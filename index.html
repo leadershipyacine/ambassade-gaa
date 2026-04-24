@@ -3421,6 +3421,8 @@ async function syncFromFirebase() {
     });
     showSyncStatus('ok');
     console.log(`☁️ Sync Firebase: ${count} tables chargées`);
+    // Mettre à jour l'écran de login si nécessaire
+    if(typeof checkFirstRun === 'function') checkFirstRun();
     return true;
   } catch(e) {
     console.warn('Firebase sync error:', e.message);
@@ -3638,23 +3640,27 @@ function switchAuthTab(tab) {
 
 // ── Premier démarrage : afficher setup si aucun compte ──────
 function checkFirstRun() {
-  const accounts = DB.getArr('accounts');
-  const firstRun   = document.getElementById('firstRunSetup');
-  const normalForms= document.getElementById('normalAuthForms');
+  const accounts    = DB.getArr('accounts');
+  const firstRun    = document.getElementById('firstRunSetup');
+  const normalForms = document.getElementById('normalAuthForms');
+  // Supprimer le message d'attente s'il existe
+  const waiting = document.getElementById('fbWaitMsg');
+  if(waiting) waiting.remove();
+
   if(!firstRun || !normalForms) return;
 
   if(!accounts || accounts.length === 0) {
     // Pas de compte — afficher l'écran de premier démarrage
-    firstRun.style.display   = 'block';
-    normalForms.style.display= 'none';
+    firstRun.style.display    = 'block';
+    normalForms.style.display = 'none';
     // Construire le PIN pad du premier démarrage
     if(!document.getElementById('frPinPad')?.children.length) {
       buildPinPad('frPinPad','frPinDisplay',6);
     }
   } else {
     // Comptes existants — formulaire normal
-    firstRun.style.display   = 'none';
-    normalForms.style.display= 'block';
+    firstRun.style.display    = 'none';
+    normalForms.style.display = 'block';
   }
 }
 
@@ -9810,14 +9816,34 @@ function init() {
     }
   }
 
-  // ── Boot Firebase en arrière-plan (non-bloquant) ─────────
+  // ── Boot Firebase puis vérifier les comptes ──────────────
   bootFirebase().then(() => {
-    // Après sync Firebase, vérifier s'il y a des comptes
+    // Après sync Firebase, re-vérifier avec les vraies données
     checkFirstRun();
   });
 
-  // Vérification immédiate depuis localStorage (avant Firebase)
-  checkFirstRun();
+  // Vérification immédiate depuis localStorage uniquement
+  // (on n'affiche PAS l'écran premier démarrage ici — on attend Firebase)
+  // Juste vérifier si on a des comptes en local
+  const localAccounts = DB.getArr('accounts');
+  if(localAccounts && localAccounts.length > 0) {
+    checkFirstRun(); // des comptes en local → formulaire normal
+  } else {
+    // Pas de comptes locaux → attendre Firebase (spinner)
+    const firstRun    = document.getElementById('firstRunSetup');
+    const normalForms = document.getElementById('normalAuthForms');
+    if(firstRun)    firstRun.style.display    = 'none';
+    if(normalForms) normalForms.style.display = 'none';
+    // Afficher un message d'attente
+    const authBody = document.querySelector('.auth-body');
+    if(authBody) {
+      const waiting = document.createElement('div');
+      waiting.id = 'fbWaitMsg';
+      waiting.style.cssText = 'text-align:center;padding:30px 0;color:rgba(255,255,255,.6)';
+      waiting.innerHTML = '<div style="font-size:24px;margin-bottom:12px">🔄</div><div style="font-size:13px">Connexion à la base de données...</div>';
+      authBody.appendChild(waiting);
+    }
+  }
 
   // Restore saved language
   const savedLang = DB.get('app_lang')||'fr';
@@ -9831,15 +9857,19 @@ function init() {
   buildPinPad('regPinPad','regPinDisplay',6);
   buildPinPad('regPin2Pad','regPin2Display',6);
 
-  // Check existing session
+  // Check existing session (local d'abord, puis Firebase)
   const session = DB.get('session');
   if (session) {
     const accounts = DB.getArr('accounts');
     const acc = accounts.find(a=>a.id===session.id&&a.active);
-    if (acc) { currentUser=acc; launchApp();
+    if (acc) {
+      currentUser=acc; launchApp();
       if(acc.mustChangePin) setTimeout(()=>{ notify('⚠️ Vous devez changer votre PIN','error'); openChangePassword(); }, 800);
-      return; }
+      return;
+    }
   }
+  // Session non trouvée localement — attendre Firebase puis réessayer
+  // (bootFirebase ci-dessus appellera checkFirstRun qui gère l'affichage)
 
   // Load EmailJS config fields if saved
   const ejsCfg = DB.get('settings_emailjs');
