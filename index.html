@@ -7361,8 +7361,8 @@ window.addEventListener('load', ()=>{ setTimeout(checkURLforRSVP, 500); });
 // ════════════════════════════════════════════════════════
 
 function initWebModule() {
-  // Nothing to load by default — sections shown on demand
   document.getElementById('webSectionContent').innerHTML = '';
+  renderWebDemandes();
 }
 
 function openWebsite() {
@@ -7371,9 +7371,84 @@ function openWebsite() {
   if(url) {
     window.open(url.startsWith('http') ? url : 'https://'+url, '_blank');
   } else {
-    notify('⚠️ Aucune URL configurée — allez dans Configuration pour définir l\'URL du site', 'error');
-    showWebSection('config');
+    window.open('site.html', '_blank');
   }
+}
+
+function renderWebDemandes() {
+  const el = document.getElementById('webSectionContent');
+  if(!el) return;
+  const demandes = DB.getArr('web_demandes');
+  const pending  = demandes.filter(d=>d.statut==='en_attente').length;
+  const traitees = demandes.filter(d=>d.statut!=='en_attente').length;
+  el.innerHTML = `
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-title">📥 Demandes reçues du site public</span>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Demandes soumises en ligne par les citoyens</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="renderWebDemandes()">🔄 Actualiser</button>
+          <button class="btn btn-green btn-sm" onclick="openWebsite()">🌐 Voir le site</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:0;border-bottom:1px solid var(--border);background:#f8faf8">
+        <div style="padding:12px 20px;text-align:center;flex:1;border-right:1px solid var(--border)">
+          <div style="font-size:22px;font-weight:700;color:var(--green)">${demandes.length}</div>
+          <div style="font-size:11px;color:var(--text2)">Total</div>
+        </div>
+        <div style="padding:12px 20px;text-align:center;flex:1;border-right:1px solid var(--border)">
+          <div style="font-size:22px;font-weight:700;color:#d97706">${pending}</div>
+          <div style="font-size:11px;color:var(--text2)">En attente</div>
+        </div>
+        <div style="padding:12px 20px;text-align:center;flex:1">
+          <div style="font-size:22px;font-weight:700;color:var(--green)">${traitees}</div>
+          <div style="font-size:11px;color:var(--text2)">Traitées</div>
+        </div>
+      </div>
+      ${demandes.length ? `
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>N°</th><th>Citoyen</th><th>Service</th><th>Email</th><th>Date</th><th>Source</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody>${[...demandes].reverse().map(d=>`<tr>
+            <td><code style="font-size:11px;background:#f0f4f1;padding:2px 6px;border-radius:3px">${d.num||'—'}</code></td>
+            <td style="font-weight:600;font-size:13px">${d.nom_complet||((d.prenom||'')+' '+(d.nom||''))||'—'}</td>
+            <td style="font-size:12px">${d.type||d.service||'—'}</td>
+            <td style="font-size:12px;color:#2563eb">${d.email||'—'}</td>
+            <td style="font-size:12px">${d.created_at||'—'}</td>
+            <td><span class="badge badge-gray" style="font-size:10px">${d.source==='site_web'?'🌐 Web':'📋 Interne'}</span></td>
+            <td>${d.statut==='en_attente'?'<span class="badge badge-gold" style="font-size:10px">⏳ En attente</span>':'<span class="badge badge-green" style="font-size:10px">✅ Traitée</span>'}</td>
+            <td style="display:flex;gap:4px">
+              <button class="btn btn-green btn-sm" onclick="traiterWebDemande(${d.id})">📁 Traiter</button>
+              <button class="btn btn-red btn-sm" onclick="supprimerWebDemande(${d.id})">🗑️</button>
+            </td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>` : `
+      <div style="padding:40px;text-align:center;color:var(--text2)">
+        <div style="font-size:36px;margin-bottom:12px">📭</div>
+        <p>Aucune demande reçue du site public.</p>
+        <button class="btn btn-green btn-sm" style="margin-top:16px" onclick="openWebsite()">🌐 Ouvrir le site public</button>
+      </div>`}
+    </div>`;
+}
+
+function traiterWebDemande(id) {
+  const d = DB.getArr('web_demandes').find(x=>x.id===id);
+  if(!d) return;
+  const list = DB.getArr('web_demandes');
+  const idx  = list.findIndex(x=>x.id===id);
+  if(idx>=0) { list[idx].statut='traite'; DB.set('web_demandes',list); }
+  notify('✅ Demande marquée traitée. Créez le dossier dans le module Dossiers.');
+  renderWebDemandes();
+}
+
+function supprimerWebDemande(id) {
+  if(!confirm('Supprimer cette demande ?')) return;
+  DB.set('web_demandes', DB.getArr('web_demandes').filter(x=>x.id!==id));
+  renderWebDemandes();
+  notify('🗑️ Demande supprimée');
 }
 
 function showWebSection(section) {
