@@ -131,6 +131,7 @@ select.f-input option{background:#0d2218;color:#fff}
 .msg{padding:10px 14px;border-radius:3px;font-size:13px;margin-bottom:16px;display:none}
 .msg.error{background:rgba(210,16,52,.15);border:1px solid rgba(210,16,52,.3);color:#f87171;display:block}
 .msg.success{background:rgba(0,98,51,.2);border:1px solid rgba(0,98,51,.4);color:#6ee7a0;display:block}
+.msg.info{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold);display:block}
 
 /* Lang bar */
 .lang-bar{position:fixed;top:20px;right:24px;display:flex;gap:6px;z-index:1100}
@@ -3698,25 +3699,44 @@ function createFirstAdmin() {
   }, 800);
 }
 
-function doLogin() {
+async function doLogin() {
   const username = document.getElementById('loginUser').value.trim();
-  const pin = pinStates['loginPinPad'] || '';
-  const msg = document.getElementById('loginMsg');
+  const pin      = pinStates['loginPinPad'] || '';
+  const msg      = document.getElementById('loginMsg');
   msg.className='msg'; msg.textContent='';
 
   if(!username || !pin) { showMsg(msg,'error','Veuillez saisir votre identifiant et votre PIN.'); return; }
 
+  // Désactiver le bouton pendant la vérification
+  const btn = document.querySelector('#loginForm .btn-primary');
+  if(btn) { btn.disabled=true; btn.textContent='Vérification...'; }
+
+  // Si Firebase pas encore prêt → attendre (max 8 secondes)
+  if(!_fbReady) {
+    showMsg(msg,'info','⏳ Connexion à la base de données...');
+    for(let i=0; i<16; i++) {
+      await new Promise(r=>setTimeout(r,500));
+      if(_fbReady) break;
+    }
+    if(_fbReady) await syncFromFirebase();
+  }
+
+  // Si comptes vides mais Firebase prêt → forcer sync
+  if(_fbReady && DB.getArr('accounts').length === 0) {
+    await syncFromFirebase();
+  }
+
+  if(btn) { btn.disabled=false; btn.textContent='Se connecter'; }
+
   const accounts = DB.getArr('accounts');
 
-  // Aucun compte du tout
   if(!accounts || accounts.length === 0) {
-    checkFirstRun();
+    showMsg(msg,'error','❌ Aucun compte trouvé. Vérifiez votre connexion internet.');
     return;
   }
 
   const acc = accounts.find(a => a.username===username && a.pin===pin && a.active);
   if(!acc) {
-    // Vérifier si l'utilisateur existe mais PIN incorrect
     const userExists = accounts.find(a=>a.username===username);
     if(userExists && !userExists.active) {
       showMsg(msg,'error','Ce compte est désactivé. Contactez un administrateur.');
@@ -9552,37 +9572,64 @@ function showRSVPPublicPage(raw) {
     </div>`;
 }
 
-function submitPublicRSVP(raw, status) {
+async function submitPublicRSVP(raw, status) {
   const accompagnants = parseInt(document.getElementById('pub_acc')?.value)||0;
-  const note = document.getElementById('pub_note')?.value||'';
-  const respondedAt = new Date().toLocaleDateString('fr-FR');
+  const note          = document.getElementById('pub_note')?.value||'';
+  const respondedAt   = new Date().toLocaleDateString('fr-FR');
+  const respondedTime = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   let payload = {};
   try { payload = JSON.parse(decodeURIComponent(escape(atob(raw)))); } catch(e) {}
-  const token = payload.t||raw;
+  const token = payload.t || raw;
 
-  // Save in localStorage (works on same device; cross-device handled by agent manually)
+  // Désactiver les boutons
+  document.querySelectorAll('#rsvp-card button').forEach(b=>{ b.disabled=true; b.style.opacity='.6'; });
+
+  // ── Écrire dans Firestore via API REST (fonctionne sans SDK, depuis n'importe quel appareil) ──
+  const BASE = 'https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents';
+  const KEY  = 'AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0';
+  let savedToCloud = false;
+
   try {
-    const list = JSON.parse(localStorage.getItem('emb_invitations')||'[]');
-    const idx = list.findIndex(i=>i.token===token);
-    if(idx>=0) {
-      list[idx].rsvp_status=status; list[idx].responded_at=respondedAt;
-      list[idx].accompagnants=accompagnants; list[idx].note=note;
-    } else {
-      const resp = JSON.parse(localStorage.getItem('emb_rsvp_responses')||'[]');
-      resp.push({token,status,evId:payload.eid,email:payload.e,nom:payload.n,
-                 accompagnants,note,responded_at:respondedAt});
-      localStorage.setItem('emb_rsvp_responses', JSON.stringify(resp));
-    }
-    localStorage.setItem('emb_invitations', JSON.stringify(list));
-  } catch(e) {}
+    // Lire les invitations depuis Firebase
+    const r = await fetch(`${BASE}/gaa/invitations?key=${KEY}`);
+    if(r.ok) {
+      const data = await r.json();
+      const invitations = JSON.parse(data.fields?.d?.stringValue || '[]');
+      const idx = invitations.findIndex(i=>i.token===token);
 
+      if(idx >= 0) {
+        // Mettre à jour l'invitation existante
+        invitations[idx].rsvp_status   = status;
+        invitations[idx].responded_at  = respondedAt+' à '+respondedTime;
+        invitations[idx].accompagnants = accompagnants;
+        invitations[idx].note          = note;
+      } else {
+        // Token non trouvé → stocker dans rsvp_responses
+        const r2 = await fetch(`${BASE}/gaa/rsvp_responses?key=${KEY}`);
+        let responses = [];
+        if(r2.ok) { const d2=await r2.json(); responses=JSON.parse(d2.fields?.d?.stringValue||'[]'); }
+        responses.push({token,status,evId:payload.eid,evTitre:payload.etit,
+          nom:payload.n,email:payload.e,accompagnants,note,responded_at:respondedAt+' à '+respondedTime});
+        await fetch(`${BASE}/gaa/rsvp_responses?key=${KEY}`,{
+          method:'PATCH',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({fields:{d:{stringValue:JSON.stringify(responses)},t:{integerValue:String(Date.now())}}})
+        });
+      }
+
+      // Écrire les invitations mises à jour
+      const w = await fetch(`${BASE}/gaa/invitations?key=${KEY}`,{
+        method:'PATCH',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({fields:{d:{stringValue:JSON.stringify(invitations)},t:{integerValue:String(Date.now())}}})
+      });
+      savedToCloud = w.ok;
+    }
+  } catch(e) { console.warn('RSVP Firebase error:', e.message); }
+
+  // ── Confirmation visuelle ─────────────────────────────────
   const msgs = {
-    accepted:{icon:'🎉',title:'Présence confirmée !',color:'#006233',
-              msg:'Merci ! Votre présence est bien enregistrée. Nous vous attendons avec plaisir.'},
-    declined:{icon:'😔',title:'Invitation déclinée',color:'#D21034',
-              msg:'Votre réponse a été enregistrée. Merci de nous avoir informés.'},
-    maybe:   {icon:'🤔',title:'Réponse enregistrée',color:'#d97706',
-              msg:'Nous avons noté "peut-être". N\'hésitez pas à revenir confirmer.'},
+    accepted:{icon:'🎉',title:'Présence confirmée !',  color:'#006233',msg:'Merci ! Votre présence est bien enregistrée. Nous vous attendons avec plaisir.'},
+    declined:{icon:'😔',title:'Invitation déclinée',   color:'#D21034',msg:'Votre réponse a été enregistrée. Merci de nous avoir informés.'},
+    maybe:   {icon:'🤔',title:'Réponse enregistrée',   color:'#d97706',msg:'Nous avons noté "peut-être". N\'hésitez pas à revenir confirmer.'},
   };
   const m = msgs[status]||msgs.accepted;
   const card = document.getElementById('rsvp-card');
@@ -9591,13 +9638,17 @@ function submitPublicRSVP(raw, status) {
       <div style="font-size:72px;margin-bottom:16px">${m.icon}</div>
       <h2 style="font-family:'Playfair Display',serif;color:${m.color};font-size:24px;margin-bottom:12px">${m.title}</h2>
       <p style="color:#4a6350;font-size:15px;line-height:1.8;margin-bottom:14px">${m.msg}</p>
-      ${accompagnants>0?`<p style="font-size:13px;color:#888">Accompagnants : <strong>+${accompagnants}</strong></p>`:''}
+      ${accompagnants>0?`<p style="font-size:13px;color:#888;margin-bottom:8px">Accompagnants : <strong>+${accompagnants}</strong></p>`:''}
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f0f4f1;font-size:12px;color:#aaa">
-        Réponse le ${respondedAt} · 🇩🇿 ${payload.amb||"Ambassade d'Algérie"}
+        ${respondedAt} à ${respondedTime} · 🇩🇿 ${payload.amb||"Ambassade d'Algérie"}<br/>
+        ${savedToCloud
+          ? '<span style="color:#006233;font-weight:600">☁️ Réponse synchronisée avec l\'ambassade</span>'
+          : '<span style="color:#d97706">⚠️ Réponse enregistrée (hors ligne)</span>'}
       </div>
     </div>`;
   history.replaceState(null,'',window.location.pathname);
 }
+
 
 function rsvpErrorHTML(msg) {
   return `<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
