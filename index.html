@@ -3649,16 +3649,18 @@ function checkFirstRun() {
 
   if(!firstRun || !normalForms) return;
 
-  if(!accounts || accounts.length === 0) {
-    // Pas de compte — afficher l'écran de premier démarrage
+  // Par défaut : toujours montrer le formulaire de connexion
+  // On ne montre le premier démarrage QUE si Firebase a confirmé
+  // qu'il n'y a vraiment aucun compte (flag _fbReady)
+  if(_fbReady && (!accounts || accounts.length === 0)) {
+    // Firebase est prêt ET confirme qu'il n'y a aucun compte
     firstRun.style.display    = 'block';
     normalForms.style.display = 'none';
-    // Construire le PIN pad du premier démarrage
     if(!document.getElementById('frPinPad')?.children.length) {
       buildPinPad('frPinPad','frPinDisplay',6);
     }
   } else {
-    // Comptes existants — formulaire normal
+    // Firebase pas encore prêt OU des comptes existent → formulaire normal
     firstRun.style.display    = 'none';
     normalForms.style.display = 'block';
   }
@@ -9822,28 +9824,10 @@ function init() {
     checkFirstRun();
   });
 
-  // Vérification immédiate depuis localStorage uniquement
-  // (on n'affiche PAS l'écran premier démarrage ici — on attend Firebase)
-  // Juste vérifier si on a des comptes en local
-  const localAccounts = DB.getArr('accounts');
-  if(localAccounts && localAccounts.length > 0) {
-    checkFirstRun(); // des comptes en local → formulaire normal
-  } else {
-    // Pas de comptes locaux → attendre Firebase (spinner)
-    const firstRun    = document.getElementById('firstRunSetup');
-    const normalForms = document.getElementById('normalAuthForms');
-    if(firstRun)    firstRun.style.display    = 'none';
-    if(normalForms) normalForms.style.display = 'none';
-    // Afficher un message d'attente
-    const authBody = document.querySelector('.auth-body');
-    if(authBody) {
-      const waiting = document.createElement('div');
-      waiting.id = 'fbWaitMsg';
-      waiting.style.cssText = 'text-align:center;padding:30px 0;color:rgba(255,255,255,.6)';
-      waiting.innerHTML = '<div style="font-size:24px;margin-bottom:12px">🔄</div><div style="font-size:13px">Connexion à la base de données...</div>';
-      authBody.appendChild(waiting);
-    }
-  }
+  // Afficher le formulaire de connexion immédiatement
+  // On ne cache plus rien — l'utilisateur peut se connecter
+  // pendant que Firebase se synchronise en arrière-plan
+  checkFirstRun();
 
   // Restore saved language
   const savedLang = DB.get('app_lang')||'fr';
