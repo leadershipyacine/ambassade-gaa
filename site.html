@@ -1108,79 +1108,116 @@ async function loadAmbInfoForChat() {
   }
 }
 
-function buildSystemPrompt() {
-  const name    = ambInfo.titre || ambInfo.name || "l'Ambassade d'Algérie";
-  const pays    = ambInfo.country || ambInfo.sub || 'Suède';
-  const adresse = ambInfo.adresse || ambInfo.addr || 'Non renseignée';
-  const tel     = ambInfo.telephone || ambInfo.tel || 'Non renseigné';
-  const email   = ambInfo.email_contact || ambInfo.email || 'Non renseigné';
-  const jours   = ambInfo.horaires?.jours || ambInfo.jours || 'Lundi au Vendredi';
-  const debut   = ambInfo.horaires?.debut || '09:00';
-  const fin     = ambInfo.horaires?.fin   || '16:00';
-  const hInfo   = ambInfo.horaires_info   || '';
-
-  return `Tu es l'assistant virtuel officiel de ${name} en ${pays}.
-Tu réponds aux questions des citoyens algériens et internautes de manière professionnelle, chaleureuse et concise.
-Tu t'exprimes principalement en français, mais tu peux répondre en arabe ou en anglais si l'utilisateur le fait.
-
-INFORMATIONS DE L'AMBASSADE :
-- Nom : ${name}
-- Pays d'accréditation : ${pays}
-- Adresse : ${adresse}
-- Téléphone : ${tel}
-- Email : ${email}
-- Horaires : ${jours}, de ${debut} à ${fin}
-${hInfo ? '- Note : ' + hInfo : ''}
-
-SERVICES DISPONIBLES :
-• Passeport biométrique (nouveau et renouvellement)
-• Carte nationale d'identité (CNI)
-• État civil (actes de naissance, mariage, livret de famille)
-• Légalisation de documents
-• Visa pour l'Algérie (tourisme, affaires, famille)
-• Immatriculation consulaire
-• Liste électorale
-• Procurations notariées
-• Assistance consulaire aux ressortissants en difficulté
-
-PRISE DE RENDEZ-VOUS :
-Les citoyens peuvent prendre rendez-vous directement sur ce site via la section "Rendez-vous" ou "Demande de document".
-
-RÈGLES IMPORTANTES :
-- Réponds toujours de façon concise (3-5 phrases maximum par réponse)
-- Si tu ne connais pas une information précise, dirige vers l'ambassade par téléphone ou email
-- Ne donne jamais d'information juridique ou médicale spécifique
-- Toujours proposer la prise de rendez-vous en ligne pour les services consulaires
-- Sois chaleureux et professionnel — tu représentes l'ambassade
-- Pour les cas urgents (accidents, arrestation, hospitalisation), donne toujours le numéro de téléphone en priorité`;
-}
 
 async function sendMessageToAI(userMessage) {
   chatHistory.push({ role: 'user', content: userMessage });
 
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 400,
-        system: buildSystemPrompt(),
-        messages: chatHistory.slice(-10), // garder les 10 derniers messages
-      })
-    });
+  // Moteur de réponses intelligent — 100% local, 24h/24 7j/7
+  const reply = generateSmartReply(userMessage.toLowerCase(), userMessage);
+  chatHistory.push({ role: 'assistant', content: reply });
+  return reply;
+}
 
-    if(!response.ok) throw new Error('API error '+response.status);
-    const data = await response.json();
-    const reply = data.content?.[0]?.text || 'Je suis désolé, je n\'ai pas pu traiter votre demande. Veuillez contacter l\'ambassade directement.';
+// ── Base de connaissances de l'ambassade ─────────────────
+function getAmbData() {
+  const name    = ambInfo.titre || ambInfo.name || "l'Ambassade d'Algérie en Suède";
+  const adresse = ambInfo.adresse || ambInfo.addr || 'Stockholm, Suède';
+  const tel     = ambInfo.telephone || ambInfo.tel || 'Consulter le site';
+  const email   = ambInfo.email_contact || ambInfo.email || 'Consulter le site';
+  const jours   = ambInfo.horaires?.jours || ambInfo.jours || 'Lundi au Vendredi';
+  const debut   = ambInfo.horaires?.debut || '09:00';
+  const fin     = ambInfo.horaires?.fin   || '16:00';
+  return { name, adresse, tel, email, jours, debut, fin };
+}
 
-    chatHistory.push({ role: 'assistant', content: reply });
-    return reply;
-  } catch(e) {
-    console.error('AI error:', e);
-    chatHistory.push({ role: 'assistant', content: 'Je suis temporairement indisponible. Veuillez nous contacter directement par téléphone ou email.' });
-    return 'Je suis temporairement indisponible. Veuillez nous contacter directement par téléphone ou email.';
+function lien(texte, ancre) {
+  return `<a href="${ancre}" style="color:var(--green);font-weight:600;text-decoration:underline">${texte}</a>`;
+}
+
+function generateSmartReply(q, original) {
+  const d = getAmbData();
+
+  // ── HORAIRES ────────────────────────────────────────────
+  if(match(q,['horaire','ouverture','ouverte','heure','quand','fermé','fermeture','disponible'])) {
+    return `🕐 **Nos horaires d'ouverture :**\n\n📅 **${d.jours}**\n⏰ **${d.debut} – ${d.fin}**\n\nEn dehors de ces horaires, vous pouvez :\n• Faire une demande en ligne → ${lien('Prendre rendez-vous', '#rdv')}\n• Nous écrire à **${d.email}**\n\nPour les **urgences consulaires** (accident, arrestation, hospitalisation), appelez le **${d.tel}** — une permanence est assurée 24h/24.`;
   }
+
+  // ── PASSEPORT ───────────────────────────────────────────
+  if(match(q,['passeport','passport','renouveler','renouvellement','biométrique','biometr'])) {
+    return `🛂 **Renouvellement / Nouveau passeport**\n\n**Documents à fournir :**\n• Ancien passeport (ou déclaration de perte)\n• Extrait de naissance de moins de 3 mois\n• 2 photos d'identité récentes\n• Justificatif de résidence en Suède\n• Formulaire de demande (remis à l'ambassade)\n\n**Délai de traitement :** 4 à 8 semaines\n\n✅ ${lien('Faire une demande en ligne', '#services')} — un agent vous contactera sous 48h pour confirmer votre rendez-vous.\n\n📞 Pour plus d'infos : **${d.tel}**`;
+  }
+
+  // ── CNI / CARTE D'IDENTITÉ ───────────────────────────────
+  if(match(q,['carte','cni','identité','identite','national'])) {
+    return `🪪 **Carte Nationale d'Identité (CNI)**\n\n**Documents à fournir :**\n• Extrait de naissance de moins de 3 mois\n• Ancien document d'identité\n• 2 photos d'identité récentes\n• Justificatif de résidence\n\n**Délai :** 3 à 6 semaines\n\n✅ ${lien('Faire une demande en ligne', '#services')} ou prenez rendez-vous directement.`;
+  }
+
+  // ── VISA ─────────────────────────────────────────────────
+  if(match(q,['visa','séjour','sejour','algérie','algerie','voyage','visiter'])) {
+    return `✈️ **Visa pour l'Algérie**\n\nL'ambassade délivre des visas pour :\n• 🏖️ **Tourisme** — 30 à 90 jours\n• 💼 **Affaires** — séjours professionnels\n• 👨‍👩‍👧 **Famille** — pour rendre visite à des proches\n• 📚 **Études** — séjours académiques\n\n**Documents généralement requis :**\n• Passeport valide 6 mois minimum\n• Formulaire de demande rempli\n• Photos d'identité\n• Justificatifs selon le type de visa\n\n✅ ${lien('Déposer une demande en ligne', '#services')} pour être recontacté par nos services.`;
+  }
+
+  // ── RENDEZ-VOUS ──────────────────────────────────────────
+  if(match(q,['rendez','rdv','rendez-vous','appointment','réservation','reservation','prendre'])) {
+    return `📅 **Prise de rendez-vous**\n\nVous pouvez prendre rendez-vous directement en ligne :\n\n✅ ${lien('→ Formulaire de rendez-vous en ligne', '#rdv')}\n\nRemplissez le formulaire en indiquant :\n• Votre nom et prénom\n• Le service souhaité\n• Votre email\n• Une date souhaitée\n\n⏱️ Un agent de l'ambassade vous confirmera le créneau sous **48h ouvrables**.\n\n📞 Vous pouvez aussi appeler le : **${d.tel}**`;
+  }
+
+  // ── ÉTAT CIVIL ───────────────────────────────────────────
+  if(match(q,['naissance','mariage','livret','civil','acte','certificat','extrait'])) {
+    return `📋 **Services d'état civil**\n\nL'ambassade délivre et légalise :\n• Actes de naissance\n• Actes de mariage\n• Livrets de famille\n• Certificats de célibat / de vie\n\n**À apporter :** Original du document algérien + copie + pièce d'identité.\n\n✅ ${lien('Faire une demande en ligne', '#services')}\n\n📞 Pour des cas complexes : **${d.tel}**`;
+  }
+
+  // ── LÉGALISATION ─────────────────────────────────────────
+  if(match(q,['légalis','legalis','apostille','authentifi','notari','traduc'])) {
+    return `📜 **Légalisation de documents**\n\nL'ambassade légalise les documents officiels pour usage en Algérie.\n\n**Délai :** 5 à 10 jours ouvrables\n\n**À apporter :**\n• Document original à légaliser\n• Copie du document\n• Pièce d'identité\n\n✅ ${lien('Prendre rendez-vous en ligne', '#rdv')}\n\n📞 **${d.tel}** · 📧 **${d.email}**`;
+  }
+
+  // ── IMMATRICULATION ──────────────────────────────────────
+  if(match(q,['immatricul','enregistr','recensement','résider','reside','vivre','habiter'])) {
+    return `🏠 **Immatriculation consulaire**\n\nTout citoyen algérien résidant en Suède doit s'immatriculer auprès de l'ambassade.\n\n**Avantages :**\n• Accès facilité aux services consulaires\n• Droit de vote aux élections algériennes\n• Protection consulaire renforcée\n\n**Documents requis :**\n• Passeport algérien valide\n• Justificatif de résidence en Suède\n• Formulaire d'immatriculation\n\n✅ ${lien('Faire une demande en ligne', '#services')}\n📅 ${lien('Prendre rendez-vous', '#rdv')}`;
+  }
+
+  // ── LISTE ÉLECTORALE ─────────────────────────────────────
+  if(match(q,['électoral','electoral','vote','voter','élection','election','suffrage'])) {
+    return `🗳️ **Inscription sur les listes électorales**\n\nLes Algériens résidant en Suède peuvent voter aux élections algériennes depuis l'ambassade.\n\n**Condition :** être immatriculé auprès de l'ambassade.\n\n**Pour s'inscrire :**\n• Passeport ou CNI algérien\n• Justificatif de résidence\n\n✅ ${lien('Demander votre inscription en ligne', '#services')}\n\nLes dates de scrutin et bureaux de vote sont annoncés sur ce site dans la section ${lien('Actualités', '#actualites')}.`;
+  }
+
+  // ── SUIVI DOSSIER ────────────────────────────────────────
+  if(match(q,['suivi','suivre','avancement','statut','dossier','num','numéro'])) {
+    return `🔍 **Suivi de votre dossier**\n\nVous pouvez suivre l'état de votre dossier en temps réel sur ce site :\n\n✅ ${lien('→ Suivre mon dossier en ligne', '#suivi')}\n\nIl vous suffit d'entrer votre **numéro de dossier** (format : DOS-XXXX-XXXXXX) pour connaître l'état de votre demande.\n\n📞 Vous pouvez aussi appeler le **${d.tel}** pendant nos heures d'ouverture.`;
+  }
+
+  // ── URGENCE ──────────────────────────────────────────────
+  if(match(q,['urgence','urgent','accident','arrestation','hôpital','hospital','arrêté','detenu','prison','perdu','volé','vol'])) {
+    return `🚨 **Assistance consulaire d'urgence**\n\nEn cas d'urgence (accident, arrestation, hospitalisation, document volé/perdu) :\n\n📞 **Appelez immédiatement le : ${d.tel}**\nUne permanence est assurée 24h/24, 7j/7 pour les situations d'urgence.\n\n📧 Email d'urgence : **${d.email}**\n\nL'ambassade peut :\n• Délivrer un laissez-passer d'urgence\n• Contacter vos proches en Algérie\n• Vous assister face aux autorités suédoises\n• Faciliter votre rapatriement si nécessaire`;
+  }
+
+  // ── CONTACT / ADRESSE ────────────────────────────────────
+  if(match(q,['adresse','situé','trouver','contact','coordonnée','coordonnee','email','mail','telephone','téléphone'])) {
+    return `📍 **Coordonnées de l'ambassade**\n\n🏛️ **${d.name}**\n📍 ${d.adresse}\n📞 **${d.tel}**\n📧 **${d.email}**\n\n🕐 **Horaires :** ${d.jours}, ${d.debut}–${d.fin}\n\n${lien('Voir sur la carte et les horaires complets', '#contact')}\n\nPour prendre rendez-vous : ${lien('Formulaire en ligne →', '#rdv')}`;
+  }
+
+  // ── SERVICES (général) ───────────────────────────────────
+  if(match(q,['service','aide','faire','besoin','comment','quoi','quels'])) {
+    return `🏛️ **Services de l'ambassade**\n\nNous offrons les services consulaires suivants :\n\n🛂 ${lien('Passeport & CNI', '#services')}\n📋 ${lien('État civil', '#services')}\n✈️ ${lien('Visa pour l\'Algérie', '#services')}\n📜 ${lien('Légalisation de documents', '#services')}\n🗳️ ${lien('Liste électorale', '#services')}\n💬 Assistance consulaire d\'urgence\n\nPour toute demande, vous pouvez :\n✅ ${lien('Faire une demande en ligne', '#services')}\n📅 ${lien('Prendre rendez-vous', '#rdv')}\n\nQuel service vous intéresse ?`;
+  }
+
+  // ── BONJOUR / SALUTATION ─────────────────────────────────
+  if(match(q,['bonjour','bonsoir','salut','salam','hello','hi ','hey','مرحبا','السلام'])) {
+    return `Bonjour ! 👋 Bienvenue sur le site officiel de **${d.name}**.\n\nJe suis votre assistant virtuel, disponible **24h/24 et 7j/7** pour vous orienter.\n\nJe peux vous aider avec :\n• 🛂 Passeport & CNI\n• ✈️ Visa pour l'Algérie\n• 📋 État civil & légalisation\n• 📅 ${lien('Prise de rendez-vous', '#rdv')}\n• 🔍 ${lien('Suivi de dossier', '#suivi')}\n\nComment puis-je vous aider ?`;
+  }
+
+  // ── MERCI / FIN ──────────────────────────────────────────
+  if(match(q,['merci','thank','شكرا','bonne journée','au revoir','bye','ciao'])) {
+    return `Avec plaisir ! 😊\n\nN'hésitez pas à revenir si vous avez d'autres questions.\n\n📅 ${lien('Prendre rendez-vous en ligne', '#rdv')}\n🔍 ${lien('Suivre votre dossier', '#suivi')}\n\nBonne journée ! 🇩🇿`;
+  }
+
+  // ── RÉPONSE GÉNÉRIQUE INTELLIGENTE ──────────────────────
+  return `Je suis là pour vous aider ! 🏛️\n\nVoici comment je peux vous orienter :\n\n📅 ${lien('Prendre rendez-vous en ligne', '#rdv')} — confirmé sous 48h\n📄 ${lien('Faire une demande de document', '#services')} — passeport, visa, état civil...\n🔍 ${lien('Suivre votre dossier', '#suivi')} — avec votre numéro de dossier\n📞 Appeler l'ambassade : **${d.tel}**\n📧 Email : **${d.email}**\n🕐 Horaires : **${d.jours}**, ${d.debut}–${d.fin}\n\nQuelle est votre question précise ?`;
+}
+
+function match(q, keywords) {
+  return keywords.some(kw => q.includes(kw));
 }
 
 function toggleChat() {
@@ -1234,13 +1271,10 @@ function addBotMessage(text, typing=true) {
 function renderBotBubble(text, messages) {
   const row = document.createElement('div');
   row.className = 'msg-row';
-  // Convert \n to <br> and make links clickable
+  // Format: convert **bold** to <strong>, \n to <br>, preserve HTML links
   const formatted = text
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/\n/g,'<br/>')
-    .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" style="color:var(--green);text-decoration:underline">$1</a>');
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g,'<br/>');
   row.innerHTML = `
     <div class="msg-avatar">🤖</div>
     <div>
