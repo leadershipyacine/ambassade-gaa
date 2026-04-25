@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ambassade d'Algérie — Site Officiel</title>
+<title>Ambassade d'Algérie en Suède — Site Officiel</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='8' fill='%23006233'/%3E%3Ccircle cx='50' cy='42' r='22' fill='none' stroke='%23C9A84C' stroke-width='3'/%3E%3Cellipse cx='50' cy='42' rx='10' ry='22' fill='none' stroke='%23C9A84C' stroke-width='2'/%3E%3Cline x1='28' y1='42' x2='72' y2='42' stroke='%23C9A84C' stroke-width='2'/%3E%3Cpath d='M50 20 L50 64' stroke='%23C9A84C' stroke-width='2'/%3E%3Crect x='30' y='72' width='40' height='4' rx='2' fill='%23C9A84C'/%3E%3Crect x='35' y='80' width='30' height='3' rx='1.5' fill='%23C9A84C' opacity='.7'/%3E%3C/svg%3E"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet"/>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -20,44 +21,66 @@ body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-heigh
 a{text-decoration:none;color:inherit}
 img{max-width:100%;height:auto}
 
+/* ── GOV BANNER ── */
+.gov-banner{background:linear-gradient(135deg,#003d1f,#006233);border-bottom:1px solid rgba(201,168,76,.3)}
+.gov-banner-inner{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.gov-banner-left{display:flex;align-items:center;gap:14px}
+.gov-banner-text{color:rgba(255,255,255,.9)}
+.gov-republic{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.02em}
+.gov-republic-fr{font-size:11px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.04em;text-transform:uppercase;margin:2px 0}
+.gov-ministry{font-size:9.5px;color:rgba(255,255,255,.55);letter-spacing:.03em}
+.gov-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.gov-link{font-size:11px;color:rgba(255,255,255,.6);transition:color .2s;cursor:pointer;text-decoration:none}
+.gov-link:hover{color:var(--gold)}
+.gov-sep{color:rgba(255,255,255,.25);font-size:11px}
+.tricolor-bar{display:flex;height:3px}
+.tc-green{flex:1;background:#006233}
+.tc-white{flex:1;background:#fff}
+.tc-green2{flex:1;background:#D21034}
+
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:all .3s}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:72px}
-.nav-logo{display:flex;align-items:center;gap:14px}
-.nav-logo .flag{font-size:28px}
-.nav-logo .name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--green);line-height:1.3}
-.nav-logo .sub{font-size:10px;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
+nav{background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+#siteHeader{position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 2px 20px rgba(0,0,0,.08)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:12px}
+.nav-logo-icon{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo .name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--green);line-height:1.3}
+.nav-logo .sub{font-size:10px;color:var(--text2);letter-spacing:.06em;text-transform:uppercase}
 .nav-links{display:flex;gap:2px;align-items:center}
-.nav-links a{padding:8px 14px;border-radius:6px;font-size:13px;font-weight:500;color:var(--text2);transition:all .2s}
+.nav-links a{padding:7px 12px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--text2);transition:all .2s}
 .nav-links a:hover,.nav-links a.active{background:var(--green);color:#fff}
-.nav-cta{margin-left:8px;background:var(--green);color:#fff!important;padding:9px 20px!important;border-radius:20px!important;font-weight:600!important}
+.nav-cta{margin-left:6px;background:var(--green)!important;color:#fff!important;padding:8px 18px!important;border-radius:20px!important;font-weight:600!important;font-size:12px!important}
 .nav-cta:hover{background:var(--green2)!important;transform:translateY(-1px)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
-.hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px}
 
-/* ── HERO ── */
-.hero{min-height:100vh;background:linear-gradient(135deg,var(--green2) 0%,var(--green) 50%,#004020 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding-top:72px}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.hero-content{max-width:1200px;margin:0 auto;padding:80px 24px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1}
-.hero-text .kicker{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.8);margin-bottom:16px}
-.hero-text h1{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,64px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px}
-.hero-text h1 span{color:var(--gold)}
-.hero-text p{font-size:17px;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:32px;max-width:480px}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
-.btn-hero{padding:14px 28px;border-radius:30px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Inter',sans-serif}
-.btn-hero-primary{background:var(--gold);color:#1a2e1f}
-.btn-hero-primary:hover{background:#d4a832;transform:translateY(-2px);box-shadow:0 8px 20px rgba(201,168,76,.4)}
-.btn-hero-outline{background:rgba(255,255,255,.1);color:#fff;border:2px solid rgba(255,255,255,.3)}
+/* ── HERO VIDEO ── */
+.hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;padding-top:130px}
+.hero-video-wrap{position:absolute;inset:0;z-index:0}
+.hero-video-wrap video{width:100%;height:100%;object-fit:cover}
+.hero-video-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,40,20,.88) 0%,rgba(0,50,25,.75) 50%,rgba(0,30,15,.82) 100%)}
+.hero-content{max-width:1200px;margin:0 auto;padding:60px 24px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1;width:100%}
+.hero-text .kicker{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.9);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.hero-text .kicker::before{content:'';width:30px;height:1px;background:var(--gold)}
+.hero-text h1{font-family:'Playfair Display',serif;font-size:clamp(32px,4.5vw,58px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:18px}
+.hero-text h1 span{color:var(--gold);font-style:italic}
+.hero-text p{font-size:16px;color:rgba(255,255,255,.75);line-height:1.85;margin-bottom:28px;max-width:480px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-hero{padding:13px 26px;border-radius:30px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .25s;font-family:'Inter',sans-serif;letter-spacing:.02em}
+.btn-hero-primary{background:var(--gold);color:#1a2e1f;box-shadow:0 4px 16px rgba(201,168,76,.35)}
+.btn-hero-primary:hover{background:#d4a832;transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.5)}
+.btn-hero-outline{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
 .btn-hero-outline:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
-.hero-card{background:rgba(255,255,255,.1);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:32px;color:#fff}
-.hero-card h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:20px;color:var(--gold)}
-.hero-stat{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:14px;background:rgba(255,255,255,.08);border-radius:10px}
-.hero-stat .icon{font-size:28px}
-.hero-stat .val{font-size:22px;font-weight:700;display:block}
-.hero-stat .lbl{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em}
-.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.1em;text-transform:uppercase;animation:bounce 2s infinite}
+.hero-card{background:rgba(255,255,255,.1);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:28px;color:#fff}
+.hero-card h3{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:18px;color:var(--gold)}
+.hero-stat{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:12px;background:rgba(255,255,255,.07);border-radius:10px;transition:background .2s}
+.hero-stat:hover{background:rgba(255,255,255,.12)}
+.hero-stat .icon{font-size:24px;flex-shrink:0}
+.hero-stat .val{font-size:22px;font-weight:800;display:block;color:#fff}
+.hero-stat .lbl{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em}
+.scroll-indicator{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.45);font-size:10px;letter-spacing:.15em;text-transform:uppercase;z-index:1;animation:bounce 2s infinite}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
-.scroll-indicator::after{content:'↓';font-size:20px}
+.scroll-arrow{width:24px;height:24px;border-right:2px solid rgba(255,255,255,.4);border-bottom:2px solid rgba(255,255,255,.4);transform:rotate(45deg);margin-top:-4px}
 
 /* ── SECTIONS ── */
 .section{padding:100px 0}
@@ -187,15 +210,19 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
   .community-grid{grid-template-columns:1fr}
   nav .nav-links{display:none}
   .hamburger{display:flex}
-  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:72px;left:0;right:0;background:#fff;padding:16px;border-bottom:1px solid var(--border);gap:4px}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:120px;left:0;right:0;background:#fff;padding:16px;border-bottom:1px solid var(--border);gap:4px;z-index:999}
+  .gov-banner-right{display:none}
+  .gov-ministry{display:none}
 }
 @media (max-width:600px){
   .section{padding:60px 0}
-  .hero{padding-top:72px}
+  .hero{padding-top:110px}
   .services-grid,.news-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr}
   .hero-btns{flex-direction:column}
+  .gov-republic{font-size:10px}
+  .gov-republic-fr{font-size:9px}
 }
 </style>
 </head>
@@ -221,45 +248,103 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
   </div>
 </div>
 
-<!-- ═══ NAVBAR ═══ -->
-<nav id="navbar">
-  <div class="nav-inner">
-    <div class="nav-logo">
-      <div class="flag">🇩🇿</div>
-      <div>
-        <div class="name" id="nav-name">Ambassade d'Algérie</div>
-        <div class="sub" id="nav-sub">Chargement...</div>
+<!-- ═══ NAVBAR GOUVERNEMENTALE ═══ -->
+<header id="siteHeader">
+  <!-- Bandeau supérieur institutionnel -->
+  <div class="gov-banner">
+    <div class="gov-banner-inner">
+      <div class="gov-banner-left">
+        <!-- Logo emblème Algérie SVG -->
+        <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" fill="none" stroke="#C9A84C" stroke-width="2"/>
+          <circle cx="50" cy="40" r="20" fill="none" stroke="#C9A84C" stroke-width="2"/>
+          <ellipse cx="50" cy="40" rx="9" ry="20" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+          <line x1="30" y1="40" x2="70" y2="40" stroke="#C9A84C" stroke-width="1.5"/>
+          <line x1="50" y1="20" x2="50" y2="60" stroke="#C9A84C" stroke-width="1.5"/>
+          <rect x="32" y="68" width="36" height="3" rx="1.5" fill="#C9A84C"/>
+          <rect x="37" y="75" width="26" height="2.5" rx="1.25" fill="#C9A84C" opacity=".8"/>
+          <rect x="27" y="83" width="46" height="2" rx="1" fill="#C9A84C" opacity=".6"/>
+        </svg>
+        <div class="gov-banner-text">
+          <div class="gov-republic">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+          <div class="gov-republic-fr">République Algérienne Démocratique et Populaire</div>
+          <div class="gov-ministry">وزارة الشؤون الخارجية والجالية الوطنية بالخارج · Ministère des Affaires Étrangères</div>
+        </div>
+      </div>
+      <div class="gov-banner-right">
+        <a href="https://www.mfa.gov.dz" target="_blank" class="gov-link">MAE Algérie</a>
+        <span class="gov-sep">·</span>
+        <a href="https://www.el-mouradia.dz" target="_blank" class="gov-link">Présidence</a>
+        <span class="gov-sep">·</span>
+        <span class="gov-link" id="gov-date"></span>
       </div>
     </div>
-    <div class="nav-links" id="navLinks">
-      <a href="#accueil" class="active">Accueil</a>
-      <a href="#services">Services</a>
-      <a href="#actualites">Actualités</a>
-      <a href="#rdv">Rendez-vous</a>
-      <a href="#suivi">Suivi dossier</a>
-      <a href="#contact">Contact</a>
-      <a href="#rdv" class="nav-cta">Demande en ligne</a>
-    </div>
-    <div class="hamburger" onclick="toggleMobileNav()">
-      <span></span><span></span><span></span>
+    <!-- Barre tricolore animée -->
+    <div class="tricolor-bar">
+      <div class="tc-green"></div>
+      <div class="tc-white"></div>
+      <div class="tc-green2"></div>
     </div>
   </div>
-</nav>
 
-<!-- ═══ HERO ═══ -->
+  <!-- Navbar principale -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">
+          <div style="font-size:9px;font-weight:800;color:#fff;letter-spacing:.05em;text-align:center;line-height:1.2">AE<br/>DZ</div>
+        </div>
+        <div>
+          <div class="name" id="nav-name">Ambassade d'Algérie</div>
+          <div class="sub" id="nav-sub">Stockholm · Suède</div>
+        </div>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="#accueil" class="active">Accueil</a>
+        <a href="#services">Services consulaires</a>
+        <a href="#actualites">Actualités</a>
+        <a href="#rdv">Rendez-vous</a>
+        <a href="#suivi">Suivi dossier</a>
+        <a href="#contact">Contact</a>
+        <a href="#services" class="nav-cta" onclick="openServiceModal('passeport');return false;">📄 Demande en ligne</a>
+      </div>
+      <div class="hamburger" onclick="toggleMobileNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══ HERO VIDÉO ═══ -->
 <section class="hero" id="accueil">
+  <!-- Vidéo de fond — Algérie -->
+  <div class="hero-video-wrap">
+    <!-- Vidéo YouTube embed en background (Alger, paysages algériens) -->
+    <iframe
+      src="https://www.youtube.com/embed/V7tREXj73Dw?autoplay=1&mute=1&loop=1&playlist=V7tREXj73Dw&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1"
+      allow="autoplay; encrypted-media"
+      style="position:absolute;top:50%;left:50%;width:180%;height:180%;transform:translate(-50%,-50%);border:none;pointer-events:none"
+      title="Algérie"></iframe>
+    <!-- Fallback gradient si vidéo non chargée -->
+  </div>
+
   <div class="hero-content container">
     <div class="hero-text">
       <div class="kicker">République Algérienne Démocratique et Populaire</div>
-      <h1>Au service de la <span>communauté</span> algérienne</h1>
-      <p id="hero-desc">Bienvenue sur le site officiel de l'Ambassade d'Algérie. Accédez à nos services consulaires, suivez vos dossiers et prenez rendez-vous en ligne.</p>
+      <h1>Au service de la<br/><span>communauté algérienne</span><br/>en Suède</h1>
+      <p id="hero-desc">Bienvenue sur le portail officiel de l'Ambassade d'Algérie à Stockholm. Accédez à tous nos services consulaires, suivez vos dossiers et effectuez vos démarches en ligne.</p>
       <div class="hero-btns">
-        <button class="btn-hero btn-hero-primary" onclick="openDemandeModal()">📄 Demande de document</button>
+        <button class="btn-hero btn-hero-primary" onclick="openServiceModal('passeport')">📄 Demande de document</button>
         <a href="#services" class="btn-hero btn-hero-outline">🔍 Nos services</a>
+      </div>
+      <!-- Bannière urgence -->
+      <div style="margin-top:24px;padding:10px 16px;background:rgba(210,16,52,.15);border:1px solid rgba(210,16,52,.3);border-radius:8px;font-size:12px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">🚨</span>
+        <span>Urgence consulaire 24h/24 : <strong style="color:#fff">+46 (0) 8 679 9130</strong></span>
       </div>
     </div>
     <div class="hero-card">
-      <h3>📊 En chiffres</h3>
+      <h3>📊 L'ambassade en chiffres</h3>
       <div class="hero-stat">
         <div class="icon">👥</div>
         <div>
@@ -288,9 +373,18 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
           <span class="lbl">Événements organisés</span>
         </div>
       </div>
+      <!-- Horaires rapides -->
+      <div style="margin-top:16px;padding:12px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2);border-radius:10px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:6px">🕐 Horaires d'ouverture</div>
+        <div style="font-size:13px;color:#fff;font-weight:600">Lun – Ven : 09:00 – 13:00</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">Fermé week-ends et jours fériés</div>
+      </div>
     </div>
   </div>
-  <div class="scroll-indicator">Découvrir</div>
+  <div class="scroll-indicator">
+    Découvrir
+    <div class="scroll-arrow"></div>
+  </div>
 </section>
 
 <!-- ═══ SERVICES ═══ -->
@@ -979,7 +1073,7 @@ function rechercherNIN() {
   resultEl.innerHTML = '<div style="font-size:12px;color:var(--text2)">🔄 Recherche en cours...</div>';
 
   // Search in Firebase
-  fetch(`https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents/gaa/contacts_user?key=AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0`)
+  fetch(`${BASE}/gaa/contacts_user?key=${KEY}`)
     .then(r=>r.json())
     .then(data => {
       const citoyens = JSON.parse(data.fields?.d?.stringValue || '[]');
@@ -1117,11 +1211,11 @@ async function submitServiceDemande() {
   };
 
   try {
-    const r = await fetch(`https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents/gaa/web_demandes?key=AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0`);
+    const r = await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`);
     let list = [];
     if(r.ok) { const d=await r.json(); list=JSON.parse(d.fields?.d?.stringValue||'[]'); }
     list.push(demande);
-    await fetch(`https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents/gaa/web_demandes?key=AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0`, {
+    await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`, {
       method:'PATCH', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({fields:{d:{stringValue:JSON.stringify(list)},t:{integerValue:String(Date.now())}}})
     });
@@ -1281,23 +1375,29 @@ function toggleMobileNav() {
   document.getElementById('navLinks').classList.toggle('open');
 }
 
+// ── Date institutionnelle dans le bandeau ─────────────────
+const govDateEl = document.getElementById('gov-date');
+if(govDateEl) {
+  const now = new Date();
+  govDateEl.textContent = now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
 // Navbar scroll effect
 window.addEventListener('scroll', () => {
-  const nav = document.getElementById('navbar');
-  if(window.scrollY > 50) {
-    nav.style.boxShadow = '0 4px 20px rgba(0,0,0,.1)';
-  } else {
-    nav.style.boxShadow = 'none';
+  const header = document.getElementById('siteHeader');
+  if(header) {
+    header.style.boxShadow = window.scrollY > 50 ? '0 4px 20px rgba(0,0,0,.12)' : '0 2px 20px rgba(0,0,0,.08)';
   }
   // Active nav link
   const sections = ['accueil','services','actualites','rdv','suivi','contact'];
   let current = 'accueil';
   sections.forEach(id => {
     const el = document.getElementById(id);
-    if(el && window.scrollY >= el.offsetTop - 100) current = id;
+    if(el && window.scrollY >= el.offsetTop - 140) current = id;
   });
   document.querySelectorAll('.nav-links a').forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#'+current);
+    const href = a.getAttribute('href');
+    a.classList.toggle('active', href === '#'+current);
   });
 });
 
