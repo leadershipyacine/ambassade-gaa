@@ -204,48 +204,19 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
 <!-- ═══ TOAST ═══ -->
 <div class="toast" id="toast"></div>
 
-<!-- ═══ MODALE DEMANDE DE DOCUMENT ═══ -->
+<!-- ═══ MODALE SERVICE CONSULAIRE INTELLIGENTE ═══ -->
 <div class="modal-overlay" id="demandeModal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width:640px">
     <div class="modal-header">
-      <h3>📄 Demande de document</h3>
+      <h3 id="modalServiceTitle">📄 Demande consulaire</h3>
       <button class="modal-close" onclick="closeDemandeModal()">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Type de document *</label>
-        <select id="dm_type">
-          <option value="">-- Sélectionner --</option>
-          <option>Passeport (nouveau)</option>
-          <option>Renouvellement de passeport</option>
-          <option>Carte d'identité nationale</option>
-          <option>Acte de naissance</option>
-          <option>Certificat de résidence</option>
-          <option>Légalisation de documents</option>
-          <option>Procuration notariée</option>
-          <option>Visa</option>
-          <option>Autre</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Prénom *</label><input id="dm_prenom" placeholder="Votre prénom"/></div>
-        <div class="form-group"><label>Nom *</label><input id="dm_nom" placeholder="Votre nom"/></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Date de naissance *</label><input type="date" id="dm_ddn"/></div>
-        <div class="form-group"><label>Nationalité</label><input id="dm_nat" value="Algérienne"/></div>
-      </div>
-      <div class="form-group"><label>Email *</label><input type="email" id="dm_email" placeholder="votre@email.com"/></div>
-      <div class="form-group"><label>Téléphone</label><input id="dm_tel" placeholder="+46 ..."/></div>
-      <div class="form-group"><label>N° de passeport / CNI actuel</label><input id="dm_doc_actuel" placeholder="N° du document actuel (si applicable)"/></div>
-      <div class="form-group"><label>Message / précisions</label><textarea id="dm_message" style="min-height:80px" placeholder="Informations supplémentaires..."></textarea></div>
-      <div style="padding:12px;background:rgba(0,98,51,.06);border-radius:8px;font-size:12px;color:var(--text2);margin-top:8px">
-        ℹ️ Votre demande sera enregistrée et un agent vous contactera dans les 48h ouvrables pour confirmer le rendez-vous.
-      </div>
+    <div class="modal-body" id="modalServiceBody">
+      <!-- Contenu dynamique selon le service -->
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" id="modalServiceFooter">
       <button onclick="closeDemandeModal()" style="padding:10px 20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">Annuler</button>
-      <button onclick="submitDemande()" class="btn-submit" style="width:auto;padding:10px 24px;margin-top:0">📤 Envoyer la demande</button>
+      <button onclick="submitServiceDemande()" class="btn-submit" style="width:auto;padding:10px 24px;margin-top:0" id="submitServiceBtn">📤 Envoyer la demande</button>
     </div>
   </div>
 </div>
@@ -332,40 +303,62 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
       <div class="divider"></div>
     </div>
     <div class="services-grid">
-      <div class="service-card" onclick="openDemandeModal()">
+      <div class="service-card" onclick="openServiceModal('passeport')">
         <div class="service-icon">🛂</div>
-        <h3>Passeport & CNI</h3>
-        <p>Demandez ou renouvelez votre passeport biométrique et votre carte d'identité nationale.</p>
+        <h3>Passeport Biométrique</h3>
+        <p>Demande, renouvellement et retrait de passeport biométrique. Délai : 4 à 8 semaines. Paiement obligatoire le jour de l'enrôlement.</p>
+        <div style="font-size:11px;color:var(--gold);margin-bottom:12px">📧 pass@embalgeria.se</div>
         <div class="service-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openDemandeModal()">
-        <div class="service-icon">📋</div>
-        <h3>État civil</h3>
-        <p>Actes de naissance, de mariage, livret de famille — obtenez vos documents d'état civil officiels.</p>
+      <div class="service-card" onclick="openServiceModal('cni')">
+        <div class="service-icon">🪪</div>
+        <h3>Carte Nationale d'Identité (CNIBE)</h3>
+        <p>Carte biométrique électronique. Si vous avez un passeport biométrique, la demande se fait entièrement en ligne via le portail du Ministère de l'Intérieur.</p>
+        <div style="font-size:11px;color:var(--gold);margin-bottom:12px">📧 pass@embalgeria.se</div>
         <div class="service-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openDemandeModal()">
+      <div class="service-card" onclick="openServiceModal('visa')">
         <div class="service-icon">✈️</div>
-        <h3>Visa</h3>
-        <p>Demandes de visa pour étrangers souhaitant se rendre en Algérie (tourisme, affaires, famille).</p>
+        <h3>Visa d'entrée en Algérie</h3>
+        <p>Visa tourisme, famille, affaires, travail, transit et presse. Délai minimum : 14 jours. Frais non remboursables.</p>
+        <div style="font-size:11px;color:var(--gold);margin-bottom:12px">📧 visa@embalgeria.se</div>
+        <div class="service-link">Déposer un dossier</div>
+      </div>
+      <div class="service-card" onclick="openServiceModal('immatriculation')">
+        <div class="service-icon">🏠</div>
+        <h3>Immatriculation Consulaire</h3>
+        <p>Tout Algérien résidant en Suède ou en Islande doit s'immatriculer. Condition préalable à l'obtention du passeport et des autres services.</p>
+        <div class="service-link">S'immatriculer</div>
+      </div>
+      <div class="service-card" onclick="openServiceModal('etat_civil')">
+        <div class="service-icon">📋</div>
+        <h3>État Civil & Acte 12S</h3>
+        <p>Actes de naissance, mariage, livret de famille. L'acte de naissance 12S est exigé pour toute demande de passeport.</p>
         <div class="service-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openDemandeModal()">
+      <div class="service-card" onclick="openServiceModal('legalisation')">
         <div class="service-icon">📜</div>
-        <h3>Légalisation</h3>
-        <p>Légalisation et apostille de documents officiels pour usage en Algérie ou à l'étranger.</p>
+        <h3>Légalisation de Documents</h3>
+        <p>Légalisation et certification de documents officiels pour usage en Algérie. Délai : 5 à 10 jours ouvrables.</p>
         <div class="service-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openDemandeModal()">
-        <div class="service-icon">🗳️</div>
-        <h3>Liste électorale</h3>
-        <p>Inscription sur les listes électorales consulaires pour participer aux élections algériennes.</p>
-        <div class="service-link">S'inscrire</div>
+      <div class="service-card" onclick="openServiceModal('autorisation')">
+        <div class="service-icon">✍️</div>
+        <h3>Autorisation Paternelle</h3>
+        <p>Pour les enfants de parents séparés ou père de nationalité étrangère. Document requis pour certaines démarches.</p>
+        <div class="service-link">Faire une demande</div>
+      </div>
+      <div class="service-card" onclick="openServiceModal('service_national')">
+        <div class="service-icon">🎖️</div>
+        <h3>Service National</h3>
+        <p>Informations et démarches liées au service national pour les ressortissants algériens résidant à l'étranger.</p>
+        <div class="service-link">En savoir plus</div>
       </div>
       <div class="service-card" onclick="window.location.href='#contact'">
-        <div class="service-icon">💬</div>
-        <h3>Assistance consulaire</h3>
-        <p>Assistance aux ressortissants en situation difficile, arrestation, hospitalisation, rapatriement.</p>
+        <div class="service-icon">🚨</div>
+        <h3>Assistance Consulaire d'Urgence</h3>
+        <p>Accident, arrestation, hospitalisation, document perdu ou volé. Permanence 24h/24 — Appelez immédiatement.</p>
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">📞 +46 (0) 8 679 9130</div>
         <div class="service-link">Nous contacter</div>
       </div>
     </div>
@@ -663,11 +656,11 @@ async function initSite() {
   if(web.welcome) setText('hero-desc', web.welcome);
 
   // Contact
-  setText('contact-adresse', web.adresse || amb.addr || 'Non renseignée');
-  setText('contact-tel', web.telephone || amb.tel || '—');
-  setText('contact-email', web.email_contact || amb.email || '—');
-  setText('h-jours', hor.jours || 'Lundi au Vendredi');
-  setText('h-horaires', `${hor.debut||'09:00'} – ${hor.fin||'16:00'}`);
+  setText('contact-adresse', web.adresse || amb.addr || 'Danderydsgatan 3-5, BOX 26027, 100 41 Stockholm, Sweden');
+  setText('contact-tel', web.telephone || amb.tel || '+46 (0) 8 679 9130');
+  setText('contact-email', web.email_contact || amb.email || 'consular@embalgeria.se');
+  setText('h-jours', hor.jours || 'Lundi – Vendredi');
+  setText('h-horaires', `${hor.debut||'09:00'} – ${hor.fin||'13:00'}`);
   if(web.horaires_info) setText('h-info', web.horaires_info);
 
   // Google Maps
@@ -739,8 +732,457 @@ function setText(id, val) {
 }
 
 // ════════════════════════════════════════════════════════
-//  FORMULAIRE RDV
+//  MODALES PAR SERVICE — avec reconnaissance NIN
 // ════════════════════════════════════════════════════════
+let currentService = null;
+let recognizedCitoyen = null;
+
+// Définition des services
+const SERVICES = {
+  passeport: {
+    icon: '🛂', title: 'Passeport Biométrique',
+    email: 'pass@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['696 SEK — Adulte (32 pages)', '348 SEK — Mineur / Étudiant', '1044 SEK — Adulte (48 pages)', '522 SEK — Mineur/Étudiant (48 pages)', 'Pénalité perte : 1125 SEK'],
+    delai: '4 à 8 semaines',
+    paiement: 'BankGiro 5088-9039 | IBAN: SE6460000000000386367558 | Pas de paiement en espèces.',
+    note: '⚠️ Le paiement doit être effectué le jour de l\'enrôlement biométrique.',
+    docs_nouveau: ['Formulaire de demande rempli', 'Acte de naissance 12S (original)', '4 photos d\'identité récentes (couleur)', 'Ancien passeport ou déclaration de perte', 'Attestation de travail ou certificat de scolarité', 'Personbevis (résidence Suède) < 3 mois', 'Droits de chancellerie (voir tarifs)'],
+    docs_renouvellement: ['Formulaire de demande rempli', 'Acte de naissance 12S (original)', '4 photos d\'identité récentes', 'Ancien passeport ou déclaration de perte', 'Personbevis (résidence Suède) < 3 mois', 'Droits de chancellerie'],
+    motifs_renouvellement: ['Expiration du passeport', 'Passeport plein (pas de place pour visas)', 'Changement de situation matrimoniale', 'Rectification état civil', 'Perte / Vol / Détérioration'],
+  },
+  cni: {
+    icon: '🪪', title: 'Carte Nationale d\'Identité (CNIBE)',
+    email: 'pass@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['114 SEK — Droits de timbre', 'Gratuit — si vous avez un passeport biométrique (demande en ligne)', 'Pénalité perte : 114 SEK'],
+    delai: '3 à 6 semaines',
+    paiement: 'Terminal de paiement à la réception de l\'ambassade. Pas d\'espèces.',
+    note: 'Si vous avez un passeport biométrique : demande entièrement en ligne sur passeport.interieur.gov.dz — sans se déplacer.',
+    docs_avec_passeport: ['Demande en ligne uniquement sur passeport.interieur.gov.dz', 'Aucun document à fournir', 'Aucun frais supplémentaire'],
+    docs_sans_passeport: ['Formulaire de demande (disponible à l\'accueil)', 'Extrait de naissance 12S (original)', '3 photos d\'identité récentes', 'Ancienne CNI ou déclaration de perte', 'Personbevis < 3 mois', '114 SEK de droits de timbre'],
+  },
+  visa: {
+    icon: '✈️', title: 'Visa d\'entrée en Algérie',
+    email: 'visa@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['957 SEK — Séjour ≤ 90 jours (adulte)', '1125 SEK — Séjour > 90 jours', '477 SEK — Enfant 6-12 ans', 'Gratuit — Enfant < 6 ans'],
+    delai: 'Minimum 14 jours (délai non garanti)',
+    paiement: 'Carte bancaire uniquement. Frais non remboursables.',
+    note: '⚠️ Tout dossier incomplet est automatiquement rejeté. Le dossier doit être déposé en personne.',
+    types: ['Familiale', 'Touristique', 'Affaires', 'Culturelle / Sportive', 'Travail', 'Transit', 'Presse'],
+    docs_communs: ['Passeport valide 6 mois minimum après dépôt', '2 formulaires PDF remplis électroniquement (AR-FR ou AR-EN), signés', '2 photos d\'identité couleur 35×45mm', 'Copie page identité passeport', 'Personbevis (Suède) ou Registers Iceland', 'Assurance voyage (évacuation médicale, hospitalisation)', 'Preuve de paiement des frais', 'Email valide du demandeur'],
+  },
+  immatriculation: {
+    icon: '🏠', title: 'Immatriculation Consulaire',
+    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['Gratuit'],
+    delai: 'Sur rendez-vous',
+    note: 'L\'immatriculation est obligatoire pour tout Algérien résidant en Suède ou en Islande. Elle est condition préalable à l\'obtention du passeport.',
+    docs: ['Acte de naissance 12S (original)', 'Passeport algérien en cours de validité', 'Personbevis < 3 mois', '2 photos d\'identité récentes', 'Formulaire d\'immatriculation (disponible à l\'accueil)'],
+  },
+  etat_civil: {
+    icon: '📋', title: 'État Civil & Acte 12S',
+    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['Voir droits de timbre selon le document'],
+    delai: '5 à 15 jours ouvrables',
+    note: 'L\'acte de naissance 12S est exigé pour toute demande de passeport biométrique. Pour les nés en Algérie : request12s.interieur.gov.dz',
+    docs: ['Pièce d\'identité algérienne en cours de validité', 'Carnet de famille ou extrait de naissance existant', 'Formulaire de demande', 'Droits de timbre applicables'],
+  },
+  legalisation: {
+    icon: '📜', title: 'Légalisation de Documents',
+    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['Selon le document — voir droits de timbre en vigueur'],
+    delai: '5 à 10 jours ouvrables',
+    note: 'Apportez l\'original du document + 1 photocopie + votre pièce d\'identité.',
+    docs: ['Document original à légaliser', 'Photocopie du document', 'Pièce d\'identité algérienne valide', 'Paiement des droits de timbre'],
+  },
+  autorisation: {
+    icon: '✍️', title: 'Autorisation Paternelle',
+    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['Voir droits de timbre'],
+    delai: 'Sur rendez-vous',
+    note: 'Requise pour les enfants voyageant sans leur père, notamment en cas de divorce ou père de nationalité étrangère.',
+    docs: ['Acte de naissance de l\'enfant', 'Livret de famille', 'Pièce d\'identité du père et de la mère', 'Justificatif de garde (si divorce)', 'Formulaire de demande'],
+  },
+  service_national: {
+    icon: '🎖️', title: 'Service National',
+    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
+    tarifs: ['Gratuit'],
+    delai: 'Variable selon les cas',
+    note: 'Pour les ressortissants algériens résidant à l\'étranger. Contactez l\'ambassade pour connaître votre situation.',
+    docs: ['Passeport algérien valide', 'Extrait de naissance 12S', 'Justificatif de résidence à l\'étranger', 'Tout document relatif au service national'],
+  },
+};
+
+function openServiceModal(serviceKey) {
+  currentService = serviceKey;
+  recognizedCitoyen = null;
+  const s = SERVICES[serviceKey];
+  if(!s) return;
+
+  document.getElementById('modalServiceTitle').textContent = `${s.icon} ${s.title}`;
+
+  // Build modal body
+  const body = document.getElementById('modalServiceBody');
+  body.innerHTML = buildServiceModalHTML(serviceKey, s);
+
+  document.getElementById('demandeModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function buildServiceModalHTML(key, s) {
+  return `
+    <!-- Étape 1 : Reconnaissance NIN -->
+    <div style="background:linear-gradient(135deg,rgba(0,98,51,.06),rgba(0,98,51,.03));border:1px solid rgba(0,98,51,.15);border-radius:12px;padding:18px;margin-bottom:20px">
+      <div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:10px">🔍 Êtes-vous déjà immatriculé ?</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Entrez votre NIN (Numéro d'Identification Nationale) pour pré-remplir automatiquement le formulaire.</p>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="nin_input" placeholder="Ex: 1234567890" maxlength="20"
+          style="flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+        <button onclick="rechercherNIN()" style="padding:10px 18px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap">Rechercher</button>
+      </div>
+      <div id="nin_result" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Infos service -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="background:#f8faf8;border-radius:8px;padding:12px">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">⏱️ Délai estimé</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${s.delai}</div>
+      </div>
+      <div style="background:#f8faf8;border-radius:8px;padding:12px">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📧 Contact service</div>
+        <div style="font-size:12px;color:var(--green);font-weight:600">${s.email}</div>
+      </div>
+    </div>
+
+    ${s.note ? `<div style="background:#fef9e7;border:1px solid #f0d060;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#92400e">${s.note}</div>` : ''}
+
+    <!-- Formulaire spécifique -->
+    <div id="service_form_area">
+      ${buildServiceForm(key, s)}
+    </div>
+
+    <!-- Tarifs -->
+    <div style="background:#f8faf8;border-radius:8px;padding:14px;margin-top:16px">
+      <div style="font-weight:700;font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">💳 Tarifs</div>
+      ${s.tarifs.map(t=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);color:var(--text)">• ${t}</div>`).join('')}
+      ${s.paiement ? `<div style="font-size:11px;color:var(--text2);margin-top:8px">💳 ${s.paiement}</div>` : ''}
+    </div>
+  `;
+}
+
+function buildServiceForm(key, s) {
+  const common = `
+    <div class="form-row">
+      <div class="form-group"><label>Prénom *</label><input class="inp" id="sf_prenom" placeholder="Prénom"/></div>
+      <div class="form-group"><label>Nom *</label><input class="inp" id="sf_nom" placeholder="Nom de famille"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date de naissance</label><input type="date" class="inp" id="sf_ddn"/></div>
+      <div class="form-group"><label>Email *</label><input type="email" class="inp" id="sf_email" placeholder="votre@email.com"/></div>
+    </div>
+    <div class="form-group"><label>Téléphone</label><input class="inp" id="sf_tel" placeholder="+46 ..."/></div>`;
+
+  if(key === 'passeport') return `
+    <div class="form-group"><label>Type de demande *</label>
+      <select class="inp" id="sf_sous_type" onchange="updatePasseportDocs()">
+        <option value="">-- Choisir --</option>
+        <option value="nouveau">Nouveau passeport (première demande)</option>
+        <option value="renouvellement">Renouvellement de passeport</option>
+        <option value="perte">Remplacement suite à perte / vol</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Type de passeport</label>
+      <select class="inp" id="sf_type_pages">
+        <option value="32">32 pages (standard)</option>
+        <option value="48">48 pages</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Catégorie</label>
+      <select class="inp" id="sf_categorie">
+        <option value="adulte">Adulte (19 ans et +)</option>
+        <option value="mineur">Mineur / Étudiant (< 19 ans)</option>
+      </select>
+    </div>
+    ${common}
+    <div class="form-group"><label>N° passeport actuel</label><input class="inp" id="sf_num_doc" placeholder="Si renouvellement"/></div>
+    <div id="sf_motif_renouvellement" style="display:none">
+      <div class="form-group"><label>Motif de renouvellement</label>
+        <select class="inp" id="sf_motif">
+          <option value="">-- Motif --</option>
+          ${s.motifs_renouvellement.map(m=>`<option>${m}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div id="docs_requis" style="margin-top:12px"></div>
+    <div class="form-group"><label>Précisions / Message</label><textarea class="inp" id="sf_message" style="min-height:70px"></textarea></div>`;
+
+  if(key === 'cni') return `
+    <div class="form-group"><label>Situation *</label>
+      <select class="inp" id="sf_sous_type" onchange="updateCNIDocs()">
+        <option value="">-- Choisir --</option>
+        <option value="avec_passeport">J'ai un passeport biométrique algérien</option>
+        <option value="sans_passeport">Je n'ai pas de passeport biométrique</option>
+        <option value="renouvellement">Renouvellement / Perte de CNI</option>
+      </select>
+    </div>
+    <div id="cni_info_area"></div>
+    ${common}
+    <div class="form-group"><label>N° CNI actuelle (si applicable)</label><input class="inp" id="sf_num_doc" placeholder="N° CNI actuelle"/></div>
+    <div class="form-group"><label>Message</label><textarea class="inp" id="sf_message" style="min-height:60px"></textarea></div>`;
+
+  if(key === 'visa') return `
+    <div class="form-group"><label>Type de visa *</label>
+      <select class="inp" id="sf_sous_type" onchange="updateVisaDocs()">
+        <option value="">-- Choisir le type --</option>
+        ${s.types.map(t=>`<option value="${t.toLowerCase().replace(/\//g,'_').replace(/ /g,'_')}">${t}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Prénom *</label><input class="inp" id="sf_prenom" placeholder="Prénom (comme sur le passeport)"/></div>
+      <div class="form-group"><label>Nom *</label><input class="inp" id="sf_nom" placeholder="Nom de famille"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Nationalité *</label><input class="inp" id="sf_nat" placeholder="Ex: Suédoise"/></div>
+      <div class="form-group"><label>N° Passeport *</label><input class="inp" id="sf_num_doc" placeholder="N° passeport"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date naissance *</label><input type="date" class="inp" id="sf_ddn"/></div>
+      <div class="form-group"><label>Email *</label><input type="email" class="inp" id="sf_email" placeholder="email@example.com"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Téléphone</label><input class="inp" id="sf_tel" placeholder="+46 ..."/></div>
+      <div class="form-group"><label>Durée de séjour souhaitée</label>
+        <select class="inp" id="sf_duree">
+          <option value="30">30 jours</option>
+          <option value="90" selected>90 jours</option>
+          <option value="90+">Plus de 90 jours</option>
+        </select>
+      </div>
+    </div>
+    <div id="visa_docs_area" style="margin:12px 0"></div>
+    <div class="form-group"><label>Message / précisions</label><textarea class="inp" id="sf_message" style="min-height:70px" placeholder="Objet du séjour, hébergement prévu..."></textarea></div>`;
+
+  // Generic form for other services
+  return `${common}
+    <div class="form-group"><label>Message / précisions</label><textarea class="inp" id="sf_message" style="min-height:80px" placeholder="Décrivez votre demande en détail..."></textarea></div>`;
+}
+
+function rechercherNIN() {
+  const nin = document.getElementById('nin_input')?.value.trim();
+  if(!nin || nin.length < 4) {
+    showNINResult('⚠️ Entrez un numéro NIN valide.', 'warning');
+    return;
+  }
+
+  const resultEl = document.getElementById('nin_result');
+  resultEl.innerHTML = '<div style="font-size:12px;color:var(--text2)">🔄 Recherche en cours...</div>';
+
+  // Search in Firebase
+  fetch(`https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents/gaa/contacts_user?key=AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0`)
+    .then(r=>r.json())
+    .then(data => {
+      const citoyens = JSON.parse(data.fields?.d?.stringValue || '[]');
+      const found = citoyens.find(c => (c.nin||'').replace(/\s/g,'') === nin.replace(/\s/g,''));
+      if(found) {
+        recognizedCitoyen = found;
+        // Auto-fill form fields
+        if(document.getElementById('sf_prenom')) document.getElementById('sf_prenom').value = found.prenom||'';
+        if(document.getElementById('sf_nom')) document.getElementById('sf_nom').value = found.nom||'';
+        if(document.getElementById('sf_email')) document.getElementById('sf_email').value = found.email||'';
+        if(document.getElementById('sf_tel')) document.getElementById('sf_tel').value = found.telephone||'';
+        if(document.getElementById('sf_ddn')) document.getElementById('sf_ddn').value = found.date_naissance||'';
+        if(document.getElementById('sf_num_doc')) document.getElementById('sf_num_doc').value = found.passeport||found.cin||'';
+
+        showNINResult(`✅ Citoyen reconnu : <strong>${found.prenom} ${found.nom}</strong> — Immatriculé · Formulaire pré-rempli automatiquement`, 'success');
+      } else {
+        recognizedCitoyen = null;
+        showNINResult('ℹ️ NIN non trouvé dans notre base. Remplissez le formulaire manuellement — votre dossier sera créé à la réception de votre demande.', 'info');
+      }
+    })
+    .catch(() => {
+      showNINResult('⚠️ Impossible de vérifier le NIN en ligne. Remplissez le formulaire manuellement.', 'warning');
+    });
+}
+
+function showNINResult(msg, type) {
+  const colors = {
+    success: {bg:'#f0f9f4', border:'#006233', color:'#006233'},
+    info:    {bg:'#eff6ff', border:'#2563eb', color:'#1e40af'},
+    warning: {bg:'#fef9e7', border:'#f0d060', color:'#92400e'},
+    error:   {bg:'#fff5f5', border:'#fca5a5', color:'#991b1b'},
+  };
+  const c = colors[type]||colors.info;
+  document.getElementById('nin_result').innerHTML =
+    `<div style="padding:10px 14px;background:${c.bg};border:1px solid ${c.border};border-radius:8px;font-size:12px;color:${c.color}">${msg}</div>`;
+}
+
+function updatePasseportDocs() {
+  const type = document.getElementById('sf_sous_type')?.value;
+  const s = SERVICES.passeport;
+  const motifEl = document.getElementById('sf_motif_renouvellement');
+  const docsEl  = document.getElementById('docs_requis');
+  if(motifEl) motifEl.style.display = (type==='renouvellement'||type==='perte') ? 'block' : 'none';
+  if(docsEl && type) {
+    const docs = type==='nouveau' ? s.docs_nouveau : s.docs_renouvellement;
+    docsEl.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:8px;padding:12px;margin-top:4px">
+      <div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:8px">📋 Documents à fournir :</div>
+      ${docs.map(d=>`<div style="font-size:12px;padding:3px 0;color:var(--text)">✔ ${d}</div>`).join('')}
+    </div>`;
+  }
+}
+
+function updateCNIDocs() {
+  const type = document.getElementById('sf_sous_type')?.value;
+  const infoEl = document.getElementById('cni_info_area');
+  if(!infoEl) return;
+  if(type === 'avec_passeport') {
+    infoEl.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="font-weight:700;color:var(--green);margin-bottom:8px">✅ Bonne nouvelle !</div>
+      <p style="font-size:13px;color:var(--text2)">Vous pouvez faire la demande entièrement <strong>en ligne</strong>, sans vous déplacer :</p>
+      <a href="https://passeport.interieur.gov.dz/fr/demandeCNIBEfr/Demande" target="_blank"
+        style="display:inline-block;margin-top:10px;padding:10px 20px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
+        🌐 Demande en ligne sur interieur.gov.dz →
+      </a>
+      <p style="font-size:11px;color:var(--text2);margin-top:8px">Aucun document à fournir · Aucun frais supplémentaire</p>
+    </div>`;
+    document.getElementById('submitServiceBtn').style.display = 'none';
+  } else if(type) {
+    const docs = SERVICES.cni.docs_sans_passeport;
+    infoEl.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:6px">📋 Documents à fournir :</div>
+      ${docs.map(d=>`<div style="font-size:12px;padding:3px 0">✔ ${d}</div>`).join('')}
+    </div>`;
+    document.getElementById('submitServiceBtn').style.display = 'inline-flex';
+  }
+}
+
+function updateVisaDocs() {
+  const type = document.getElementById('sf_sous_type')?.value;
+  const docsEl = document.getElementById('visa_docs_area');
+  if(!docsEl || !type) return;
+  const s = SERVICES.visa;
+  const extraDocs = {
+    familiale: ['Preuve de nationalité algérienne du conjoint/famille', 'Extrait de naissance ou livret de famille', 'Acte de mariage si applicable'],
+    touristique: ['Preuve d\'emploi ou ressources financières', 'Réservation hôtel ou hébergement confirmé'],
+    affaires: ['Lettre d\'invitation de la société algérienne (objet, durée, prise en charge)', 'Lettre de mission de l\'employeur'],
+    travail: ['Contrat de travail signé', 'Autorisation de travail temporaire (Algérie)', 'Engagement de rapatriement'],
+    transit: ['Visa du pays de destination finale', 'Billet d\'avion confirmé', 'Justificatif de ressources'],
+    presse: ['Demande écrite du média', 'Copie de la carte de presse', 'Formulaire d\'accréditation (3 copies)', 'Déposer 15 jours à l\'avance'],
+  };
+  const extra = extraDocs[type] || [];
+  docsEl.innerHTML = `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px">
+    <div style="font-weight:700;font-size:12px;color:#1e40af;margin-bottom:6px">📋 Documents requis — ${type.replace(/_/g,' ')} :</div>
+    ${s.docs_communs.map(d=>`<div style="font-size:11px;padding:2px 0;color:var(--text)">✔ ${d}</div>`).join('')}
+    ${extra.length ? '<div style="font-weight:700;font-size:11px;color:#1e40af;margin-top:8px;margin-bottom:4px">Documents supplémentaires :</div>'+extra.map(d=>`<div style="font-size:11px;padding:2px 0;color:#1e40af">➕ ${d}</div>`).join('') : ''}
+  </div>`;
+}
+
+async function submitServiceDemande() {
+  const s = SERVICES[currentService];
+  if(!s) return;
+
+  const prenom = document.getElementById('sf_prenom')?.value.trim();
+  const nom    = document.getElementById('sf_nom')?.value.trim();
+  const email  = document.getElementById('sf_email')?.value.trim();
+
+  if(!prenom || !nom || !email) {
+    showToast('⚠️ Veuillez remplir au minimum Prénom, Nom et Email.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('submitServiceBtn');
+  if(btn) { btn.textContent = '⏳ Envoi...'; btn.disabled = true; }
+
+  const num = 'DEM-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
+  const demande = {
+    id: Date.now(), num,
+    type: s.title,
+    service_key: currentService,
+    sous_type: document.getElementById('sf_sous_type')?.value || '',
+    prenom, nom,
+    nom_complet: prenom + ' ' + nom,
+    email,
+    tel:        document.getElementById('sf_tel')?.value || '',
+    ddn:        document.getElementById('sf_ddn')?.value || '',
+    num_doc:    document.getElementById('sf_num_doc')?.value || '',
+    message:    document.getElementById('sf_message')?.value || '',
+    nin:        document.getElementById('nin_input')?.value || '',
+    citoyen_id: recognizedCitoyen?.id || null,
+    citoyen_reconnu: !!recognizedCitoyen,
+    statut: 'en_attente',
+    source: 'site_web',
+    created_at: new Date().toLocaleDateString('fr-FR'),
+    email_service: s.email,
+  };
+
+  try {
+    const r = await fetch(`https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents/gaa/web_demandes?key=AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0`);
+    let list = [];
+    if(r.ok) { const d=await r.json(); list=JSON.parse(d.fields?.d?.stringValue||'[]'); }
+    list.push(demande);
+    await fetch(`https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents/gaa/web_demandes?key=AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({fields:{d:{stringValue:JSON.stringify(list)},t:{integerValue:String(Date.now())}}})
+    });
+
+    // Show success
+    document.getElementById('modalServiceBody').innerHTML = `
+      <div style="text-align:center;padding:40px 20px">
+        <div style="font-size:64px;margin-bottom:16px">✅</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-bottom:12px">Demande envoyée !</h3>
+        <p style="color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:12px">
+          Votre demande de <strong>${s.title}</strong> a bien été enregistrée.<br/>
+          Un agent de l'ambassade vous contactera dans les <strong>48h ouvrables</strong>.
+        </p>
+        <div style="background:#f0f9f4;border-radius:10px;padding:16px;margin:16px 0;display:inline-block;text-align:left">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px">VOTRE NUMÉRO DE DOSSIER</div>
+          <div style="font-size:20px;font-weight:800;color:var(--green);letter-spacing:.05em">${num}</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:4px">Conservez ce numéro pour le suivi</div>
+        </div>
+        <p style="font-size:12px;color:var(--text2)">📧 Contact : <strong>${s.email}</strong><br/>📞 ${s.tel}</p>
+        <a href="#suivi" onclick="closeDemandeModal()"
+          style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
+          🔍 Suivre mon dossier
+        </a>
+      </div>`;
+    document.getElementById('modalServiceFooter').style.display = 'none';
+    showToast(`✅ Demande envoyée — N° ${num}`);
+  } catch(e) {
+    showToast('❌ Erreur d\'envoi. Veuillez réessayer.', 'error');
+    if(btn) { btn.textContent = '📤 Envoyer la demande'; btn.disabled = false; }
+  }
+}
+
+function openDemandeModal() { openServiceModal('passeport'); }
+
+function closeDemandeModal() {
+  document.getElementById('demandeModal').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('modalServiceFooter').style.display = '';
+  const btn = document.getElementById('submitServiceBtn');
+  if(btn) { btn.textContent = '📤 Envoyer la demande'; btn.disabled = false; btn.style.display = ''; }
+  currentService = null;
+  recognizedCitoyen = null;
+}
+
+// Add .inp style for modal form inputs
+const modalInputStyle = document.createElement('style');
+modalInputStyle.textContent = `
+  #modalServiceBody .inp, #modalServiceBody .form-group input, #modalServiceBody .form-group select, #modalServiceBody .form-group textarea {
+    width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:13px;color:var(--text);transition:border-color .2s;background:#fff;
+    box-sizing:border-box;
+  }
+  #modalServiceBody .inp:focus, #modalServiceBody .form-group input:focus, #modalServiceBody .form-group select:focus, #modalServiceBody .form-group textarea:focus {
+    outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,98,51,.08);
+  }
+  #modalServiceBody .form-group { margin-bottom:12px; }
+  #modalServiceBody .form-group label { display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em; }
+  #modalServiceBody .form-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+  @media(max-width:500px){ #modalServiceBody .form-row { grid-template-columns:1fr; } }
+`;
+document.head.appendChild(modalInputStyle);
 async function submitRDV() {
   const prenom  = document.getElementById('rdv_prenom')?.value.trim();
   const nom     = document.getElementById('rdv_nom')?.value.trim();
@@ -804,109 +1246,6 @@ function resetRDV() {
   document.getElementById('rdv_service').value='';
 }
 
-// ════════════════════════════════════════════════════════
-//  FORMULAIRE DEMANDE DE DOCUMENT
-// ════════════════════════════════════════════════════════
-function openDemandeModal() {
-  document.getElementById('demandeModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeDemandeModal() {
-  document.getElementById('demandeModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-async function submitDemande() {
-  const type   = document.getElementById('dm_type')?.value;
-  const prenom = document.getElementById('dm_prenom')?.value.trim();
-  const nom    = document.getElementById('dm_nom')?.value.trim();
-  const email  = document.getElementById('dm_email')?.value.trim();
-
-  if(!type || !prenom || !nom || !email) {
-    showToast('⚠️ Veuillez remplir les champs obligatoires', 'error');
-    return;
-  }
-
-  const num = 'DEM-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-  const demande = {
-    id: Date.now(), num,
-    type, prenom, nom, email,
-    ddn:        document.getElementById('dm_ddn')?.value||'',
-    tel:        document.getElementById('dm_tel')?.value||'',
-    doc_actuel: document.getElementById('dm_doc_actuel')?.value||'',
-    message:    document.getElementById('dm_message')?.value||'',
-    statut:     'en_attente',
-    source:     'site_web',
-    created_at: new Date().toLocaleDateString('fr-FR'),
-    nom_complet: prenom+' '+nom,
-  };
-
-  try {
-    const r = await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`);
-    let list = [];
-    if(r.ok) { const d=await r.json(); list=JSON.parse(d.fields?.d?.stringValue||'[]'); }
-    list.push(demande);
-    await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({fields:{d:{stringValue:JSON.stringify(list)},t:{integerValue:String(Date.now())}}})
-    });
-    closeDemandeModal();
-    showToast(`✅ Demande envoyée ! Votre N° : ${num}`);
-  } catch(e) {
-    showToast('❌ Erreur. Veuillez réessayer.', 'error');
-  }
-}
-
-// ════════════════════════════════════════════════════════
-//  SUIVI DOSSIER
-// ════════════════════════════════════════════════════════
-async function searchDossier() {
-  const num = document.getElementById('trackingNum')?.value.trim().toUpperCase();
-  const el  = document.getElementById('trackingResult');
-  if(!num) return;
-
-  el.innerHTML = '<p style="color:var(--text2);margin-top:12px">🔄 Recherche en cours...</p>';
-
-  try {
-    // Chercher dans dossiers internes + demandes web
-    const [dossiers, webDemandes] = await Promise.all([
-      loadFromFirebase('dossiers'),
-      loadFromFirebase('web_demandes')
-    ]);
-
-    const all = [...(dossiers||[]), ...(webDemandes||[])];
-    const found = all.find(d =>
-      (d.num||'').toUpperCase() === num ||
-      (d.num||'').toUpperCase().includes(num)
-    );
-
-    if(found) {
-      const statusColors = {
-        en_attente:'#d97706', en_cours:'#2563eb', valide:'#006233',
-        pret:'#006233', en_attente_retrait:'#2563eb',
-        refuse:'#D21034', incomplet:'#D21034'
-      };
-      const statusLabels = {
-        en_attente:'⏳ En attente de traitement', en_cours:'🔄 En cours de traitement',
-        valide:'✅ Validé', pret:'📬 Prêt à retirer',
-        en_attente_retrait:'🕐 En attente de retrait',
-        refuse:'❌ Refusé', incomplet:'⚠️ Incomplet — pièces manquantes'
-      };
-      const s = found.statut || 'en_attente';
-      el.innerHTML = `
-        <div style="margin-top:16px;padding:20px;background:var(--bg);border-radius:12px;border:1px solid var(--border)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-            <div>
-              <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Dossier trouvé</div>
-              <div style="font-size:18px;font-weight:700;color:var(--text)">${found.nom_complet||found.prenom+' '+found.nom||'—'}</div>
-              <div style="font-size:13px;color:var(--text2);margin-top:4px">📁 ${found.type||found.service||'—'} · N° ${found.num}</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font-weight:700;color:${statusColors[s]||'#666'};font-size:14px;margin-bottom:4px">${statusLabels[s]||s}</div>
-              <div style="font-size:12px;color:var(--text2)">${found.created_at||'—'}</div>
-            </div>
-          </div>
-          ${s==='pret'||s==='en_attente_retrait' ? `
             <div style="margin-top:14px;padding:12px;background:rgba(0,98,51,.08);border-radius:8px;font-size:13px;color:var(--green);font-weight:500">
               📬 Votre document est prêt à être retiré à l'ambassade. Munissez-vous d'une pièce d'identité.
             </div>` : ''}
