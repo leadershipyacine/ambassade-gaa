@@ -3,226 +3,293 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ambassade d'Algérie en Suède — Site Officiel</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='8' fill='%23006233'/%3E%3Ccircle cx='50' cy='42' r='22' fill='none' stroke='%23C9A84C' stroke-width='3'/%3E%3Cellipse cx='50' cy='42' rx='10' ry='22' fill='none' stroke='%23C9A84C' stroke-width='2'/%3E%3Cline x1='28' y1='42' x2='72' y2='42' stroke='%23C9A84C' stroke-width='2'/%3E%3Cpath d='M50 20 L50 64' stroke='%23C9A84C' stroke-width='2'/%3E%3Crect x='30' y='72' width='40' height='4' rx='2' fill='%23C9A84C'/%3E%3Crect x='35' y='80' width='30' height='3' rx='1.5' fill='%23C9A84C' opacity='.7'/%3E%3C/svg%3E"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-<!-- Firebase SDK -->
+<title>Ambassade d'Algérie en Suède — Portail Officiel</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='12' fill='%23006233'/%3E%3Ccircle cx='50' cy='44' r='24' fill='none' stroke='%23C9A84C' stroke-width='3'/%3E%3Cellipse cx='50' cy='44' rx='11' ry='24' fill='none' stroke='%23C9A84C' stroke-width='2'/%3E%3Cline x1='26' y1='44' x2='74' y2='44' stroke='%23C9A84C' stroke-width='2'/%3E%3Crect x='30' y='76' width='40' height='4' rx='2' fill='%23C9A84C'/%3E%3Crect x='36' y='84' width='28' height='3' rx='1.5' fill='%23C9A84C' opacity='.7'/%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"/>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --green:#006233; --green2:#004d28; --red:#D21034;
-  --gold:#C9A84C; --white:#fff; --text:#1a2e1f; --text2:#4a6350;
-  --bg:#f8faf8; --border:#e0ead8;
-}
+:root{--green:#006233;--green2:#004d28;--red:#D21034;--gold:#C9A84C;--text:#1a2e1f;--text2:#4a6350;--bg:#f8faf8;--border:#e0ead8}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.7}
+body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.7;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
-img{max-width:100%;height:auto}
 
-/* ── GOV BANNER ── */
-.gov-banner{background:linear-gradient(135deg,#003d1f,#006233);border-bottom:1px solid rgba(201,168,76,.3)}
-.gov-banner-inner{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.gov-banner-left{display:flex;align-items:center;gap:14px}
-.gov-banner-text{color:rgba(255,255,255,.9)}
-.gov-republic{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.02em}
-.gov-republic-fr{font-size:11px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.04em;text-transform:uppercase;margin:2px 0}
-.gov-ministry{font-size:9.5px;color:rgba(255,255,255,.55);letter-spacing:.03em}
-.gov-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.gov-link{font-size:11px;color:rgba(255,255,255,.6);transition:color .2s;cursor:pointer;text-decoration:none}
-.gov-link:hover{color:var(--gold)}
-.gov-sep{color:rgba(255,255,255,.25);font-size:11px}
-.tricolor-bar{display:flex;height:3px}
-.tc-green{flex:1;background:#006233}
-.tc-white{flex:1;background:#fff}
-.tc-green2{flex:1;background:#D21034}
+/* ═══ GOV HEADER ═══ */
+#siteHeader{position:fixed;top:0;left:0;right:0;z-index:1000;transition:box-shadow .3s}
+.gov-top{background:linear-gradient(90deg,#003520,#006233,#003520);padding:8px 24px}
+.gov-top-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.gov-logo-row{display:flex;align-items:center;gap:12px}
+.gov-emblem{width:40px;height:40px;flex-shrink:0}
+.gov-titles{line-height:1.3}
+.gov-ar{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;color:var(--gold)}
+.gov-fr{font-size:10px;font-weight:600;letter-spacing:.06em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.gov-min{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.04em;margin-top:1px}
+.gov-links{display:flex;gap:12px;align-items:center}
+.gov-links a{font-size:10.5px;color:rgba(255,255,255,.5);transition:color .2s}
+.gov-links a:hover{color:var(--gold)}
+.gov-date{font-size:10px;color:rgba(255,255,255,.35);margin-left:8px}
+/* Barre tricolore */
+.tribar{display:flex;height:3px}
+.tribar div{flex:1}
+.tribar .g{background:#006233}
+.tribar .w{background:#fff}
+.tribar .r{background:#D21034}
+/* scrolling ticker */
+.ticker-wrap{background:rgba(0,0,0,.25);overflow:hidden;height:26px;display:flex;align-items:center}
+.ticker{display:flex;animation:ticker 30s linear infinite;white-space:nowrap;gap:60px;padding-left:100%}
+.ticker span{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.04em}
+.ticker strong{color:var(--gold)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 
-/* ── NAV ── */
-nav{background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-#siteHeader{position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 2px 20px rgba(0,0,0,.08)}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
-.nav-logo{display:flex;align-items:center;gap:12px}
-.nav-logo-icon{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nav-logo .name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--green);line-height:1.3}
-.nav-logo .sub{font-size:10px;color:var(--text2);letter-spacing:.06em;text-transform:uppercase}
+/* ═══ NAVBAR ═══ */
+.navbar{background:rgba(255,255,255,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:62px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-badge{width:36px;height:36px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;letter-spacing:.03em;line-height:1.2;text-align:center}
+.nav-brand-text .name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--green)}
+.nav-brand-text .sub{font-size:9.5px;color:var(--text2);letter-spacing:.07em;text-transform:uppercase}
 .nav-links{display:flex;gap:2px;align-items:center}
-.nav-links a{padding:7px 12px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--text2);transition:all .2s}
+.nav-links a{padding:7px 11px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--text2);transition:all .2s}
 .nav-links a:hover,.nav-links a.active{background:var(--green);color:#fff}
-.nav-cta{margin-left:6px;background:var(--green)!important;color:#fff!important;padding:8px 18px!important;border-radius:20px!important;font-weight:600!important;font-size:12px!important}
-.nav-cta:hover{background:var(--green2)!important;transform:translateY(-1px)}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
-.hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px}
+.nav-cta{background:var(--green)!important;color:#fff!important;border-radius:20px!important;font-weight:600!important;margin-left:6px;padding:7px 16px!important}
+.nav-cta:hover{background:var(--green2)!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,98,51,.3)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:none}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:.3s}
 
-/* ── HERO VIDEO ── */
-.hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;padding-top:130px}
-.hero-video-wrap{position:absolute;inset:0;z-index:0}
-.hero-video-wrap video{width:100%;height:100%;object-fit:cover}
-.hero-video-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,40,20,.88) 0%,rgba(0,50,25,.75) 50%,rgba(0,30,15,.82) 100%)}
-.hero-content{max-width:1200px;margin:0 auto;padding:60px 24px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1;width:100%}
-.hero-text .kicker{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.9);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.hero-text .kicker::before{content:'';width:30px;height:1px;background:var(--gold)}
-.hero-text h1{font-family:'Playfair Display',serif;font-size:clamp(32px,4.5vw,58px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:18px}
-.hero-text h1 span{color:var(--gold);font-style:italic}
-.hero-text p{font-size:16px;color:rgba(255,255,255,.75);line-height:1.85;margin-bottom:28px;max-width:480px}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
-.btn-hero{padding:13px 26px;border-radius:30px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .25s;font-family:'Inter',sans-serif;letter-spacing:.02em}
-.btn-hero-primary{background:var(--gold);color:#1a2e1f;box-shadow:0 4px 16px rgba(201,168,76,.35)}
-.btn-hero-primary:hover{background:#d4a832;transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.5)}
-.btn-hero-outline{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
-.btn-hero-outline:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
-.hero-card{background:rgba(255,255,255,.1);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:28px;color:#fff}
-.hero-card h3{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:18px;color:var(--gold)}
-.hero-stat{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:12px;background:rgba(255,255,255,.07);border-radius:10px;transition:background .2s}
-.hero-stat:hover{background:rgba(255,255,255,.12)}
-.hero-stat .icon{font-size:24px;flex-shrink:0}
-.hero-stat .val{font-size:22px;font-weight:800;display:block;color:#fff}
-.hero-stat .lbl{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em}
-.scroll-indicator{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.45);font-size:10px;letter-spacing:.15em;text-transform:uppercase;z-index:1;animation:bounce 2s infinite}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
-.scroll-arrow{width:24px;height:24px;border-right:2px solid rgba(255,255,255,.4);border-bottom:2px solid rgba(255,255,255,.4);transform:rotate(45deg);margin-top:-4px}
+/* ═══ HERO VIDEO ═══ */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,#001a0d,#003520,#001a0d)}
+.hero-bg iframe{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);border:none;pointer-events:none;opacity:.6}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,30,15,.9) 0%,rgba(0,60,30,.7) 60%,rgba(0,20,10,.85) 100%);z-index:1}
+.hero-inner{max-width:1200px;margin:0 auto;padding:60px 24px;display:grid;grid-template-columns:1fr 440px;gap:50px;align-items:center;position:relative;z-index:2;width:100%}
+.hero-kicker{font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.85);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero-kicker::before{content:'';width:28px;height:1px;background:var(--gold);flex-shrink:0}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,54px);font-weight:900;color:#fff;line-height:1.12;margin-bottom:18px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-desc{font-size:15px;color:rgba(255,255,255,.72);line-height:1.85;margin-bottom:28px;max-width:480px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.btn-gold{padding:13px 26px;border-radius:30px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:var(--gold);color:#1a2e1f;font-family:'Inter',sans-serif;transition:all .25s;letter-spacing:.02em}
+.btn-gold:hover{background:#d4a832;transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.45)}
+.btn-outline{padding:13px 26px;border-radius:30px;font-size:14px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.35);font-family:'Inter',sans-serif;transition:all .25s;backdrop-filter:blur(8px)}
+.btn-outline:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+.hero-urgence{padding:10px 16px;background:rgba(210,16,52,.18);border:1px solid rgba(210,16,52,.35);border-radius:8px;font-size:12px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:10px}
+.hero-urgence strong{color:#fff}
+/* Stats card */
+.stats-card{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:26px;color:#fff}
+.stats-card-title{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:18px;color:var(--gold);display:flex;align-items:center;gap:8px}
+.stat-row{display:flex;align-items:center;gap:14px;padding:11px 12px;background:rgba(255,255,255,.06);border-radius:10px;margin-bottom:10px;transition:background .2s}
+.stat-row:hover{background:rgba(255,255,255,.12)}
+.stat-icon{font-size:22px;flex-shrink:0}
+.stat-val{font-size:22px;font-weight:800;display:block;line-height:1}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.stat-hours{margin-top:16px;padding:12px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);border-radius:10px}
+.stat-hours-title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:6px}
+.stat-hours-val{font-size:13px;font-weight:600;color:#fff}
+.stat-hours-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.35);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;animation:float 2s ease-in-out infinite}
+.scroll-hint-arrow{width:20px;height:20px;border-right:2px solid rgba(255,255,255,.3);border-bottom:2px solid rgba(255,255,255,.3);transform:rotate(45deg)}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-/* ── SECTIONS ── */
-.section{padding:100px 0}
+/* ═══ SECTIONS ═══ */
+.section{padding:90px 0}
 .section-alt{background:var(--bg)}
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
-.section-header{text-align:center;margin-bottom:60px}
-.section-header .kicker{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-.section-header h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--text);margin-bottom:16px}
-.section-header p{font-size:16px;color:var(--text2);max-width:560px;margin:0 auto;line-height:1.8}
-.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--green),var(--gold));margin:16px auto 0;border-radius:3px}
+.section-head{text-align:center;margin-bottom:56px}
+.section-kicker{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,40px);font-weight:700;color:var(--text);margin-bottom:14px}
+.section-head p{font-size:15px;color:var(--text2);max-width:540px;margin:0 auto;line-height:1.8}
+.divider{width:50px;height:3px;background:linear-gradient(90deg,var(--green),var(--gold));margin:14px auto 0;border-radius:3px}
 
-/* ── SERVICES ── */
-.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
-.service-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
-.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .3s}
-.service-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,98,51,.12);border-color:transparent}
-.service-card:hover::before{transform:scaleX(1)}
-.service-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,rgba(0,98,51,.1),rgba(0,98,51,.05));display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px}
-.service-card h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
-.service-card p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px}
-.service-link{font-size:13px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px}
-.service-link::after{content:'→';transition:transform .2s}
-.service-card:hover .service-link::after{transform:translateX(4px)}
+/* ═══ SERVICES ═══ */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.svc-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--gold));transform:scaleX(0);transform-origin:left;transition:.3s}
+.svc-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,98,51,.1);border-color:transparent}
+.svc-card:hover::before{transform:scaleX(1)}
+.svc-icon{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,rgba(0,98,51,.1),rgba(0,98,51,.05));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px}
+.svc-card h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px}
+.svc-card p{font-size:12.5px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.svc-email{font-size:11px;color:var(--gold);margin-bottom:10px}
+.svc-link{font-size:12.5px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px}
+.svc-link::after{content:'→';transition:transform .2s}
+.svc-card:hover .svc-link::after{transform:translateX(4px)}
 
-/* ── ACTUALITÉS ── */
-.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px}
-.news-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--border);transition:all .3s}
-.news-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.1)}
-.news-card-img{height:200px;background:linear-gradient(135deg,var(--green2),var(--green));display:flex;align-items:center;justify-content:center;font-size:48px}
-.news-card-body{padding:24px}
-.news-date{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.news-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
-.news-card p{font-size:13px;color:var(--text2);line-height:1.7}
-.news-badge{display:inline-block;background:rgba(0,98,51,.1);color:var(--green);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+/* ═══ ACTUALITÉS ═══ */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.news-card{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border);transition:all .3s}
+.news-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.09)}
+.news-img{height:180px;background:linear-gradient(135deg,var(--green2),var(--green));display:flex;align-items:center;justify-content:center;font-size:42px}
+.news-body{padding:20px}
+.news-badge{display:inline-block;background:rgba(0,98,51,.08);color:var(--green);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.news-date{font-size:11px;font-weight:600;color:var(--gold);margin-bottom:8px}
+.news-card h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.4}
+.news-card p{font-size:12.5px;color:var(--text2);line-height:1.7}
 
-/* ── RDV ONLINE ── */
-.rdv-section{background:linear-gradient(135deg,var(--green2),var(--green));padding:100px 0;position:relative;overflow:hidden}
+/* ═══ RDV ═══ */
+.rdv-section{background:linear-gradient(135deg,var(--green2),var(--green));padding:90px 0;position:relative;overflow:hidden}
 .rdv-section::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/svg%3E")}
-.rdv-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1}
-.rdv-text h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);color:#fff;margin-bottom:16px}
-.rdv-text p{color:rgba(255,255,255,.75);font-size:16px;line-height:1.8;margin-bottom:32px}
-.rdv-steps{display:flex;flex-direction:column;gap:16px}
-.rdv-step{display:flex;align-items:flex-start;gap:16px;background:rgba(255,255,255,.1);border-radius:12px;padding:16px}
-.rdv-step-num{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#1a2e1f;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0}
-.rdv-step-text strong{display:block;color:#fff;font-size:14px;margin-bottom:4px}
-.rdv-step-text span{color:rgba(255,255,255,.65);font-size:12px}
-.rdv-form{background:#fff;border-radius:20px;padding:36px}
-.rdv-form h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);margin-bottom:24px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);transition:border-color .2s;background:#fff}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,98,51,.1)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn-submit{width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:8px}
-.btn-submit:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,98,51,.3)}
-#rdvSuccess{display:none;text-align:center;padding:20px}
-#rdvSuccess .icon{font-size:56px;margin-bottom:12px}
+.rdv-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative;z-index:1}
+.rdv-text h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,40px);color:#fff;margin-bottom:14px}
+.rdv-text p{color:rgba(255,255,255,.72);font-size:15px;line-height:1.85;margin-bottom:28px}
+.rdv-steps{display:flex;flex-direction:column;gap:14px}
+.rdv-step{display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.09);border-radius:10px;padding:14px}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#1a2e1f;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0}
+.step-txt strong{display:block;color:#fff;font-size:13px;margin-bottom:3px}
+.step-txt span{color:rgba(255,255,255,.6);font-size:12px}
+/* RDV form */
+.rdv-form-wrap{background:#fff;border-radius:18px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.rdv-form-wrap h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--text);margin-bottom:22px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);transition:border-color .2s;background:#fff;box-sizing:border-box}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,98,51,.08)}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-submit-full{width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:6px}
+.btn-submit-full:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,98,51,.3)}
+.btn-submit-full:disabled{background:#ccc;cursor:not-allowed;transform:none}
 
-/* ── COMMUNAUTÉ ── */
-.community-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.community-card{text-align:center;padding:32px 20px;border-radius:16px;background:#fff;border:1px solid var(--border);transition:all .3s}
-.community-card:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,98,51,.1)}
-.community-card .emoji{font-size:40px;margin-bottom:16px}
-.community-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
-.community-card p{font-size:13px;color:var(--text2)}
+/* ═══ SUIVI ═══ */
+.tracking-box{max-width:580px;margin:0 auto;background:#fff;border-radius:18px;padding:36px;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.tracking-box h3{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px}
+.tracking-box p{color:var(--text2);font-size:13px;margin-bottom:22px}
+.search-row{display:flex;gap:10px}
+.search-row input{flex:1;padding:11px 15px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;transition:border-color .2s}
+.search-row input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,98,51,.08)}
+.search-row button{padding:11px 22px;background:var(--green);color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all .2s}
+.search-row button:hover{background:var(--green2)}
 
-/* ── CONTACT ── */
+/* ═══ CONTACT ═══ */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
 .contact-info h3{font-family:'Playfair Display',serif;font-size:26px;margin-bottom:24px}
-.contact-item{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
-.contact-item .icon-wrap{width:44px;height:44px;border-radius:12px;background:rgba(0,98,51,.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.contact-item strong{display:block;font-size:13px;color:var(--text2);margin-bottom:4px}
-.contact-item span{font-size:15px;font-weight:500}
-.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
-.hour-item{background:var(--bg);border-radius:8px;padding:12px}
-.hour-item .day{font-size:12px;color:var(--text2);margin-bottom:4px}
-.hour-item .time{font-size:14px;font-weight:600;color:var(--green)}
-.map-placeholder{height:300px;background:linear-gradient(135deg,#e8f5ee,#f0f9f4);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:40px;border:2px dashed var(--border)}
+.ci-item{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.ci-icon{width:42px;height:42px;border-radius:10px;background:rgba(0,98,51,.08);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ci-item strong{display:block;font-size:12px;color:var(--text2);margin-bottom:3px}
+.ci-item span{font-size:14px;font-weight:500}
+.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.hi{background:var(--bg);border-radius:8px;padding:10px 12px}
+.hi-day{font-size:11px;color:var(--text2);margin-bottom:3px}
+.hi-time{font-size:13px;font-weight:600;color:var(--green)}
+.map-box{height:280px;background:linear-gradient(135deg,#e8f5ee,#f0f9f4);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;border:1px dashed var(--border);overflow:hidden}
+.map-box iframe{width:100%;height:100%;border:none}
 
-/* ── FOOTER ── */
-footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
-.footer-brand .flag{font-size:36px;margin-bottom:12px}
-.footer-brand .name{font-family:'Playfair Display',serif;color:#fff;font-size:16px;margin-bottom:8px}
+/* ═══ COMMUNAUTÉ ═══ */
+.comm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.comm-card{text-align:center;padding:28px 18px;border-radius:14px;background:#fff;border:1px solid var(--border);transition:all .3s}
+.comm-card:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,98,51,.1)}
+.comm-card .em{font-size:36px;margin-bottom:14px}
+.comm-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.comm-card p{font-size:12.5px;color:var(--text2)}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+.footer-brand .fn{font-family:'Playfair Display',serif;color:#fff;font-size:15px;margin-bottom:8px}
 .footer-brand p{font-size:12px;line-height:1.8}
-.footer-col h4{color:#fff;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px}
-.footer-col a{display:block;font-size:13px;margin-bottom:10px;transition:color .2s;color:rgba(255,255,255,.6)}
+.footer-col h4{color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+.footer-col a{display:block;font-size:12.5px;margin-bottom:9px;transition:color .2s;color:rgba(255,255,255,.55)}
 .footer-col a:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;font-size:12px}
-.social-links{display:flex;gap:10px;margin-top:16px}
-.social-link{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;cursor:pointer}
-.social-link:hover{background:rgba(255,255,255,.25);transform:translateY(-2px)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;font-size:11.5px}
+.social-row{display:flex;gap:8px;margin-top:14px}
+.social-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all .2s}
+.social-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-2px)}
 
-/* ── NOTIFICATION TOAST ── */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:340px}
+/* ═══ MODAL ═══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:#fff;border-radius:18px;max-width:660px;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(16px);transition:transform .3s;box-shadow:0 24px 64px rgba(0,0,0,.22)}
+.overlay.open .modal-box{transform:translateY(0)}
+.modal-head{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;border-radius:18px 18px 0 0;z-index:1}
+.modal-head h3{font-family:'Playfair Display',serif;font-size:19px}
+.modal-close{width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.modal-close:hover{background:var(--border)}
+.modal-body{padding:24px 26px}
+.modal-body .fg{margin-bottom:12px}
+.modal-body .fg label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.modal-body .fg input,.modal-body .fg select,.modal-body .fg textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);transition:border-color .2s;background:#fff;box-sizing:border-box}
+.modal-body .fg input:focus,.modal-body .fg select:focus,.modal-body .fg textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,98,51,.08)}
+.modal-body .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-foot{padding:18px 26px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.btn-cancel{padding:9px 18px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500}
+.btn-send{padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;transition:all .2s}
+.btn-send:hover{background:var(--green2);transform:translateY(-1px)}
+.btn-send:disabled{background:#ccc;cursor:not-allowed;transform:none}
+
+/* ═══ NIN BOX ═══ */
+.nin-box{background:linear-gradient(135deg,rgba(0,98,51,.06),rgba(0,98,51,.03));border:1px solid rgba(0,98,51,.15);border-radius:12px;padding:16px;margin-bottom:18px}
+.nin-box-title{font-weight:700;font-size:13px;color:var(--green);margin-bottom:8px}
+.nin-row{display:flex;gap:8px}
+.nin-row input{flex:1;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px}
+.nin-row input:focus{outline:none;border-color:var(--green)}
+.nin-row button{padding:10px 16px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;font-family:'Inter',sans-serif;white-space:nowrap}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:13px 20px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px}
 .toast.show{transform:translateY(0);opacity:1}
 
-/* ── TRACKING DOSSIER ── */
-.tracking-section{background:var(--bg);padding:80px 0}
-.tracking-box{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;padding:40px;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.06)}
-.tracking-box h3{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px}
-.tracking-box p{color:var(--text2);font-size:14px;margin-bottom:24px}
-.tracking-input-row{display:flex;gap:10px}
-.tracking-input-row input{flex:1;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif}
-.tracking-input-row input:focus{outline:none;border-color:var(--green)}
-.tracking-input-row button{padding:12px 24px;background:var(--green);color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
-#trackingResult{margin-top:20px}
+/* ═══ CHAT WIDGET ═══ */
+#chat-widget{position:fixed;bottom:26px;right:26px;z-index:9998;font-family:'Inter',sans-serif}
+#chat-bubble{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 4px 18px rgba(0,98,51,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;border:none;position:relative;transition:all .3s}
+#chat-bubble:hover{transform:scale(1.1)}
+#chat-bubble .pulse{position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(0,98,51,.3);animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.35);opacity:0}}
+#chat-notif{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:var(--red);border-radius:50%;border:2px solid #fff;font-size:9px;color:#fff;display:none;align-items:center;justify-content:center;font-weight:700}
+#chat-panel{position:absolute;bottom:70px;right:0;width:360px;max-height:520px;background:#fff;border-radius:18px;box-shadow:0 20px 56px rgba(0,0,0,.16);display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(0,98,51,.1);animation:slideUp .3s cubic-bezier(.22,1,.36,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#chat-panel.open{display:flex}
+.chat-head{background:linear-gradient(135deg,var(--green2),var(--green));padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.chat-head-info .cname{color:#fff;font-weight:700;font-size:13px}
+.chat-head-info .cstatus{color:rgba(255,255,255,.65);font-size:11px;display:flex;align-items:center;gap:4px}
+.chat-head-info .cstatus::before{content:'';width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block}
+.chat-close-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;margin-left:auto;transition:background .2s}
+.chat-close-btn:hover{background:rgba(255,255,255,.28)}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:180px;max-height:300px}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(0,98,51,.2);border-radius:2px}
+.msg-row{display:flex;gap:7px;align-items:flex-end}
+.msg-row.user{flex-direction:row-reverse}
+.msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.msg-av.u{background:linear-gradient(135deg,#e0ead8,#c6d8c0);color:var(--green2)}
+.msg-bub{max-width:80%;padding:9px 12px;border-radius:14px;font-size:12.5px;line-height:1.6}
+.msg-bub.bot{background:var(--bg);color:var(--text);border-bottom-left-radius:3px}
+.msg-bub.user{background:var(--green);color:#fff;border-bottom-right-radius:3px}
+.msg-time{font-size:10px;color:#aaa;margin-top:3px}
+.typing-ind{display:flex;align-items:center;gap:4px;padding:8px 12px;background:var(--bg);border-radius:14px;border-bottom-left-radius:3px;width:fit-content}
+.typing-ind span{width:6px;height:6px;border-radius:50%;background:var(--text2);display:inline-block;animation:typing 1.2s infinite}
+.typing-ind span:nth-child(2){animation-delay:.2s}
+.typing-ind span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.chat-sugg{padding:0 10px 10px;display:flex;flex-wrap:wrap;gap:5px}
+.sugg-btn{padding:5px 11px;background:rgba(0,98,51,.07);color:var(--green);border:1px solid rgba(0,98,51,.18);border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;white-space:nowrap}
+.sugg-btn:hover{background:var(--green);color:#fff}
+.chat-input-row{padding:10px;border-top:1px solid var(--border);display:flex;gap:7px;align-items:center;flex-shrink:0}
+.chat-input-row input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:22px;font-size:12.5px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.chat-input-row input:focus{border-color:var(--green)}
+.chat-send-btn{width:36px;height:36px;border-radius:50%;background:var(--green);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;flex-shrink:0}
+.chat-send-btn:hover{background:var(--green2);transform:scale(1.05)}
+.chat-foot{text-align:center;padding:7px;font-size:10px;color:#bbb;border-top:1px solid var(--border);flex-shrink:0}
 
-/* ── MODAL DEMANDE ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
-.modal-overlay.open{opacity:1;pointer-events:all}
-.modal-box{background:#fff;border-radius:20px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform .3s;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.modal-overlay.open .modal-box{transform:translateY(0)}
-.modal-header{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;border-radius:20px 20px 0 0}
-.modal-header h3{font-family:'Playfair Display',serif;font-size:20px}
-.modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.modal-close:hover{background:var(--border)}
-.modal-body{padding:28px}
-.modal-footer{padding:20px 28px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
-
-/* ── RESPONSIVE ── */
-@media (max-width:900px){
-  .hero-content{grid-template-columns:1fr}
-  .rdv-inner{grid-template-columns:1fr}
-  .contact-grid{grid-template-columns:1fr}
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr}
+  .rdv-inner,.contact-grid{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .community-grid{grid-template-columns:1fr}
-  nav .nav-links{display:none}
+  .comm-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
   .hamburger{display:flex}
-  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:120px;left:0;right:0;background:#fff;padding:16px;border-bottom:1px solid var(--border);gap:4px;z-index:999}
-  .gov-banner-right{display:none}
-  .gov-ministry{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:120px;left:0;right:0;background:#fff;padding:14px;border-bottom:1px solid var(--border);gap:3px;z-index:999}
+  .gov-links,.gov-date{display:none}
+  .gov-min{display:none}
+  #chat-panel{width:calc(100vw - 28px);right:-4px}
 }
-@media (max-width:600px){
-  .section{padding:60px 0}
-  .hero{padding-top:110px}
+@media(max-width:580px){
+  .section{padding:56px 0}
   .services-grid,.news-grid{grid-template-columns:1fr}
-  .form-row{grid-template-columns:1fr}
+  .fg-row,.modal-body .fg-row{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr}
   .hero-btns{flex-direction:column}
-  .gov-republic{font-size:10px}
-  .gov-republic-fr{font-size:9px}
+  .hero-inner{padding:50px 18px}
 }
 </style>
 </head>
@@ -231,229 +298,195 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
 <!-- ═══ TOAST ═══ -->
 <div class="toast" id="toast"></div>
 
-<!-- ═══ MODALE SERVICE CONSULAIRE INTELLIGENTE ═══ -->
-<div class="modal-overlay" id="demandeModal">
-  <div class="modal-box" style="max-width:640px">
-    <div class="modal-header">
-      <h3 id="modalServiceTitle">📄 Demande consulaire</h3>
-      <button class="modal-close" onclick="closeDemandeModal()">✕</button>
+<!-- ═══ MODALE SERVICE ═══ -->
+<div class="overlay" id="serviceModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">📄 Demande consulaire</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body" id="modalServiceBody">
-      <!-- Contenu dynamique selon le service -->
-    </div>
-    <div class="modal-footer" id="modalServiceFooter">
-      <button onclick="closeDemandeModal()" style="padding:10px 20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">Annuler</button>
-      <button onclick="submitServiceDemande()" class="btn-submit" style="width:auto;padding:10px 24px;margin-top:0" id="submitServiceBtn">📤 Envoyer la demande</button>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-send" id="modalSendBtn" onclick="submitModal()">📤 Envoyer la demande</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ NAVBAR GOUVERNEMENTALE ═══ -->
+<!-- ═══ HEADER GOUVERNEMENTAL ═══ -->
 <header id="siteHeader">
-  <!-- Bandeau supérieur institutionnel -->
-  <div class="gov-banner">
-    <div class="gov-banner-inner">
-      <div class="gov-banner-left">
-        <!-- Logo emblème Algérie SVG -->
-        <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="48" fill="none" stroke="#C9A84C" stroke-width="2"/>
-          <circle cx="50" cy="40" r="20" fill="none" stroke="#C9A84C" stroke-width="2"/>
-          <ellipse cx="50" cy="40" rx="9" ry="20" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
-          <line x1="30" y1="40" x2="70" y2="40" stroke="#C9A84C" stroke-width="1.5"/>
-          <line x1="50" y1="20" x2="50" y2="60" stroke="#C9A84C" stroke-width="1.5"/>
-          <rect x="32" y="68" width="36" height="3" rx="1.5" fill="#C9A84C"/>
-          <rect x="37" y="75" width="26" height="2.5" rx="1.25" fill="#C9A84C" opacity=".8"/>
-          <rect x="27" y="83" width="46" height="2" rx="1" fill="#C9A84C" opacity=".6"/>
+  <!-- Bandeau institutionnel -->
+  <div class="gov-top">
+    <div class="gov-top-inner">
+      <div class="gov-logo-row">
+        <!-- Emblème SVG -->
+        <svg class="gov-emblem" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="46" r="32" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+          <circle cx="50" cy="46" r="22" fill="none" stroke="#C9A84C" stroke-width="1.8"/>
+          <ellipse cx="50" cy="46" rx="11" ry="32" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+          <line x1="18" y1="46" x2="82" y2="46" stroke="#C9A84C" stroke-width="1.5"/>
+          <line x1="50" y1="14" x2="50" y2="78" stroke="#C9A84C" stroke-width="1.5"/>
+          <rect x="28" y="84" width="44" height="4" rx="2" fill="#C9A84C"/>
+          <rect x="34" y="92" width="32" height="3" rx="1.5" fill="#C9A84C" opacity=".7"/>
         </svg>
-        <div class="gov-banner-text">
-          <div class="gov-republic">الجمهورية الجزائرية الديمقراطية الشعبية</div>
-          <div class="gov-republic-fr">République Algérienne Démocratique et Populaire</div>
-          <div class="gov-ministry">وزارة الشؤون الخارجية والجالية الوطنية بالخارج · Ministère des Affaires Étrangères</div>
+        <div class="gov-titles">
+          <div class="gov-ar">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+          <div class="gov-fr">République Algérienne Démocratique et Populaire</div>
+          <div class="gov-min">Ministère des Affaires Étrangères · وزارة الشؤون الخارجية</div>
         </div>
       </div>
-      <div class="gov-banner-right">
-        <a href="https://www.mfa.gov.dz" target="_blank" class="gov-link">MAE Algérie</a>
-        <span class="gov-sep">·</span>
-        <a href="https://www.el-mouradia.dz" target="_blank" class="gov-link">Présidence</a>
-        <span class="gov-sep">·</span>
-        <span class="gov-link" id="gov-date"></span>
+      <div class="gov-links">
+        <a href="https://www.mfa.gov.dz" target="_blank">MAE Algérie</a>
+        <a href="https://www.el-mouradia.dz" target="_blank">Présidence</a>
+        <a href="https://www.interieur.gov.dz" target="_blank">Intérieur</a>
+        <span class="gov-date" id="govDate"></span>
       </div>
     </div>
-    <!-- Barre tricolore animée -->
-    <div class="tricolor-bar">
-      <div class="tc-green"></div>
-      <div class="tc-white"></div>
-      <div class="tc-green2"></div>
+    <!-- Barre tricolore -->
+    <div class="tribar"><div class="g"></div><div class="w"></div><div class="r"></div></div>
+    <!-- Ticker d'informations -->
+    <div class="ticker-wrap">
+      <div class="ticker">
+        <span>🕐 Horaires : <strong>Lundi – Vendredi · 09h00 – 13h00</strong></span>
+        <span>📞 Urgences consulaires 24h/24 : <strong>+46 (0) 8 679 9130</strong></span>
+        <span>📧 Passeports : <strong>pass@embalgeria.se</strong></span>
+        <span>📧 Visas : <strong>visa@embalgeria.se</strong></span>
+        <span>📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong></span>
+        <span>⚠️ Tout dossier incomplet sera automatiquement refusé</span>
+        <span>🕐 Horaires : <strong>Lundi – Vendredi · 09h00 – 13h00</strong></span>
+        <span>📞 Urgences consulaires 24h/24 : <strong>+46 (0) 8 679 9130</strong></span>
+      </div>
     </div>
   </div>
-
-  <!-- Navbar principale -->
-  <nav id="navbar">
+  <!-- Navbar -->
+  <nav class="navbar">
     <div class="nav-inner">
-      <div class="nav-logo">
-        <div class="nav-logo-icon">
-          <div style="font-size:9px;font-weight:800;color:#fff;letter-spacing:.05em;text-align:center;line-height:1.2">AE<br/>DZ</div>
-        </div>
-        <div>
-          <div class="name" id="nav-name">Ambassade d'Algérie</div>
-          <div class="sub" id="nav-sub">Stockholm · Suède</div>
+      <div class="nav-brand">
+        <div class="nav-badge">AE<br/>DZ</div>
+        <div class="nav-brand-text">
+          <div class="name" id="navName">Ambassade d'Algérie</div>
+          <div class="sub" id="navSub">Stockholm · Suède</div>
         </div>
       </div>
       <div class="nav-links" id="navLinks">
         <a href="#accueil" class="active">Accueil</a>
-        <a href="#services">Services consulaires</a>
+        <a href="#services">Services</a>
         <a href="#actualites">Actualités</a>
         <a href="#rdv">Rendez-vous</a>
         <a href="#suivi">Suivi dossier</a>
         <a href="#contact">Contact</a>
-        <a href="#services" class="nav-cta" onclick="openServiceModal('passeport');return false;">📄 Demande en ligne</a>
+        <a href="#services" class="nav-cta" onclick="openServiceForm('passeport');return false;">📄 Demande en ligne</a>
       </div>
-      <div class="hamburger" onclick="toggleMobileNav()">
-        <span></span><span></span><span></span>
-      </div>
+      <button class="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
     </div>
   </nav>
 </header>
 
 <!-- ═══ HERO VIDÉO ═══ -->
 <section class="hero" id="accueil">
-  <!-- Vidéo de fond — Algérie -->
-  <div class="hero-video-wrap">
-    <!-- Vidéo YouTube embed en background (Alger, paysages algériens) -->
+  <div class="hero-bg">
+    <!-- Vidéo YouTube Algérie en fond -->
     <iframe
-      src="https://www.youtube.com/embed/V7tREXj73Dw?autoplay=1&mute=1&loop=1&playlist=V7tREXj73Dw&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1"
-      allow="autoplay; encrypted-media"
-      style="position:absolute;top:50%;left:50%;width:180%;height:180%;transform:translate(-50%,-50%);border:none;pointer-events:none"
-      title="Algérie"></iframe>
-    <!-- Fallback gradient si vidéo non chargée -->
+      src="https://www.youtube.com/embed/V7tREXj73Dw?autoplay=1&mute=1&loop=1&playlist=V7tREXj73Dw&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&enablejsapi=0"
+      allow="autoplay; encrypted-media; fullscreen"
+      title="Algérie"
+      loading="lazy">
+    </iframe>
   </div>
-
-  <div class="hero-content container">
+  <div class="hero-overlay"></div>
+  <div class="hero-inner container">
     <div class="hero-text">
-      <div class="kicker">République Algérienne Démocratique et Populaire</div>
-      <h1>Au service de la<br/><span>communauté algérienne</span><br/>en Suède</h1>
-      <p id="hero-desc">Bienvenue sur le portail officiel de l'Ambassade d'Algérie à Stockholm. Accédez à tous nos services consulaires, suivez vos dossiers et effectuez vos démarches en ligne.</p>
+      <div class="hero-kicker">Portail Consulaire Officiel</div>
+      <h1>Au service de la<br/><em>communauté algérienne</em><br/>en Suède</h1>
+      <p class="hero-desc" id="heroDesc">Bienvenue sur le portail officiel de l'Ambassade d'Algérie à Stockholm. Effectuez vos démarches consulaires, suivez vos dossiers et prenez rendez-vous en ligne.</p>
       <div class="hero-btns">
-        <button class="btn-hero btn-hero-primary" onclick="openServiceModal('passeport')">📄 Demande de document</button>
-        <a href="#services" class="btn-hero btn-hero-outline">🔍 Nos services</a>
+        <button class="btn-gold" onclick="openServiceForm('passeport')">📄 Demande de document</button>
+        <a href="#services" class="btn-outline">🔍 Nos services consulaires</a>
       </div>
-      <!-- Bannière urgence -->
-      <div style="margin-top:24px;padding:10px 16px;background:rgba(210,16,52,.15);border:1px solid rgba(210,16,52,.3);border-radius:8px;font-size:12px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:10px">
-        <span style="font-size:16px">🚨</span>
-        <span>Urgence consulaire 24h/24 : <strong style="color:#fff">+46 (0) 8 679 9130</strong></span>
+      <div class="hero-urgence">
+        <span style="font-size:18px">🚨</span>
+        <span>Urgence consulaire 24h/24 : <strong>+46 (0) 8 679 9130</strong></span>
       </div>
     </div>
-    <div class="hero-card">
-      <h3>📊 L'ambassade en chiffres</h3>
-      <div class="hero-stat">
-        <div class="icon">👥</div>
-        <div>
-          <span class="val" id="stat-citoyens">—</span>
-          <span class="lbl">Citoyens immatriculés</span>
-        </div>
-      </div>
-      <div class="hero-stat">
-        <div class="icon">📁</div>
-        <div>
-          <span class="val" id="stat-dossiers">—</span>
-          <span class="lbl">Dossiers traités</span>
-        </div>
-      </div>
-      <div class="hero-stat">
-        <div class="icon">📅</div>
-        <div>
-          <span class="val" id="stat-rdv">—</span>
-          <span class="lbl">Rendez-vous accordés</span>
-        </div>
-      </div>
-      <div class="hero-stat">
-        <div class="icon">🎟️</div>
-        <div>
-          <span class="val" id="stat-events">—</span>
-          <span class="lbl">Événements organisés</span>
-        </div>
-      </div>
-      <!-- Horaires rapides -->
-      <div style="margin-top:16px;padding:12px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2);border-radius:10px">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:6px">🕐 Horaires d'ouverture</div>
-        <div style="font-size:13px;color:#fff;font-weight:600">Lun – Ven : 09:00 – 13:00</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">Fermé week-ends et jours fériés</div>
+    <div class="stats-card">
+      <div class="stats-card-title">📊 L'ambassade en chiffres</div>
+      <div class="stat-row"><div class="stat-icon">👥</div><div><span class="stat-val" id="statCitoyens">—</span><div class="stat-lbl">Citoyens immatriculés</div></div></div>
+      <div class="stat-row"><div class="stat-icon">📁</div><div><span class="stat-val" id="statDossiers">—</span><div class="stat-lbl">Dossiers traités</div></div></div>
+      <div class="stat-row"><div class="stat-icon">📅</div><div><span class="stat-val" id="statRdv">—</span><div class="stat-lbl">Rendez-vous accordés</div></div></div>
+      <div class="stat-row"><div class="stat-icon">🎟️</div><div><span class="stat-val" id="statEvents">—</span><div class="stat-lbl">Événements organisés</div></div></div>
+      <div class="stat-hours">
+        <div class="stat-hours-title">🕐 Horaires d'ouverture</div>
+        <div class="stat-hours-val">Lundi – Vendredi : 09:00 – 13:00</div>
+        <div class="stat-hours-sub">Fermé week-ends et jours fériés algériens et suédois</div>
       </div>
     </div>
   </div>
-  <div class="scroll-indicator">
-    Découvrir
-    <div class="scroll-arrow"></div>
-  </div>
+  <div class="scroll-hint">Découvrir<div class="scroll-hint-arrow"></div></div>
 </section>
 
 <!-- ═══ SERVICES ═══ -->
 <section class="section" id="services">
   <div class="container">
-    <div class="section-header">
-      <div class="kicker">Services consulaires</div>
+    <div class="section-head">
+      <div class="section-kicker">Services consulaires</div>
       <h2>Tout ce dont vous avez besoin</h2>
-      <p>L'ambassade met à votre disposition une gamme complète de services administratifs et consulaires.</p>
+      <p>L'Ambassade d'Algérie à Stockholm met à votre disposition une gamme complète de services administratifs et consulaires.</p>
       <div class="divider"></div>
     </div>
     <div class="services-grid">
-      <div class="service-card" onclick="openServiceModal('passeport')">
-        <div class="service-icon">🛂</div>
-        <h3>Passeport Biométrique</h3>
-        <p>Demande, renouvellement et retrait de passeport biométrique. Délai : 4 à 8 semaines. Paiement obligatoire le jour de l'enrôlement.</p>
-        <div style="font-size:11px;color:var(--gold);margin-bottom:12px">📧 pass@embalgeria.se</div>
-        <div class="service-link">Faire une demande</div>
+      <div class="svc-card" onclick="openServiceForm('passeport')">
+        <div class="svc-icon">🛂</div><h3>Passeport Biométrique</h3>
+        <p>Demande, renouvellement, remplacement suite à perte ou vol. Paiement le jour de l'enrôlement biométrique.</p>
+        <div class="svc-email">📧 pass@embalgeria.se · Délai : 4–8 semaines</div>
+        <div class="svc-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('cni')">
-        <div class="service-icon">🪪</div>
-        <h3>Carte Nationale d'Identité (CNIBE)</h3>
-        <p>Carte biométrique électronique. Si vous avez un passeport biométrique, la demande se fait entièrement en ligne via le portail du Ministère de l'Intérieur.</p>
-        <div style="font-size:11px;color:var(--gold);margin-bottom:12px">📧 pass@embalgeria.se</div>
-        <div class="service-link">Faire une demande</div>
+      <div class="svc-card" onclick="openServiceForm('cni')">
+        <div class="svc-icon">🪪</div><h3>Carte Nationale d'Identité (CNIBE)</h3>
+        <p>Carte biométrique électronique. Avec passeport biométrique : demande 100% en ligne sur interieur.gov.dz.</p>
+        <div class="svc-email">📧 pass@embalgeria.se · Droits : 114 SEK</div>
+        <div class="svc-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('visa')">
-        <div class="service-icon">✈️</div>
-        <h3>Visa d'entrée en Algérie</h3>
-        <p>Visa tourisme, famille, affaires, travail, transit et presse. Délai minimum : 14 jours. Frais non remboursables.</p>
-        <div style="font-size:11px;color:var(--gold);margin-bottom:12px">📧 visa@embalgeria.se</div>
-        <div class="service-link">Déposer un dossier</div>
+      <div class="svc-card" onclick="openServiceForm('visa')">
+        <div class="svc-icon">✈️</div><h3>Visa d'entrée en Algérie</h3>
+        <p>Tourisme, famille, affaires, travail, transit, culturel, presse. Délai minimum 14 jours. Frais non remboursables.</p>
+        <div class="svc-email">📧 visa@embalgeria.se · À partir de 957 SEK</div>
+        <div class="svc-link">Déposer un dossier</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('immatriculation')">
-        <div class="service-icon">🏠</div>
-        <h3>Immatriculation Consulaire</h3>
-        <p>Tout Algérien résidant en Suède ou en Islande doit s'immatriculer. Condition préalable à l'obtention du passeport et des autres services.</p>
-        <div class="service-link">S'immatriculer</div>
+      <div class="svc-card" onclick="openServiceForm('immatriculation')">
+        <div class="svc-icon">🏠</div><h3>Immatriculation Consulaire</h3>
+        <p>Obligatoire pour tout Algérien résidant en Suède ou en Islande. Condition préalable aux autres services.</p>
+        <div class="svc-email">📧 consular@embalgeria.se · Gratuit</div>
+        <div class="svc-link">S'immatriculer</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('etat_civil')">
-        <div class="service-icon">📋</div>
-        <h3>État Civil & Acte 12S</h3>
-        <p>Actes de naissance, mariage, livret de famille. L'acte de naissance 12S est exigé pour toute demande de passeport.</p>
-        <div class="service-link">Faire une demande</div>
+      <div class="svc-card" onclick="openServiceForm('etat_civil')">
+        <div class="svc-icon">📋</div><h3>État Civil & Acte 12S</h3>
+        <p>Actes de naissance, mariage, livret de famille. L'acte 12S est exigé pour toute demande de passeport.</p>
+        <div class="svc-email">📧 consular@embalgeria.se · Délai : 5–15 jours</div>
+        <div class="svc-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('legalisation')">
-        <div class="service-icon">📜</div>
-        <h3>Légalisation de Documents</h3>
-        <p>Légalisation et certification de documents officiels pour usage en Algérie. Délai : 5 à 10 jours ouvrables.</p>
-        <div class="service-link">Faire une demande</div>
+      <div class="svc-card" onclick="openServiceForm('legalisation')">
+        <div class="svc-icon">📜</div><h3>Légalisation de Documents</h3>
+        <p>Légalisation et certification de documents officiels pour usage en Algérie. Original + photocopie requis.</p>
+        <div class="svc-email">📧 consular@embalgeria.se · Délai : 5–10 jours</div>
+        <div class="svc-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('autorisation')">
-        <div class="service-icon">✍️</div>
-        <h3>Autorisation Paternelle</h3>
-        <p>Pour les enfants de parents séparés ou père de nationalité étrangère. Document requis pour certaines démarches.</p>
-        <div class="service-link">Faire une demande</div>
+      <div class="svc-card" onclick="openServiceForm('autorisation')">
+        <div class="svc-icon">✍️</div><h3>Autorisation Paternelle</h3>
+        <p>Pour les enfants voyageant sans leur père. Requise en cas de divorce ou père de nationalité étrangère.</p>
+        <div class="svc-email">📧 consular@embalgeria.se</div>
+        <div class="svc-link">Faire une demande</div>
       </div>
-      <div class="service-card" onclick="openServiceModal('service_national')">
-        <div class="service-icon">🎖️</div>
-        <h3>Service National</h3>
-        <p>Informations et démarches liées au service national pour les ressortissants algériens résidant à l'étranger.</p>
-        <div class="service-link">En savoir plus</div>
+      <div class="svc-card" onclick="openServiceForm('service_national')">
+        <div class="svc-icon">🎖️</div><h3>Service National</h3>
+        <p>Informations et démarches liées au service national pour les ressortissants algériens résidant en Suède.</p>
+        <div class="svc-email">📧 consular@embalgeria.se</div>
+        <div class="svc-link">En savoir plus</div>
       </div>
-      <div class="service-card" onclick="window.location.href='#contact'">
-        <div class="service-icon">🚨</div>
-        <h3>Assistance Consulaire d'Urgence</h3>
-        <p>Accident, arrestation, hospitalisation, document perdu ou volé. Permanence 24h/24 — Appelez immédiatement.</p>
-        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">📞 +46 (0) 8 679 9130</div>
-        <div class="service-link">Nous contacter</div>
+      <div class="svc-card" onclick="window.location.href='#contact'">
+        <div class="svc-icon">🚨</div><h3>Assistance Consulaire d'Urgence</h3>
+        <p>Accident, arrestation, hospitalisation, document perdu ou volé. Permanence 24h/24.</p>
+        <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:8px">📞 +46 (0) 8 679 9130</div>
+        <div class="svc-link">Nous contacter</div>
       </div>
     </div>
   </div>
@@ -462,41 +495,16 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
 <!-- ═══ ACTUALITÉS ═══ -->
 <section class="section section-alt" id="actualites">
   <div class="container">
-    <div class="section-header">
-      <div class="kicker">Actualités</div>
+    <div class="section-head">
+      <div class="section-kicker">Actualités</div>
       <h2>Dernières nouvelles</h2>
       <p>Restez informés des dernières communications et événements de l'ambassade.</p>
       <div class="divider"></div>
     </div>
     <div class="news-grid" id="newsGrid">
-      <!-- Rempli dynamiquement par Firebase -->
-      <div class="news-card">
-        <div class="news-card-img">📰</div>
-        <div class="news-card-body">
-          <div class="news-badge">Communiqué</div>
-          <div class="news-date" id="news-date-1">Chargement...</div>
-          <h3 id="news-title-1">Chargement des actualités...</h3>
-          <p id="news-body-1">Connecté à la base de données de l'ambassade.</p>
-        </div>
-      </div>
-      <div class="news-card">
-        <div class="news-card-img">🎖️</div>
-        <div class="news-card-body">
-          <div class="news-badge">Événement</div>
-          <div class="news-date" id="news-date-2"></div>
-          <h3 id="news-title-2"></h3>
-          <p id="news-body-2"></p>
-        </div>
-      </div>
-      <div class="news-card">
-        <div class="news-card-img">📢</div>
-        <div class="news-card-body">
-          <div class="news-badge">Avis</div>
-          <div class="news-date" id="news-date-3"></div>
-          <h3 id="news-title-3"></h3>
-          <p id="news-body-3"></p>
-        </div>
-      </div>
+      <div class="news-card"><div class="news-img">📰</div><div class="news-body"><div class="news-badge">Communiqué</div><div class="news-date" id="nd1">—</div><h3 id="nt1">Chargement...</h3><p id="nb1">Connexion à la base de données...</p></div></div>
+      <div class="news-card"><div class="news-img">🎖️</div><div class="news-body"><div class="news-badge">Événement</div><div class="news-date" id="nd2"></div><h3 id="nt2"></h3><p id="nb2"></p></div></div>
+      <div class="news-card"><div class="news-img">📢</div><div class="news-body"><div class="news-badge">Avis</div><div class="news-date" id="nd3"></div><h3 id="nt3"></h3><p id="nb3"></p></div></div>
     </div>
   </div>
 </section>
@@ -506,63 +514,47 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
   <div class="container">
     <div class="rdv-inner">
       <div class="rdv-text">
-        <div class="kicker" style="color:rgba(201,168,76,.8)">Service numérique</div>
-        <h2>Prenez rendez-vous en ligne</h2>
-        <p>Plus besoin de vous déplacer pour un premier contact. Soumettez votre demande de document ou de rendez-vous directement depuis chez vous.</p>
+        <div class="section-kicker" style="color:rgba(201,168,76,.8)">Service numérique</div>
+        <h2 style="color:#fff">Prenez rendez-vous en ligne</h2>
+        <p>Plus besoin de vous déplacer pour un premier contact. Soumettez votre demande directement depuis chez vous.</p>
         <div class="rdv-steps">
-          <div class="rdv-step">
-            <div class="rdv-step-num">1</div>
-            <div class="rdv-step-text">
-              <strong>Remplissez le formulaire</strong>
-              <span>Indiquez vos coordonnées et le service souhaité</span>
-            </div>
-          </div>
-          <div class="rdv-step">
-            <div class="rdv-step-num">2</div>
-            <div class="rdv-step-text">
-              <strong>Confirmation sous 48h</strong>
-              <span>Un agent vous contacte pour confirmer la date</span>
-            </div>
-          </div>
-          <div class="rdv-step">
-            <div class="rdv-step-num">3</div>
-            <div class="rdv-step-text">
-              <strong>Suivi en temps réel</strong>
-              <span>Suivez l'avancement de votre dossier avec votre numéro</span>
-            </div>
-          </div>
+          <div class="rdv-step"><div class="step-num">1</div><div class="step-txt"><strong>Remplissez le formulaire</strong><span>Coordonnées et service souhaité</span></div></div>
+          <div class="rdv-step"><div class="step-num">2</div><div class="step-txt"><strong>Confirmation sous 48h ouvrables</strong><span>Un agent vous contacte pour confirmer</span></div></div>
+          <div class="rdv-step"><div class="step-num">3</div><div class="step-txt"><strong>Suivi en temps réel</strong><span>Suivez votre dossier avec votre numéro</span></div></div>
         </div>
       </div>
-      <div class="rdv-form">
+      <div class="rdv-form-wrap">
         <h3>📅 Demande de rendez-vous</h3>
-        <div id="rdvFormContent">
-          <div class="form-row">
-            <div class="form-group"><label>Prénom *</label><input id="rdv_prenom" placeholder="Votre prénom"/></div>
-            <div class="form-group"><label>Nom *</label><input id="rdv_nom" placeholder="Votre nom"/></div>
+        <div id="rdvForm">
+          <div class="fg-row">
+            <div class="fg"><label>Prénom *</label><input id="rp" placeholder="Votre prénom"/></div>
+            <div class="fg"><label>Nom *</label><input id="rn" placeholder="Votre nom"/></div>
           </div>
-          <div class="form-group"><label>Email *</label><input type="email" id="rdv_email" placeholder="votre@email.com"/></div>
-          <div class="form-group"><label>Téléphone</label><input id="rdv_tel" placeholder="+46 ..."/></div>
-          <div class="form-group">
-            <label>Service demandé *</label>
-            <select id="rdv_service">
+          <div class="fg"><label>Email *</label><input type="email" id="re" placeholder="votre@email.com"/></div>
+          <div class="fg"><label>Téléphone</label><input id="rt" placeholder="+46 ..."/></div>
+          <div class="fg"><label>Service souhaité *</label>
+            <select id="rs">
               <option value="">-- Choisir un service --</option>
-              <option>Passeport / CNI</option>
-              <option>État civil</option>
-              <option>Visa</option>
-              <option>Légalisation</option>
-              <option>Liste électorale</option>
+              <option>Passeport biométrique</option>
+              <option>Carte Nationale d'Identité (CNIBE)</option>
+              <option>Visa d'entrée en Algérie</option>
+              <option>Immatriculation consulaire</option>
+              <option>État civil / Acte 12S</option>
+              <option>Légalisation de documents</option>
+              <option>Autorisation paternelle</option>
+              <option>Service national</option>
               <option>Autre</option>
             </select>
           </div>
-          <div class="form-group"><label>Date souhaitée</label><input type="date" id="rdv_date"/></div>
-          <div class="form-group"><label>Message</label><textarea id="rdv_message" style="min-height:70px" placeholder="Précisions sur votre demande..."></textarea></div>
-          <button class="btn-submit" onclick="submitRDV()">📤 Envoyer ma demande</button>
+          <div class="fg"><label>Date souhaitée</label><input type="date" id="rd"/></div>
+          <div class="fg"><label>Message</label><textarea id="rm" style="min-height:65px" placeholder="Précisions sur votre demande..."></textarea></div>
+          <button class="btn-submit-full" onclick="submitRDV()">📤 Envoyer ma demande</button>
         </div>
-        <div id="rdvSuccess" style="display:none;text-align:center;padding:30px 0">
-          <div style="font-size:56px;margin-bottom:16px">✅</div>
+        <div id="rdvOk" style="display:none;text-align:center;padding:28px 0">
+          <div style="font-size:52px;margin-bottom:12px">✅</div>
           <h3 style="font-family:'Playfair Display',serif;margin-bottom:8px">Demande envoyée !</h3>
-          <p style="color:var(--text2);font-size:14px">Votre numéro de dossier : <strong id="rdvNum" style="color:var(--green)">—</strong><br/>Un agent vous contactera dans les 48h ouvrables.</p>
-          <button onclick="resetRDV()" style="margin-top:20px;padding:10px 24px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">Nouvelle demande</button>
+          <p style="color:var(--text2);font-size:13px">Votre numéro de dossier :<br/><strong id="rdvNum" style="font-size:18px;color:var(--green);display:block;margin:8px 0"></strong>Un agent vous contactera dans les <strong>48h ouvrables</strong>.</p>
+          <button onclick="resetRDV()" style="margin-top:16px;padding:9px 22px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">Nouvelle demande</button>
         </div>
       </div>
     </div>
@@ -570,22 +562,22 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
 </section>
 
 <!-- ═══ SUIVI DOSSIER ═══ -->
-<section class="tracking-section" id="suivi">
+<section class="section section-alt" id="suivi">
   <div class="container">
-    <div class="section-header">
-      <div class="kicker">Transparence</div>
+    <div class="section-head">
+      <div class="section-kicker">Transparence</div>
       <h2>Suivez votre dossier</h2>
       <p>Entrez votre numéro de dossier pour connaître son état en temps réel.</p>
       <div class="divider"></div>
     </div>
     <div class="tracking-box">
       <h3>🔍 Recherche de dossier</h3>
-      <p>Renseignez le numéro qui vous a été communiqué lors du dépôt de votre demande.</p>
-      <div class="tracking-input-row">
-        <input type="text" id="trackingNum" placeholder="Ex: DOS-2025-001234" />
+      <p>Saisissez le numéro qui vous a été communiqué lors de votre demande (format : DOS-XXXX-XXXXXX ou DEM-XXXX-XXXXXX).</p>
+      <div class="search-row">
+        <input type="text" id="trackNum" placeholder="Ex: DOS-2025-123456" onkeydown="if(event.key==='Enter')searchDossier()"/>
         <button onclick="searchDossier()">Rechercher</button>
       </div>
-      <div id="trackingResult"></div>
+      <div id="trackResult"></div>
     </div>
   </div>
 </section>
@@ -593,28 +585,16 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
 <!-- ═══ COMMUNAUTÉ ═══ -->
 <section class="section" id="communaute">
   <div class="container">
-    <div class="section-header">
-      <div class="kicker">Diaspora algérienne</div>
+    <div class="section-head">
+      <div class="section-kicker">Diaspora algérienne</div>
       <h2>Une communauté unie</h2>
-      <p>L'ambassade est au service de toute la communauté algérienne résidant en Suède.</p>
+      <p>L'ambassade est au service de toute la communauté algérienne résidant en Suède et en Islande.</p>
       <div class="divider"></div>
     </div>
-    <div class="community-grid">
-      <div class="community-card">
-        <div class="emoji">🎓</div>
-        <h3>Étudiants</h3>
-        <p>Assistance aux étudiants algériens pour leurs démarches administratives et consulaires.</p>
-      </div>
-      <div class="community-card">
-        <div class="emoji">💼</div>
-        <h3>Entrepreneurs</h3>
-        <p>Soutien aux entrepreneurs algériens souhaitant développer des partenariats avec l'Algérie.</p>
-      </div>
-      <div class="community-card">
-        <div class="emoji">👨‍👩‍👧‍👦</div>
-        <h3>Familles</h3>
-        <p>Accompagnement des familles algériennes pour leur immatriculation et leurs droits.</p>
-      </div>
+    <div class="comm-grid">
+      <div class="comm-card"><div class="em">🎓</div><h3>Étudiants</h3><p>Assistance aux étudiants algériens pour leurs démarches administratives et consulaires en Suède.</p></div>
+      <div class="comm-card"><div class="em">💼</div><h3>Entrepreneurs</h3><p>Soutien aux entrepreneurs algériens souhaitant développer des partenariats avec l'Algérie.</p></div>
+      <div class="comm-card"><div class="em">👨‍👩‍👧‍👦</div><h3>Familles</h3><p>Accompagnement des familles algériennes pour leur immatriculation et leurs droits consulaires.</p></div>
     </div>
   </div>
 </section>
@@ -622,41 +602,53 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
 <!-- ═══ CONTACT ═══ -->
 <section class="section section-alt" id="contact">
   <div class="container">
-    <div class="section-header">
-      <div class="kicker">Nous trouver</div>
+    <div class="section-head">
+      <div class="section-kicker">Nous trouver</div>
       <h2>Contact & Horaires</h2>
       <div class="divider"></div>
     </div>
     <div class="contact-grid">
       <div class="contact-info">
-        <h3>Ambassade d'Algérie</h3>
-        <div class="contact-item">
-          <div class="icon-wrap">📍</div>
-          <div><strong>Adresse</strong><span id="contact-adresse">Chargement...</span></div>
-        </div>
-        <div class="contact-item">
-          <div class="icon-wrap">📞</div>
-          <div><strong>Téléphone</strong><span id="contact-tel">—</span></div>
-        </div>
-        <div class="contact-item">
-          <div class="icon-wrap">📧</div>
-          <div><strong>Email</strong><span id="contact-email">—</span></div>
-        </div>
-        <div class="contact-item">
-          <div class="icon-wrap">🕐</div>
+        <h3 id="contactName">Ambassade d'Algérie à Stockholm</h3>
+        <div class="ci-item"><div class="ci-icon">📍</div><div><strong>Adresse</strong><span id="contactAddr">Danderydsgatan 3-5, BOX 26027, 100 41 Stockholm</span></div></div>
+        <div class="ci-item"><div class="ci-icon">📞</div><div><strong>Téléphone (standard)</strong><span>+46 (0) 8 679 9130</span></div></div>
+        <div class="ci-item"><div class="ci-icon">📧</div><div><strong>Passeports & CNI</strong><span>pass@embalgeria.se</span></div></div>
+        <div class="ci-item"><div class="ci-icon">📧</div><div><strong>Visas</strong><span>visa@embalgeria.se</span></div></div>
+        <div class="ci-item"><div class="ci-icon">📧</div><div><strong>Affaires consulaires</strong><span>consular@embalgeria.se</span></div></div>
+        <div class="ci-item">
+          <div class="ci-icon">🕐</div>
           <div>
-            <strong>Horaires d'ouverture</strong>
-            <div class="hours-grid" id="hoursGrid">
-              <div class="hour-item"><div class="day" id="h-jours">Chargement...</div><div class="time" id="h-horaires">—</div></div>
-              <div class="hour-item"><div class="day">Week-end</div><div class="time" style="color:#D21034">Fermé</div></div>
+            <strong>Horaires de réception</strong>
+            <div class="hours-grid">
+              <div class="hi"><div class="hi-day">Lundi – Vendredi</div><div class="hi-time">09:00 – 13:00</div></div>
+              <div class="hi"><div class="hi-day">Week-end</div><div class="hi-time" style="color:var(--red)">Fermé</div></div>
             </div>
-            <div id="h-info" style="font-size:12px;color:var(--text2);margin-top:8px"></div>
+            <div style="font-size:11px;color:var(--text2);margin-top:8px">⚠️ Paiement uniquement par carte bancaire (BankGiro 5088-9039)</div>
+          </div>
+        </div>
+        <!-- Liens institutionnels -->
+        <div style="margin-top:20px">
+          <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Liens utiles</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <a href="https://www.mfa.gov.dz" target="_blank" style="padding:6px 12px;background:rgba(0,98,51,.08);color:var(--green);border-radius:20px;font-size:11px;font-weight:600;transition:all .2s" onmouseover="this.style.background='var(--green)';this.style.color='#fff'" onmouseout="this.style.background='rgba(0,98,51,.08)';this.style.color='var(--green)'">MAE Algérie</a>
+            <a href="https://www.el-mouradia.dz" target="_blank" style="padding:6px 12px;background:rgba(0,98,51,.08);color:var(--green);border-radius:20px;font-size:11px;font-weight:600;transition:all .2s" onmouseover="this.style.background='var(--green)';this.style.color='#fff'" onmouseout="this.style.background='rgba(0,98,51,.08)';this.style.color='var(--green)'">Présidence</a>
+            <a href="https://passeport.interieur.gov.dz" target="_blank" style="padding:6px 12px;background:rgba(0,98,51,.08);color:var(--green);border-radius:20px;font-size:11px;font-weight:600;transition:all .2s" onmouseover="this.style.background='var(--green)';this.style.color='#fff'" onmouseout="this.style.background='rgba(0,98,51,.08)';this.style.color='var(--green)'">CNI en ligne</a>
+            <a href="https://douane.gov.dz" target="_blank" style="padding:6px 12px;background:rgba(0,98,51,.08);color:var(--green);border-radius:20px;font-size:11px;font-weight:600;transition:all .2s" onmouseover="this.style.background='var(--green)';this.style.color='#fff'" onmouseout="this.style.background='rgba(0,98,51,.08)';this.style.color='var(--green)'">Douanes</a>
           </div>
         </div>
       </div>
       <div>
-        <div class="map-placeholder" id="mapContainer">🗺️</div>
-        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap" id="socialLinks"></div>
+        <div class="map-box" id="mapBox">
+          🗺️ Stockholm, Suède
+        </div>
+        <div id="socialLinks" style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"></div>
+        <!-- BankGiro info -->
+        <div style="margin-top:16px;padding:14px;background:var(--bg);border-radius:10px;font-size:12px">
+          <div style="font-weight:700;color:var(--text2);margin-bottom:6px">💳 Informations bancaires</div>
+          <div>BankGiro : <strong>5088-9039</strong></div>
+          <div>IBAN : <strong>SE6460000000000386367558</strong></div>
+          <div>BIC/SWIFT : <strong>HANDSESS</strong></div>
+        </div>
       </div>
     </div>
   </div>
@@ -667,157 +659,168 @@ footer{background:var(--green2);color:rgba(255,255,255,.7);padding:60px 0 24px}
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="flag">🇩🇿</div>
-        <div class="name" id="footer-name">Ambassade d'Algérie</div>
-        <p>République Algérienne Démocratique et Populaire<br/>Ministère des Affaires Étrangères</p>
-        <div class="social-links" id="footer-social"></div>
+        <div class="fn" id="footerName">Ambassade d'Algérie à Stockholm</div>
+        <p>République Algérienne Démocratique et Populaire<br/>Ministère des Affaires Étrangères<br/>Danderydsgatan 3-5, 100 41 Stockholm</p>
+        <div class="social-row" id="footerSocial"></div>
       </div>
       <div class="footer-col">
         <h4>Services</h4>
-        <a href="#" onclick="openDemandeModal()">Passeport & CNI</a>
-        <a href="#" onclick="openDemandeModal()">État civil</a>
-        <a href="#" onclick="openDemandeModal()">Visa</a>
-        <a href="#" onclick="openDemandeModal()">Légalisation</a>
-        <a href="#" onclick="openDemandeModal()">Liste électorale</a>
+        <a href="#" onclick="openServiceForm('passeport');return false">Passeport biométrique</a>
+        <a href="#" onclick="openServiceForm('cni');return false">Carte nationale d'identité</a>
+        <a href="#" onclick="openServiceForm('visa');return false">Visa Algérie</a>
+        <a href="#" onclick="openServiceForm('legalisation');return false">Légalisation</a>
+        <a href="#" onclick="openServiceForm('immatriculation');return false">Immatriculation</a>
       </div>
       <div class="footer-col">
         <h4>Infos pratiques</h4>
         <a href="#rdv">Prendre rendez-vous</a>
         <a href="#suivi">Suivre mon dossier</a>
-        <a href="#contact">Horaires</a>
+        <a href="#contact">Horaires d'ouverture</a>
         <a href="#contact">Nous contacter</a>
+        <a href="https://passeport.interieur.gov.dz" target="_blank">CNI en ligne</a>
       </div>
       <div class="footer-col">
-        <h4>Liens utiles</h4>
-        <a href="https://www.mae.gov.dz" target="_blank">Ministère AE Algérie</a>
+        <h4>Liens officiels</h4>
+        <a href="https://www.mfa.gov.dz" target="_blank">MAE Algérie</a>
+        <a href="https://www.el-mouradia.dz" target="_blank">Présidence de la République</a>
         <a href="https://www.interieur.gov.dz" target="_blank">Ministère de l'Intérieur</a>
+        <a href="https://douane.gov.dz" target="_blank">Direction des Douanes</a>
         <a href="https://www.migrationsverket.se" target="_blank">Migrations verket</a>
-        <a href="https://www.swedenabroad.se" target="_blank">Sweden Abroad</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <span id="footer-rights">© 2025 Ambassade d'Algérie. Tous droits réservés.</span>
-      <span>Propulsé par GAA — Système de Gestion Administrative</span>
+      <span id="footerRights">© 2025 Ambassade d'Algérie en Suède. Tous droits réservés.</span>
+      <span>Propulsé par <strong>GAA</strong> · Système de Gestion Administrative</span>
     </div>
   </div>
 </footer>
 
+<!-- ═══ CHAT WIDGET ═══ -->
+<div id="chat-widget">
+  <div id="chat-panel">
+    <div class="chat-head">
+      <div class="chat-av">🤖</div>
+      <div class="chat-head-info">
+        <div class="cname">Assistant Ambassade</div>
+        <div class="cstatus">Disponible 24h/24 · 7j/7</div>
+      </div>
+      <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="chat-sugg" id="chatSugg">
+      <button class="sugg-btn" onclick="sendSugg('Quels sont vos horaires ?')">🕐 Horaires</button>
+      <button class="sugg-btn" onclick="sendSugg('Comment renouveler mon passeport ?')">🛂 Passeport</button>
+      <button class="sugg-btn" onclick="sendSugg('Comment prendre rendez-vous ?')">📅 RDV</button>
+      <button class="sugg-btn" onclick="sendSugg('Je veux un visa pour l\'Algérie')">✈️ Visa</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatIn" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="chat-send-btn" onclick="sendChat()">➤</button>
+    </div>
+    <div class="chat-foot">🔒 Agent virtuel · Ambassade d'Algérie</div>
+  </div>
+  <button id="chat-bubble" onclick="toggleChat()">
+    <div class="pulse"></div>
+    💬
+    <div id="chat-notif">!</div>
+  </button>
+</div>
+
 <script>
-// ════════════════════════════════════════════════════════
-//  FIREBASE CONFIG
-// ════════════════════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0",
-  authDomain: "embassit01.firebaseapp.com",
-  projectId: "embassit01",
-  storageBucket: "embassit01.firebasestorage.app",
-  messagingSenderId: "828948422527",
-  appId: "1:828948422527:web:ae655c475a70b92795844a"
+// ══════════════════════════════════════════════════════
+//  FIREBASE
+// ══════════════════════════════════════════════════════
+const FBC = {
+  apiKey:"AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0",
+  authDomain:"embassit01.firebaseapp.com",
+  projectId:"embassit01",
+  storageBucket:"embassit01.firebasestorage.app",
+  messagingSenderId:"828948422527",
+  appId:"1:828948422527:web:ae655c475a70b92795844a"
 };
+firebase.initializeApp(FBC);
+const FBASE = 'https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents';
+const FKEY  = FBC.apiKey;
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const BASE = 'https://firestore.googleapis.com/v1/projects/embassit01/databases/(default)/documents';
-const KEY  = 'AIzaSyBI6l_aKQcAaZig2PULOKfR6leb0Xyzxh0';
-
-// ════════════════════════════════════════════════════════
-//  LOAD DATA FROM FIREBASE
-// ════════════════════════════════════════════════════════
-async function loadFromFirebase(table) {
+async function fbGet(table) {
   try {
-    const r = await fetch(`${BASE}/gaa/${table}?key=${KEY}`);
+    const r = await fetch(`${FBASE}/gaa/${table}?key=${FKEY}`);
     if(!r.ok) return null;
     const d = await r.json();
     return d.fields?.d?.stringValue ? JSON.parse(d.fields.d.stringValue) : null;
-  } catch(e) { return null; }
+  } catch(e){ return null; }
 }
 
+async function fbSet(table, data) {
+  const r = await fbGet(table);
+  const list = Array.isArray(r) ? r : (r ? [r] : []);
+  list.push(data);
+  await fetch(`${FBASE}/gaa/${table}?key=${FKEY}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({fields:{d:{stringValue:JSON.stringify(list)},t:{integerValue:String(Date.now())}}})
+  });
+  return list;
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT SITE
+// ══════════════════════════════════════════════════════
 async function initSite() {
-  // ── Paramètres ambassade
-  const amb = await loadFromFirebase('settings_amb') || {};
-  const web = await loadFromFirebase('settings_web') || {};
-  const hor = await loadFromFirebase('settings_horaires') || {jours:'Lundi au Vendredi',debut:'09:00',fin:'16:00'};
+  // Date du jour dans le bandeau
+  const gd = document.getElementById('govDate');
+  if(gd) gd.textContent = new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'});
 
-  // Nav & footer
-  const name = web.titre || amb.name || "Ambassade d'Algérie";
-  const pays = amb.country || web.sub || 'Suède';
-  setText('nav-name', name);
-  setText('nav-sub', pays);
-  setText('footer-name', name);
-  setText('footer-rights', `© ${new Date().getFullYear()} ${name}. Tous droits réservés.`);
+  // Données Firebase
+  const [amb, web, hor, citoyens, dossiers, rdvs, events, actus, comms] = await Promise.all([
+    fbGet('settings_amb'), fbGet('settings_web'), fbGet('settings_horaires'),
+    fbGet('contacts_user'), fbGet('dossiers'), fbGet('rdvs'), fbGet('evenements'),
+    fbGet('web_actualites'), fbGet('communications')
+  ]);
 
-  // Hero
-  if(web.welcome) setText('hero-desc', web.welcome);
+  const a = amb||{}, w = web||{}, h = hor||{};
+  const name = w.titre || a.name || "Ambassade d'Algérie en Suède";
+
+  // Noms
+  setText('navName', name);
+  setText('navSub', a.country||'Stockholm · Suède');
+  setText('footerName', name);
+  setText('footerRights', `© ${new Date().getFullYear()} ${name}. Tous droits réservés.`);
+  if(w.welcome) setText('heroDesc', w.welcome);
+
+  // Stats
+  setText('statCitoyens', (Array.isArray(citoyens)?citoyens.length:0).toString());
+  setText('statDossiers',  (Array.isArray(dossiers)?dossiers.length:0).toString());
+  setText('statRdv',       (Array.isArray(rdvs)?rdvs.length:0).toString());
+  setText('statEvents',    (Array.isArray(events)?events.length:0).toString());
 
   // Contact
-  setText('contact-adresse', web.adresse || amb.addr || 'Danderydsgatan 3-5, BOX 26027, 100 41 Stockholm, Sweden');
-  setText('contact-tel', web.telephone || amb.tel || '+46 (0) 8 679 9130');
-  setText('contact-email', web.email_contact || amb.email || 'consular@embalgeria.se');
-  setText('h-jours', hor.jours || 'Lundi – Vendredi');
-  setText('h-horaires', `${hor.debut||'09:00'} – ${hor.fin||'13:00'}`);
-  if(web.horaires_info) setText('h-info', web.horaires_info);
+  if(w.adresse||a.addr) setText('contactAddr', w.adresse||a.addr);
 
-  // Google Maps
-  if(web.maps) {
-    document.getElementById('mapContainer').innerHTML = web.maps;
+  // Maps
+  if(w.maps) {
+    const mapBox = document.getElementById('mapBox');
+    if(mapBox) mapBox.innerHTML = w.maps;
   }
 
-  // Social links
-  const socials = [
-    {key:'facebook', icon:'📘', label:'Facebook'},
-    {key:'twitter',  icon:'🐦', label:'Twitter'},
-    {key:'instagram',icon:'📸', label:'Instagram'},
-    {key:'linkedin', icon:'💼', label:'LinkedIn'},
-    {key:'youtube',  icon:'▶️', label:'YouTube'},
+  // Réseaux sociaux
+  const socials = [{k:'facebook',i:'📘'},{k:'twitter',i:'🐦'},{k:'instagram',i:'📸'},{k:'linkedin',i:'💼'},{k:'youtube',i:'▶️'}];
+  const sh = socials.filter(s=>w[s.k]).map(s=>`<a href="${w[s.k]}" target="_blank" class="social-btn">${s.i}</a>`).join('');
+  const sl = document.getElementById('socialLinks'); if(sl) sl.innerHTML = sh;
+  const fs = document.getElementById('footerSocial'); if(fs) fs.innerHTML = sh;
+
+  // Actualités
+  const allNews = [...(Array.isArray(actus)?actus:[]),...(Array.isArray(comms)?comms.slice(0,3).map(c=>({titre:c.title,contenu:c.body,date:c.savedAt})):[])].slice(0,3);
+  const defNews = [
+    {titre:"Modification des horaires d'été 2025",contenu:"L'ambassade informe la communauté que les horaires seront modifiés du 1er juillet au 31 août.",date:"15 juin 2025"},
+    {titre:"Opération passeport biométrique",contenu:"Session spéciale de délivrance organisée. Prenez rendez-vous en ligne.",date:"10 juin 2025"},
+    {titre:"Fête de l'Indépendance — 5 juillet",contenu:"L'Ambassade adresse ses vœux à la communauté algérienne à l'occasion du 63ème anniversaire.",date:"5 juillet 2025"},
   ];
-  const socialHtml = socials.filter(s=>web[s.key]).map(s=>
-    `<a href="${web[s.key]}" target="_blank" class="social-link" title="${s.label}">${s.icon}</a>`
-  ).join('');
-  const sl = document.getElementById('socialLinks');
-  const fs = document.getElementById('footer-social');
-  if(sl) sl.innerHTML = socialHtml;
-  if(fs) fs.innerHTML = socialHtml;
-
-  // ── Statistiques depuis la BDD
-  const citoyens = await loadFromFirebase('contacts_user') || [];
-  const dossiers = await loadFromFirebase('dossiers') || [];
-  const rdvs     = await loadFromFirebase('rdvs') || [];
-  const events   = await loadFromFirebase('evenements') || [];
-
-  setText('stat-citoyens', citoyens.length || '—');
-  setText('stat-dossiers', dossiers.length || '—');
-  setText('stat-rdv', rdvs.length || '—');
-  setText('stat-events', events.length || '—');
-
-  // ── Actualités
-  const actualites = await loadFromFirebase('web_actualites') || [];
-  const comms      = await loadFromFirebase('communications') || [];
-
-  // Fusionner actualités web + communications
-  const allNews = [
-    ...actualites.map(n=>({...n, src:'web'})),
-    ...comms.slice(0,6).map(c=>({titre:c.title, contenu:c.body, date:c.savedAt, src:'comm', type:c.type}))
-  ].sort((a,b)=>(b.id||0)-(a.id||0)).slice(0,3);
-
-  if(allNews.length > 0) {
-    allNews.forEach((n,i) => {
-      setText(`news-title-${i+1}`, n.titre || n.title || 'Actualité');
-      setText(`news-body-${i+1}`, (n.contenu||n.body||'').slice(0,120)+'...');
-      setText(`news-date-${i+1}`, n.date || n.savedAt || '');
-    });
-  } else {
-    // News par défaut pour la démo
-    const defaultNews = [
-      {titre:"Horaires modifiés pour la période estivale", body:"L'ambassade informe la communauté algérienne que les horaires d'ouverture seront modifiés pendant la période estivale.", date:"15 juillet 2025"},
-      {titre:"Opération passeport biométrique", body:"Une session spéciale de délivrance de passeports biométriques est organisée. Prenez rendez-vous en ligne.", date:"10 juillet 2025"},
-      {titre:"Message à la communauté — Fête de l'Indépendance", body:"L'Ambassade adresse ses vœux les plus chaleureux à la communauté algérienne à l'occasion du 63e anniversaire.", date:"5 juillet 2025"},
-    ];
-    defaultNews.forEach((n,i) => {
-      setText(`news-title-${i+1}`, n.titre);
-      setText(`news-body-${i+1}`, n.body);
-      setText(`news-date-${i+1}`, n.date);
-    });
-  }
+  const news = allNews.length ? allNews : defNews;
+  news.forEach((n,i) => {
+    setText(`nd${i+1}`, n.date||'');
+    setText(`nt${i+1}`, n.titre||'');
+    setText(`nb${i+1}`, (n.contenu||'').slice(0,100)+'...');
+  });
 }
 
 function setText(id, val) {
@@ -825,969 +828,467 @@ function setText(id, val) {
   if(el && val) el.textContent = val;
 }
 
-// ════════════════════════════════════════════════════════
-//  MODALES PAR SERVICE — avec reconnaissance NIN
-// ════════════════════════════════════════════════════════
-let currentService = null;
-let recognizedCitoyen = null;
+// ══════════════════════════════════════════════════════
+//  FORMULAIRES PAR SERVICE
+// ══════════════════════════════════════════════════════
+let curService = null, curCitoyen = null;
 
-// Définition des services
-const SERVICES = {
-  passeport: {
-    icon: '🛂', title: 'Passeport Biométrique',
-    email: 'pass@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['696 SEK — Adulte (32 pages)', '348 SEK — Mineur / Étudiant', '1044 SEK — Adulte (48 pages)', '522 SEK — Mineur/Étudiant (48 pages)', 'Pénalité perte : 1125 SEK'],
-    delai: '4 à 8 semaines',
-    paiement: 'BankGiro 5088-9039 | IBAN: SE6460000000000386367558 | Pas de paiement en espèces.',
-    note: '⚠️ Le paiement doit être effectué le jour de l\'enrôlement biométrique.',
-    docs_nouveau: ['Formulaire de demande rempli', 'Acte de naissance 12S (original)', '4 photos d\'identité récentes (couleur)', 'Ancien passeport ou déclaration de perte', 'Attestation de travail ou certificat de scolarité', 'Personbevis (résidence Suède) < 3 mois', 'Droits de chancellerie (voir tarifs)'],
-    docs_renouvellement: ['Formulaire de demande rempli', 'Acte de naissance 12S (original)', '4 photos d\'identité récentes', 'Ancien passeport ou déclaration de perte', 'Personbevis (résidence Suède) < 3 mois', 'Droits de chancellerie'],
-    motifs_renouvellement: ['Expiration du passeport', 'Passeport plein (pas de place pour visas)', 'Changement de situation matrimoniale', 'Rectification état civil', 'Perte / Vol / Détérioration'],
-  },
-  cni: {
-    icon: '🪪', title: 'Carte Nationale d\'Identité (CNIBE)',
-    email: 'pass@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['114 SEK — Droits de timbre', 'Gratuit — si vous avez un passeport biométrique (demande en ligne)', 'Pénalité perte : 114 SEK'],
-    delai: '3 à 6 semaines',
-    paiement: 'Terminal de paiement à la réception de l\'ambassade. Pas d\'espèces.',
-    note: 'Si vous avez un passeport biométrique : demande entièrement en ligne sur passeport.interieur.gov.dz — sans se déplacer.',
-    docs_avec_passeport: ['Demande en ligne uniquement sur passeport.interieur.gov.dz', 'Aucun document à fournir', 'Aucun frais supplémentaire'],
-    docs_sans_passeport: ['Formulaire de demande (disponible à l\'accueil)', 'Extrait de naissance 12S (original)', '3 photos d\'identité récentes', 'Ancienne CNI ou déclaration de perte', 'Personbevis < 3 mois', '114 SEK de droits de timbre'],
-  },
-  visa: {
-    icon: '✈️', title: 'Visa d\'entrée en Algérie',
-    email: 'visa@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['957 SEK — Séjour ≤ 90 jours (adulte)', '1125 SEK — Séjour > 90 jours', '477 SEK — Enfant 6-12 ans', 'Gratuit — Enfant < 6 ans'],
-    delai: 'Minimum 14 jours (délai non garanti)',
-    paiement: 'Carte bancaire uniquement. Frais non remboursables.',
-    note: '⚠️ Tout dossier incomplet est automatiquement rejeté. Le dossier doit être déposé en personne.',
-    types: ['Familiale', 'Touristique', 'Affaires', 'Culturelle / Sportive', 'Travail', 'Transit', 'Presse'],
-    docs_communs: ['Passeport valide 6 mois minimum après dépôt', '2 formulaires PDF remplis électroniquement (AR-FR ou AR-EN), signés', '2 photos d\'identité couleur 35×45mm', 'Copie page identité passeport', 'Personbevis (Suède) ou Registers Iceland', 'Assurance voyage (évacuation médicale, hospitalisation)', 'Preuve de paiement des frais', 'Email valide du demandeur'],
-  },
-  immatriculation: {
-    icon: '🏠', title: 'Immatriculation Consulaire',
-    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['Gratuit'],
-    delai: 'Sur rendez-vous',
-    note: 'L\'immatriculation est obligatoire pour tout Algérien résidant en Suède ou en Islande. Elle est condition préalable à l\'obtention du passeport.',
-    docs: ['Acte de naissance 12S (original)', 'Passeport algérien en cours de validité', 'Personbevis < 3 mois', '2 photos d\'identité récentes', 'Formulaire d\'immatriculation (disponible à l\'accueil)'],
-  },
-  etat_civil: {
-    icon: '📋', title: 'État Civil & Acte 12S',
-    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['Voir droits de timbre selon le document'],
-    delai: '5 à 15 jours ouvrables',
-    note: 'L\'acte de naissance 12S est exigé pour toute demande de passeport biométrique. Pour les nés en Algérie : request12s.interieur.gov.dz',
-    docs: ['Pièce d\'identité algérienne en cours de validité', 'Carnet de famille ou extrait de naissance existant', 'Formulaire de demande', 'Droits de timbre applicables'],
-  },
-  legalisation: {
-    icon: '📜', title: 'Légalisation de Documents',
-    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['Selon le document — voir droits de timbre en vigueur'],
-    delai: '5 à 10 jours ouvrables',
-    note: 'Apportez l\'original du document + 1 photocopie + votre pièce d\'identité.',
-    docs: ['Document original à légaliser', 'Photocopie du document', 'Pièce d\'identité algérienne valide', 'Paiement des droits de timbre'],
-  },
-  autorisation: {
-    icon: '✍️', title: 'Autorisation Paternelle',
-    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['Voir droits de timbre'],
-    delai: 'Sur rendez-vous',
-    note: 'Requise pour les enfants voyageant sans leur père, notamment en cas de divorce ou père de nationalité étrangère.',
-    docs: ['Acte de naissance de l\'enfant', 'Livret de famille', 'Pièce d\'identité du père et de la mère', 'Justificatif de garde (si divorce)', 'Formulaire de demande'],
-  },
-  service_national: {
-    icon: '🎖️', title: 'Service National',
-    email: 'consular@embalgeria.se', tel: '+46 (0) 8 679 9130',
-    tarifs: ['Gratuit'],
-    delai: 'Variable selon les cas',
-    note: 'Pour les ressortissants algériens résidant à l\'étranger. Contactez l\'ambassade pour connaître votre situation.',
-    docs: ['Passeport algérien valide', 'Extrait de naissance 12S', 'Justificatif de résidence à l\'étranger', 'Tout document relatif au service national'],
-  },
+const SVC_INFO = {
+  passeport:      {icon:'🛂',title:'Passeport Biométrique',   email:'pass@embalgeria.se',   delai:'4–8 semaines',  tarif:'696 SEK adulte · 348 SEK mineur/étudiant'},
+  cni:            {icon:'🪪',title:'Carte Nationale d\'Identité',email:'pass@embalgeria.se', delai:'3–6 semaines',  tarif:'114 SEK (ou gratuit avec passeport biométrique)'},
+  visa:           {icon:'✈️',title:'Visa d\'entrée en Algérie',email:'visa@embalgeria.se',   delai:'≥ 14 jours',   tarif:'957 SEK (≤90j) · 1125 SEK (>90j)'},
+  immatriculation:{icon:'🏠',title:'Immatriculation Consulaire',email:'consular@embalgeria.se',delai:'Sur RDV',    tarif:'Gratuit'},
+  etat_civil:     {icon:'📋',title:'État Civil & Acte 12S',    email:'consular@embalgeria.se',delai:'5–15 jours', tarif:'Voir droits de timbre'},
+  legalisation:   {icon:'📜',title:'Légalisation de Documents', email:'consular@embalgeria.se',delai:'5–10 jours', tarif:'Voir droits de timbre'},
+  autorisation:   {icon:'✍️',title:'Autorisation Paternelle',   email:'consular@embalgeria.se',delai:'Sur RDV',    tarif:'Voir droits de timbre'},
+  service_national:{icon:'🎖️',title:'Service National',         email:'consular@embalgeria.se',delai:'Variable',   tarif:'Gratuit'},
 };
 
-function openServiceModal(serviceKey) {
-  currentService = serviceKey;
-  recognizedCitoyen = null;
-  const s = SERVICES[serviceKey];
+const DOCS = {
+  passeport:{
+    nouveau:['Formulaire de demande rempli','Acte de naissance 12S (original)','4 photos d\'identité récentes (couleur)','Ancien passeport ou déclaration de perte','Attestation de travail ou certificat de scolarité','Personbevis < 3 mois (preuve de résidence)','Droits de chancellerie (voir tarifs)'],
+    renouvellement:['Formulaire de demande rempli','Acte de naissance 12S (original)','4 photos d\'identité récentes','Ancien passeport ou déclaration de perte','Personbevis < 3 mois','Droits de chancellerie'],
+  },
+  cni:{avec_passeport:['Demande 100% en ligne : passeport.interieur.gov.dz','Aucun document physique à fournir','Aucun frais supplémentaire'],sans_passeport:['Formulaire de demande','Extrait de naissance 12S (original)','3 photos d\'identité récentes','Ancienne CNI ou déclaration de perte','Personbevis < 3 mois','114 SEK droits de timbre']},
+  visa:{commun:['Passeport valide 6 mois minimum','2 formulaires PDF remplis électroniquement (signés)','2 photos 35×45mm','Copie page identité passeport','Personbevis (Suède) ou Registers Iceland','Assurance voyage (évacuation médicale + hospitalisation)','Preuve de paiement','Email valide']},
+  immatriculation:{docs:['Acte de naissance 12S (original)','Passeport algérien valide','Personbevis < 3 mois','2 photos d\'identité récentes','Formulaire d\'immatriculation']},
+  etat_civil:{docs:['Pièce d\'identité algérienne valide','Ancien extrait ou carnet de famille','Formulaire de demande','Droits de timbre applicables']},
+  legalisation:{docs:['Document original à légaliser','Photocopie du document','Pièce d\'identité algérienne valide','Droits de timbre']},
+  autorisation:{docs:['Acte de naissance de l\'enfant','Livret de famille','Pièce d\'identité du père et de la mère','Justificatif de garde si divorce','Formulaire de demande']},
+  service_national:{docs:['Passeport algérien valide','Extrait de naissance 12S','Justificatif de résidence à l\'étranger','Tout document lié au service national']},
+};
+
+function openServiceForm(key) {
+  curService = key;
+  curCitoyen = null;
+  const s = SVC_INFO[key];
   if(!s) return;
-
-  document.getElementById('modalServiceTitle').textContent = `${s.icon} ${s.title}`;
-
-  // Build modal body
-  const body = document.getElementById('modalServiceBody');
-  body.innerHTML = buildServiceModalHTML(serviceKey, s);
-
-  document.getElementById('demandeModal').classList.add('open');
+  document.getElementById('modalTitle').textContent = `${s.icon} ${s.title}`;
+  document.getElementById('modalBody').innerHTML = buildForm(key, s);
+  document.getElementById('modalSendBtn').style.display = '';
+  document.getElementById('modalFoot').style.display = '';
+  document.getElementById('serviceModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function buildServiceModalHTML(key, s) {
-  return `
-    <!-- Étape 1 : Reconnaissance NIN -->
-    <div style="background:linear-gradient(135deg,rgba(0,98,51,.06),rgba(0,98,51,.03));border:1px solid rgba(0,98,51,.15);border-radius:12px;padding:18px;margin-bottom:20px">
-      <div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:10px">🔍 Êtes-vous déjà immatriculé ?</div>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Entrez votre NIN (Numéro d'Identification Nationale) pour pré-remplir automatiquement le formulaire.</p>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="nin_input" placeholder="Ex: 1234567890" maxlength="20"
-          style="flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px"
-          oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
-        <button onclick="rechercherNIN()" style="padding:10px 18px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap">Rechercher</button>
-      </div>
-      <div id="nin_result" style="margin-top:10px"></div>
-    </div>
-
-    <!-- Infos service -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
-      <div style="background:#f8faf8;border-radius:8px;padding:12px">
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">⏱️ Délai estimé</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text)">${s.delai}</div>
-      </div>
-      <div style="background:#f8faf8;border-radius:8px;padding:12px">
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📧 Contact service</div>
-        <div style="font-size:12px;color:var(--green);font-weight:600">${s.email}</div>
-      </div>
-    </div>
-
-    ${s.note ? `<div style="background:#fef9e7;border:1px solid #f0d060;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#92400e">${s.note}</div>` : ''}
-
-    <!-- Formulaire spécifique -->
-    <div id="service_form_area">
-      ${buildServiceForm(key, s)}
-    </div>
-
-    <!-- Tarifs -->
-    <div style="background:#f8faf8;border-radius:8px;padding:14px;margin-top:16px">
-      <div style="font-weight:700;font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">💳 Tarifs</div>
-      ${s.tarifs.map(t=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);color:var(--text)">• ${t}</div>`).join('')}
-      ${s.paiement ? `<div style="font-size:11px;color:var(--text2);margin-top:8px">💳 ${s.paiement}</div>` : ''}
-    </div>
-  `;
+function closeModal() {
+  document.getElementById('serviceModal').classList.remove('open');
+  document.body.style.overflow = '';
+  curService = null; curCitoyen = null;
 }
 
-function buildServiceForm(key, s) {
-  const common = `
-    <div class="form-row">
-      <div class="form-group"><label>Prénom *</label><input class="inp" id="sf_prenom" placeholder="Prénom"/></div>
-      <div class="form-group"><label>Nom *</label><input class="inp" id="sf_nom" placeholder="Nom de famille"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Date de naissance</label><input type="date" class="inp" id="sf_ddn"/></div>
-      <div class="form-group"><label>Email *</label><input type="email" class="inp" id="sf_email" placeholder="votre@email.com"/></div>
-    </div>
-    <div class="form-group"><label>Téléphone</label><input class="inp" id="sf_tel" placeholder="+46 ..."/></div>`;
+function buildForm(key, s) {
+  const docsHtml = (docs) => docs && docs.length
+    ? `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:8px;padding:12px;margin:10px 0">
+        <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">📋 Documents à fournir</div>
+        ${docs.map(d=>`<div style="font-size:12px;padding:3px 0;color:var(--text)">✔ ${d}</div>`).join('')}
+      </div>` : '';
 
-  if(key === 'passeport') return `
-    <div class="form-group"><label>Type de demande *</label>
-      <select class="inp" id="sf_sous_type" onchange="updatePasseportDocs()">
+  let extraFields = '';
+  if(key==='passeport') extraFields = `
+    <div class="fg"><label>Type de demande *</label>
+      <select id="sf_sub" onchange="updateDocs()">
         <option value="">-- Choisir --</option>
-        <option value="nouveau">Nouveau passeport (première demande)</option>
-        <option value="renouvellement">Renouvellement de passeport</option>
+        <option value="nouveau">Nouveau passeport (1ère demande)</option>
+        <option value="renouvellement">Renouvellement</option>
         <option value="perte">Remplacement suite à perte / vol</option>
       </select>
     </div>
-    <div class="form-group"><label>Type de passeport</label>
-      <select class="inp" id="sf_type_pages">
-        <option value="32">32 pages (standard)</option>
-        <option value="48">48 pages</option>
+    <div class="fg-row">
+      <div class="fg"><label>Type</label><select id="sf_pages"><option value="32">32 pages (standard)</option><option value="48">48 pages</option></select></div>
+      <div class="fg"><label>Catégorie</label><select id="sf_cat"><option value="adulte">Adulte (19+)</option><option value="mineur">Mineur / Étudiant</option></select></div>
+    </div>`;
+  if(key==='visa') extraFields = `
+    <div class="fg"><label>Type de visa *</label>
+      <select id="sf_sub" onchange="updateDocs()">
+        <option value="">-- Choisir le type --</option>
+        <option value="familiale">Familiale</option>
+        <option value="touristique">Touristique</option>
+        <option value="affaires">Affaires</option>
+        <option value="culturelle">Culturelle / Sportive</option>
+        <option value="travail">Travail</option>
+        <option value="transit">Transit</option>
+        <option value="presse">Presse</option>
       </select>
     </div>
-    <div class="form-group"><label>Catégorie</label>
-      <select class="inp" id="sf_categorie">
-        <option value="adulte">Adulte (19 ans et +)</option>
-        <option value="mineur">Mineur / Étudiant (< 19 ans)</option>
-      </select>
+    <div class="fg-row">
+      <div class="fg"><label>Nationalité *</label><input id="sf_nat" placeholder="Ex: Suédoise"/></div>
+      <div class="fg"><label>N° Passeport *</label><input id="sf_numdoc" placeholder="N° passeport"/></div>
     </div>
-    ${common}
-    <div class="form-group"><label>N° passeport actuel</label><input class="inp" id="sf_num_doc" placeholder="Si renouvellement"/></div>
-    <div id="sf_motif_renouvellement" style="display:none">
-      <div class="form-group"><label>Motif de renouvellement</label>
-        <select class="inp" id="sf_motif">
-          <option value="">-- Motif --</option>
-          ${s.motifs_renouvellement.map(m=>`<option>${m}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-    <div id="docs_requis" style="margin-top:12px"></div>
-    <div class="form-group"><label>Précisions / Message</label><textarea class="inp" id="sf_message" style="min-height:70px"></textarea></div>`;
-
-  if(key === 'cni') return `
-    <div class="form-group"><label>Situation *</label>
-      <select class="inp" id="sf_sous_type" onchange="updateCNIDocs()">
+    <div class="fg"><label>Durée de séjour souhaitée</label>
+      <select id="sf_dur"><option value="30">30 jours</option><option value="90" selected>90 jours</option><option value="90+">+ de 90 jours</option></select>
+    </div>`;
+  if(key==='cni') extraFields = `
+    <div class="fg"><label>Situation *</label>
+      <select id="sf_sub" onchange="updateDocs()">
         <option value="">-- Choisir --</option>
         <option value="avec_passeport">J'ai un passeport biométrique algérien</option>
         <option value="sans_passeport">Je n'ai pas de passeport biométrique</option>
         <option value="renouvellement">Renouvellement / Perte de CNI</option>
       </select>
-    </div>
-    <div id="cni_info_area"></div>
-    ${common}
-    <div class="form-group"><label>N° CNI actuelle (si applicable)</label><input class="inp" id="sf_num_doc" placeholder="N° CNI actuelle"/></div>
-    <div class="form-group"><label>Message</label><textarea class="inp" id="sf_message" style="min-height:60px"></textarea></div>`;
+    </div>`;
 
-  if(key === 'visa') return `
-    <div class="form-group"><label>Type de visa *</label>
-      <select class="inp" id="sf_sous_type" onchange="updateVisaDocs()">
-        <option value="">-- Choisir le type --</option>
-        ${s.types.map(t=>`<option value="${t.toLowerCase().replace(/\//g,'_').replace(/ /g,'_')}">${t}</option>`).join('')}
-      </select>
+  return `
+    <!-- NIN -->
+    <div class="nin-box">
+      <div class="nin-box-title">🔍 Êtes-vous déjà immatriculé ? (optionnel)</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px">Entrez votre NIN pour pré-remplir le formulaire automatiquement.</p>
+      <div class="nin-row">
+        <input type="text" id="ninInput" placeholder="Numéro d'identification nationale..." oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+        <button onclick="searchNIN()">Vérifier</button>
+      </div>
+      <div id="ninResult" style="margin-top:8px"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>Prénom *</label><input class="inp" id="sf_prenom" placeholder="Prénom (comme sur le passeport)"/></div>
-      <div class="form-group"><label>Nom *</label><input class="inp" id="sf_nom" placeholder="Nom de famille"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Nationalité *</label><input class="inp" id="sf_nat" placeholder="Ex: Suédoise"/></div>
-      <div class="form-group"><label>N° Passeport *</label><input class="inp" id="sf_num_doc" placeholder="N° passeport"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Date naissance *</label><input type="date" class="inp" id="sf_ddn"/></div>
-      <div class="form-group"><label>Email *</label><input type="email" class="inp" id="sf_email" placeholder="email@example.com"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Téléphone</label><input class="inp" id="sf_tel" placeholder="+46 ..."/></div>
-      <div class="form-group"><label>Durée de séjour souhaitée</label>
-        <select class="inp" id="sf_duree">
-          <option value="30">30 jours</option>
-          <option value="90" selected>90 jours</option>
-          <option value="90+">Plus de 90 jours</option>
-        </select>
+
+    <!-- Info service -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="background:#f8faf8;border-radius:8px;padding:11px">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">⏱️ Délai</div>
+        <div style="font-size:12.5px;font-weight:600">${s.delai}</div>
+      </div>
+      <div style="background:#f8faf8;border-radius:8px;padding:11px">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">💳 Tarifs</div>
+        <div style="font-size:11.5px;color:var(--green);font-weight:600">${s.tarif}</div>
       </div>
     </div>
-    <div id="visa_docs_area" style="margin:12px 0"></div>
-    <div class="form-group"><label>Message / précisions</label><textarea class="inp" id="sf_message" style="min-height:70px" placeholder="Objet du séjour, hébergement prévu..."></textarea></div>`;
 
-  // Generic form for other services
-  return `${common}
-    <div class="form-group"><label>Message / précisions</label><textarea class="inp" id="sf_message" style="min-height:80px" placeholder="Décrivez votre demande en détail..."></textarea></div>`;
-}
+    <!-- Champs spécifiques -->
+    ${extraFields}
 
-function rechercherNIN() {
-  const nin = document.getElementById('nin_input')?.value.trim();
-  if(!nin || nin.length < 4) {
-    showNINResult('⚠️ Entrez un numéro NIN valide.', 'warning');
-    return;
-  }
-
-  const resultEl = document.getElementById('nin_result');
-  resultEl.innerHTML = '<div style="font-size:12px;color:var(--text2)">🔄 Recherche en cours...</div>';
-
-  // Search in Firebase
-  fetch(`${BASE}/gaa/contacts_user?key=${KEY}`)
-    .then(r=>r.json())
-    .then(data => {
-      const citoyens = JSON.parse(data.fields?.d?.stringValue || '[]');
-      const found = citoyens.find(c => (c.nin||'').replace(/\s/g,'') === nin.replace(/\s/g,''));
-      if(found) {
-        recognizedCitoyen = found;
-        // Auto-fill form fields
-        if(document.getElementById('sf_prenom')) document.getElementById('sf_prenom').value = found.prenom||'';
-        if(document.getElementById('sf_nom')) document.getElementById('sf_nom').value = found.nom||'';
-        if(document.getElementById('sf_email')) document.getElementById('sf_email').value = found.email||'';
-        if(document.getElementById('sf_tel')) document.getElementById('sf_tel').value = found.telephone||'';
-        if(document.getElementById('sf_ddn')) document.getElementById('sf_ddn').value = found.date_naissance||'';
-        if(document.getElementById('sf_num_doc')) document.getElementById('sf_num_doc').value = found.passeport||found.cin||'';
-
-        showNINResult(`✅ Citoyen reconnu : <strong>${found.prenom} ${found.nom}</strong> — Immatriculé · Formulaire pré-rempli automatiquement`, 'success');
-      } else {
-        recognizedCitoyen = null;
-        showNINResult('ℹ️ NIN non trouvé dans notre base. Remplissez le formulaire manuellement — votre dossier sera créé à la réception de votre demande.', 'info');
-      }
-    })
-    .catch(() => {
-      showNINResult('⚠️ Impossible de vérifier le NIN en ligne. Remplissez le formulaire manuellement.', 'warning');
-    });
-}
-
-function showNINResult(msg, type) {
-  const colors = {
-    success: {bg:'#f0f9f4', border:'#006233', color:'#006233'},
-    info:    {bg:'#eff6ff', border:'#2563eb', color:'#1e40af'},
-    warning: {bg:'#fef9e7', border:'#f0d060', color:'#92400e'},
-    error:   {bg:'#fff5f5', border:'#fca5a5', color:'#991b1b'},
-  };
-  const c = colors[type]||colors.info;
-  document.getElementById('nin_result').innerHTML =
-    `<div style="padding:10px 14px;background:${c.bg};border:1px solid ${c.border};border-radius:8px;font-size:12px;color:${c.color}">${msg}</div>`;
-}
-
-function updatePasseportDocs() {
-  const type = document.getElementById('sf_sous_type')?.value;
-  const s = SERVICES.passeport;
-  const motifEl = document.getElementById('sf_motif_renouvellement');
-  const docsEl  = document.getElementById('docs_requis');
-  if(motifEl) motifEl.style.display = (type==='renouvellement'||type==='perte') ? 'block' : 'none';
-  if(docsEl && type) {
-    const docs = type==='nouveau' ? s.docs_nouveau : s.docs_renouvellement;
-    docsEl.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:8px;padding:12px;margin-top:4px">
-      <div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:8px">📋 Documents à fournir :</div>
-      ${docs.map(d=>`<div style="font-size:12px;padding:3px 0;color:var(--text)">✔ ${d}</div>`).join('')}
+    <!-- Champs communs -->
+    <div class="fg-row">
+      <div class="fg"><label>Prénom *</label><input id="sf_prenom" placeholder="Prénom"/></div>
+      <div class="fg"><label>Nom *</label><input id="sf_nom" placeholder="Nom de famille"/></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Date de naissance</label><input type="date" id="sf_ddn"/></div>
+      <div class="fg"><label>Email *</label><input type="email" id="sf_email" placeholder="votre@email.com"/></div>
+    </div>
+    <div class="fg"><label>Téléphone</label><input id="sf_tel" placeholder="+46 ..."/></div>
+    ${key!=='visa'?`<div class="fg"><label>N° document actuel</label><input id="sf_numdoc" placeholder="N° passeport ou CNI actuel (si renouvellement)"/></div>`:''}
+    <div id="docsArea"></div>
+    <div class="fg"><label>Message / précisions</label><textarea id="sf_msg" style="min-height:70px" placeholder="Informations supplémentaires..."></textarea></div>
+    <div style="padding:10px 12px;background:rgba(0,98,51,.06);border-radius:8px;font-size:11.5px;color:var(--text2)">
+      ℹ️ Votre demande sera enregistrée et un agent vous contactera dans les <strong>48h ouvrables</strong> à l'adresse : <strong>${s.email}</strong>
     </div>`;
-  }
 }
 
-function updateCNIDocs() {
-  const type = document.getElementById('sf_sous_type')?.value;
-  const infoEl = document.getElementById('cni_info_area');
-  if(!infoEl) return;
-  if(type === 'avec_passeport') {
-    infoEl.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:10px;padding:14px;margin-bottom:14px">
-      <div style="font-weight:700;color:var(--green);margin-bottom:8px">✅ Bonne nouvelle !</div>
-      <p style="font-size:13px;color:var(--text2)">Vous pouvez faire la demande entièrement <strong>en ligne</strong>, sans vous déplacer :</p>
-      <a href="https://passeport.interieur.gov.dz/fr/demandeCNIBEfr/Demande" target="_blank"
-        style="display:inline-block;margin-top:10px;padding:10px 20px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
-        🌐 Demande en ligne sur interieur.gov.dz →
-      </a>
-      <p style="font-size:11px;color:var(--text2);margin-top:8px">Aucun document à fournir · Aucun frais supplémentaire</p>
-    </div>`;
-    document.getElementById('submitServiceBtn').style.display = 'none';
-  } else if(type) {
-    const docs = SERVICES.cni.docs_sans_passeport;
-    infoEl.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:8px;padding:12px;margin-bottom:12px">
-      <div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:6px">📋 Documents à fournir :</div>
-      ${docs.map(d=>`<div style="font-size:12px;padding:3px 0">✔ ${d}</div>`).join('')}
-    </div>`;
-    document.getElementById('submitServiceBtn').style.display = 'inline-flex';
-  }
-}
-
-function updateVisaDocs() {
-  const type = document.getElementById('sf_sous_type')?.value;
-  const docsEl = document.getElementById('visa_docs_area');
-  if(!docsEl || !type) return;
-  const s = SERVICES.visa;
-  const extraDocs = {
-    familiale: ['Preuve de nationalité algérienne du conjoint/famille', 'Extrait de naissance ou livret de famille', 'Acte de mariage si applicable'],
-    touristique: ['Preuve d\'emploi ou ressources financières', 'Réservation hôtel ou hébergement confirmé'],
-    affaires: ['Lettre d\'invitation de la société algérienne (objet, durée, prise en charge)', 'Lettre de mission de l\'employeur'],
-    travail: ['Contrat de travail signé', 'Autorisation de travail temporaire (Algérie)', 'Engagement de rapatriement'],
-    transit: ['Visa du pays de destination finale', 'Billet d\'avion confirmé', 'Justificatif de ressources'],
-    presse: ['Demande écrite du média', 'Copie de la carte de presse', 'Formulaire d\'accréditation (3 copies)', 'Déposer 15 jours à l\'avance'],
-  };
-  const extra = extraDocs[type] || [];
-  docsEl.innerHTML = `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px">
-    <div style="font-weight:700;font-size:12px;color:#1e40af;margin-bottom:6px">📋 Documents requis — ${type.replace(/_/g,' ')} :</div>
-    ${s.docs_communs.map(d=>`<div style="font-size:11px;padding:2px 0;color:var(--text)">✔ ${d}</div>`).join('')}
-    ${extra.length ? '<div style="font-weight:700;font-size:11px;color:#1e40af;margin-top:8px;margin-bottom:4px">Documents supplémentaires :</div>'+extra.map(d=>`<div style="font-size:11px;padding:2px 0;color:#1e40af">➕ ${d}</div>`).join('') : ''}
+function updateDocs() {
+  const sub = document.getElementById('sf_sub')?.value;
+  const docsArea = document.getElementById('docsArea');
+  if(!docsArea || !curService) return;
+  const d = DOCS[curService];
+  if(!d) return;
+  const docs = d[sub] || d['commun'] || d['docs'] || [];
+  if(!docs.length) { docsArea.innerHTML=''; return; }
+  docsArea.innerHTML = `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:8px;padding:12px;margin:10px 0">
+    <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">📋 Documents à fournir</div>
+    ${docs.map(d=>`<div style="font-size:12px;padding:3px 0;color:var(--text)">✔ ${d}</div>`).join('')}
   </div>`;
+  // CNI avec passeport : afficher lien direct + cacher submit
+  if(curService==='cni' && sub==='avec_passeport') {
+    docsArea.innerHTML += `<div style="background:#f0f9f4;border:1px solid #c6e8d8;border-radius:10px;padding:14px;margin-top:10px;text-align:center">
+      <div style="font-weight:700;color:var(--green);margin-bottom:8px">✅ Bonne nouvelle !</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Avec un passeport biométrique, la demande se fait entièrement en ligne :</p>
+      <a href="https://passeport.interieur.gov.dz/fr/demandeCNIBEfr/Demande" target="_blank"
+        style="display:inline-block;padding:10px 22px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
+        🌐 Faire la demande en ligne →
+      </a>
+    </div>`;
+    document.getElementById('modalSendBtn').style.display = 'none';
+  } else {
+    document.getElementById('modalSendBtn').style.display = '';
+  }
 }
 
-async function submitServiceDemande() {
-  const s = SERVICES[currentService];
-  if(!s) return;
+async function searchNIN() {
+  const nin = document.getElementById('ninInput')?.value.trim();
+  const res = document.getElementById('ninResult');
+  if(!nin || nin.length < 4) { res.innerHTML = '<div style="padding:8px 12px;background:#fef9e7;border:1px solid #f0d060;border-radius:7px;font-size:12px;color:#92400e">⚠️ Entrez un NIN valide (chiffres uniquement).</div>'; return; }
+  res.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:6px 0">🔄 Recherche...</div>';
+  try {
+    const list = await fbGet('contacts_user') || [];
+    const found = list.find(c => (c.nin||'').replace(/\s/g,'') === nin.replace(/\s/g,''));
+    if(found) {
+      curCitoyen = found;
+      const f = (id, val) => { const el=document.getElementById(id); if(el&&val) el.value=val; };
+      f('sf_prenom', found.prenom); f('sf_nom', found.nom);
+      f('sf_email', found.email); f('sf_tel', found.telephone||found.tel);
+      f('sf_ddn', found.date_naissance); f('sf_numdoc', found.passeport||found.cin||'');
+      res.innerHTML = `<div style="padding:8px 12px;background:#f0f9f4;border:1px solid #c6e8d8;border-radius:7px;font-size:12px;color:var(--green)">✅ <strong>${found.prenom} ${found.nom}</strong> reconnu · Formulaire pré-rempli</div>`;
+    } else {
+      curCitoyen = null;
+      res.innerHTML = '<div style="padding:8px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;font-size:12px;color:#1e40af">ℹ️ NIN non trouvé. Remplissez le formulaire manuellement.</div>';
+    }
+  } catch(e) {
+    res.innerHTML = '<div style="padding:8px 12px;background:#fef9e7;border:1px solid #f0d060;border-radius:7px;font-size:12px;color:#92400e">⚠️ Impossible de vérifier. Remplissez manuellement.</div>';
+  }
+}
 
+async function submitModal() {
   const prenom = document.getElementById('sf_prenom')?.value.trim();
   const nom    = document.getElementById('sf_nom')?.value.trim();
   const email  = document.getElementById('sf_email')?.value.trim();
+  if(!prenom||!nom||!email) { showToast('⚠️ Prénom, Nom et Email sont requis.', 'error'); return; }
 
-  if(!prenom || !nom || !email) {
-    showToast('⚠️ Veuillez remplir au minimum Prénom, Nom et Email.', 'error');
-    return;
-  }
+  const btn = document.getElementById('modalSendBtn');
+  btn.textContent = '⏳ Envoi...'; btn.disabled = true;
 
-  const btn = document.getElementById('submitServiceBtn');
-  if(btn) { btn.textContent = '⏳ Envoi...'; btn.disabled = true; }
-
-  const num = 'DEM-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-  const demande = {
-    id: Date.now(), num,
-    type: s.title,
-    service_key: currentService,
-    sous_type: document.getElementById('sf_sous_type')?.value || '',
-    prenom, nom,
-    nom_complet: prenom + ' ' + nom,
-    email,
-    tel:        document.getElementById('sf_tel')?.value || '',
-    ddn:        document.getElementById('sf_ddn')?.value || '',
-    num_doc:    document.getElementById('sf_num_doc')?.value || '',
-    message:    document.getElementById('sf_message')?.value || '',
-    nin:        document.getElementById('nin_input')?.value || '',
-    citoyen_id: recognizedCitoyen?.id || null,
-    citoyen_reconnu: !!recognizedCitoyen,
-    statut: 'en_attente',
-    source: 'site_web',
-    created_at: new Date().toLocaleDateString('fr-FR'),
-    email_service: s.email,
+  const s = SVC_INFO[curService] || {};
+  const num = 'DEM-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-6);
+  const payload = {
+    id:Date.now(), num, type:s.title||curService,
+    service_key:curService,
+    sous_type:document.getElementById('sf_sub')?.value||'',
+    prenom, nom, nom_complet:prenom+' '+nom, email,
+    tel:document.getElementById('sf_tel')?.value||'',
+    ddn:document.getElementById('sf_ddn')?.value||'',
+    num_doc:document.getElementById('sf_numdoc')?.value||'',
+    message:document.getElementById('sf_msg')?.value||'',
+    nin:document.getElementById('ninInput')?.value||'',
+    citoyen_id:curCitoyen?.id||null,
+    citoyen_reconnu:!!curCitoyen,
+    statut:'en_attente', source:'site_web',
+    created_at:new Date().toLocaleDateString('fr-FR'),
+    email_service:s.email||''
   };
 
   try {
-    const r = await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`);
-    let list = [];
-    if(r.ok) { const d=await r.json(); list=JSON.parse(d.fields?.d?.stringValue||'[]'); }
-    list.push(demande);
-    await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({fields:{d:{stringValue:JSON.stringify(list)},t:{integerValue:String(Date.now())}}})
-    });
-
-    // Show success
-    document.getElementById('modalServiceBody').innerHTML = `
-      <div style="text-align:center;padding:40px 20px">
-        <div style="font-size:64px;margin-bottom:16px">✅</div>
-        <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--green);margin-bottom:12px">Demande envoyée !</h3>
-        <p style="color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:12px">
+    await fbSet('web_demandes', payload);
+    document.getElementById('modalBody').innerHTML = `
+      <div style="text-align:center;padding:36px 16px">
+        <div style="font-size:60px;margin-bottom:14px">✅</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--green);margin-bottom:10px">Demande envoyée !</h3>
+        <p style="color:var(--text2);font-size:13px;line-height:1.8;margin-bottom:14px">
           Votre demande de <strong>${s.title}</strong> a bien été enregistrée.<br/>
-          Un agent de l'ambassade vous contactera dans les <strong>48h ouvrables</strong>.
+          Un agent vous contactera sous <strong>48h ouvrables</strong>.
         </p>
-        <div style="background:#f0f9f4;border-radius:10px;padding:16px;margin:16px 0;display:inline-block;text-align:left">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:4px">VOTRE NUMÉRO DE DOSSIER</div>
-          <div style="font-size:20px;font-weight:800;color:var(--green);letter-spacing:.05em">${num}</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:4px">Conservez ce numéro pour le suivi</div>
+        <div style="background:#f0f9f4;border-radius:10px;padding:16px;display:inline-block;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em">Votre numéro de dossier</div>
+          <div style="font-size:22px;font-weight:800;color:var(--green);letter-spacing:.04em">${num}</div>
+          <div style="font-size:11px;color:var(--text2)">Conservez ce numéro pour le suivi en ligne</div>
         </div>
-        <p style="font-size:12px;color:var(--text2)">📧 Contact : <strong>${s.email}</strong><br/>📞 ${s.tel}</p>
-        <a href="#suivi" onclick="closeDemandeModal()"
-          style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
-          🔍 Suivre mon dossier
-        </a>
+        <p style="font-size:12px;color:var(--text2)">📧 ${s.email||'consular@embalgeria.se'}<br/>📞 +46 (0) 8 679 9130</p>
+        <a href="#suivi" onclick="closeModal()" style="display:inline-block;margin-top:14px;padding:10px 22px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">🔍 Suivre mon dossier</a>
       </div>`;
-    document.getElementById('modalServiceFooter').style.display = 'none';
+    document.getElementById('modalFoot').style.display = 'none';
     showToast(`✅ Demande envoyée — N° ${num}`);
   } catch(e) {
-    showToast('❌ Erreur d\'envoi. Veuillez réessayer.', 'error');
-    if(btn) { btn.textContent = '📤 Envoyer la demande'; btn.disabled = false; }
+    showToast('❌ Erreur d\'envoi. Réessayez.', 'error');
+    btn.textContent = '📤 Envoyer la demande'; btn.disabled = false;
   }
 }
 
-function openDemandeModal() { openServiceModal('passeport'); }
-
-function closeDemandeModal() {
-  document.getElementById('demandeModal').classList.remove('open');
-  document.body.style.overflow = '';
-  document.getElementById('modalServiceFooter').style.display = '';
-  const btn = document.getElementById('submitServiceBtn');
-  if(btn) { btn.textContent = '📤 Envoyer la demande'; btn.disabled = false; btn.style.display = ''; }
-  currentService = null;
-  recognizedCitoyen = null;
-}
-
-// Add .inp style for modal form inputs
-const modalInputStyle = document.createElement('style');
-modalInputStyle.textContent = `
-  #modalServiceBody .inp, #modalServiceBody .form-group input, #modalServiceBody .form-group select, #modalServiceBody .form-group textarea {
-    width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;
-    font-family:'Inter',sans-serif;font-size:13px;color:var(--text);transition:border-color .2s;background:#fff;
-    box-sizing:border-box;
-  }
-  #modalServiceBody .inp:focus, #modalServiceBody .form-group input:focus, #modalServiceBody .form-group select:focus, #modalServiceBody .form-group textarea:focus {
-    outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,98,51,.08);
-  }
-  #modalServiceBody .form-group { margin-bottom:12px; }
-  #modalServiceBody .form-group label { display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em; }
-  #modalServiceBody .form-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
-  @media(max-width:500px){ #modalServiceBody .form-row { grid-template-columns:1fr; } }
-`;
-document.head.appendChild(modalInputStyle);
+// ══════════════════════════════════════════════════════
+//  FORMULAIRE RDV
+// ══════════════════════════════════════════════════════
 async function submitRDV() {
-  const prenom  = document.getElementById('rdv_prenom')?.value.trim();
-  const nom     = document.getElementById('rdv_nom')?.value.trim();
-  const email   = document.getElementById('rdv_email')?.value.trim();
-  const service = document.getElementById('rdv_service')?.value;
-
-  if(!prenom || !nom || !email || !service) {
-    showToast('⚠️ Veuillez remplir les champs obligatoires', 'error');
-    return;
-  }
-
-  const btn = document.querySelector('#rdvFormContent .btn-submit');
-  if(btn) { btn.textContent = '⏳ Envoi...'; btn.disabled = true; }
-
-  const num = 'DOS-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-  const rdv = {
-    id: Date.now(),
-    num,
-    prenom, nom, email,
-    tel:     document.getElementById('rdv_tel')?.value||'',
-    service,
-    date:    document.getElementById('rdv_date')?.value||'',
-    message: document.getElementById('rdv_message')?.value||'',
-    statut:  'en_attente',
-    source:  'site_web',
-    created_at: new Date().toLocaleDateString('fr-FR'),
-    nom_complet: prenom+' '+nom,
-    type: service,
-  };
-
-  // Envoyer dans Firebase
+  const p = v('rp'), n = v('rn'), e = v('re'), s = v('rs');
+  if(!p||!n||!e||!s){ showToast('⚠️ Remplissez les champs obligatoires.','error'); return; }
+  const btn = document.querySelector('#rdvForm .btn-submit-full');
+  if(btn){ btn.textContent='⏳ Envoi...'; btn.disabled=true; }
+  const num = 'DOS-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-6);
+  const data = {id:Date.now(),num,prenom:p,nom:n,nom_complet:p+' '+n,email:e,
+    tel:v('rt'),service:s,date:v('rd'),message:v('rm'),
+    statut:'en_attente',source:'site_web',created_at:new Date().toLocaleDateString('fr-FR'),type:s};
   try {
-    const r = await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`);
-    let list = [];
-    if(r.ok) {
-      const d = await r.json();
-      list = JSON.parse(d.fields?.d?.stringValue || '[]');
-    }
-    list.push(rdv);
-    await fetch(`${BASE}/gaa/web_demandes?key=${KEY}`, {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({fields:{d:{stringValue:JSON.stringify(list)},t:{integerValue:String(Date.now())}}})
-    });
-    // Afficher succès
-    document.getElementById('rdvFormContent').style.display = 'none';
-    document.getElementById('rdvSuccess').style.display = 'block';
+    await fbSet('web_demandes', data);
+    document.getElementById('rdvForm').style.display='none';
+    document.getElementById('rdvOk').style.display='block';
     document.getElementById('rdvNum').textContent = num;
-    showToast('✅ Demande envoyée avec succès !');
-  } catch(e) {
-    showToast('❌ Erreur d\'envoi. Veuillez réessayer.', 'error');
-    if(btn) { btn.textContent = '📤 Envoyer ma demande'; btn.disabled = false; }
+    showToast('✅ Demande envoyée !');
+  } catch(e){
+    showToast('❌ Erreur d\'envoi. Réessayez.','error');
+    if(btn){ btn.textContent='📤 Envoyer ma demande'; btn.disabled=false; }
   }
 }
 
-function resetRDV() {
-  document.getElementById('rdvFormContent').style.display = 'block';
-  document.getElementById('rdvSuccess').style.display = 'none';
-  ['rdv_prenom','rdv_nom','rdv_email','rdv_tel','rdv_date','rdv_message'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
-  });
-  document.getElementById('rdv_service').value='';
+function resetRDV(){
+  document.getElementById('rdvForm').style.display='block';
+  document.getElementById('rdvOk').style.display='none';
+  ['rp','rn','re','rt','rd','rm'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('rs').value='';
 }
 
-            <div style="margin-top:14px;padding:12px;background:rgba(0,98,51,.08);border-radius:8px;font-size:13px;color:var(--green);font-weight:500">
-              📬 Votre document est prêt à être retiré à l'ambassade. Munissez-vous d'une pièce d'identité.
-            </div>` : ''}
-        </div>`;
+function v(id){ return document.getElementById(id)?.value?.trim()||''; }
+
+// ══════════════════════════════════════════════════════
+//  SUIVI DOSSIER
+// ══════════════════════════════════════════════════════
+async function searchDossier() {
+  const num = document.getElementById('trackNum')?.value.trim().toUpperCase();
+  const el  = document.getElementById('trackResult');
+  if(!num){ return; }
+  el.innerHTML = '<div style="padding:10px;color:var(--text2);font-size:13px">🔄 Recherche en cours...</div>';
+  try {
+    const [dossiers, demandes] = await Promise.all([fbGet('dossiers'), fbGet('web_demandes')]);
+    const all = [...(Array.isArray(dossiers)?dossiers:[]), ...(Array.isArray(demandes)?demandes:[])];
+    const found = all.find(d=>(d.num||'').toUpperCase()===num||(d.num||'').toUpperCase().includes(num));
+    if(found){
+      const st = found.statut||'en_attente';
+      const stMap = {en_attente:{l:'⏳ En attente',c:'#d97706'},en_cours:{l:'🔄 En traitement',c:'#2563eb'},valide:{l:'✅ Validé',c:'#006233'},pret:{l:'📬 Prêt à retirer',c:'#006233'},en_attente_retrait:{l:'🕐 En attente de retrait',c:'#2563eb'},refuse:{l:'❌ Refusé',c:'#D21034'},incomplet:{l:'⚠️ Incomplet',c:'#D21034'}};
+      const s = stMap[st]||stMap.en_attente;
+      el.innerHTML = `<div style="margin-top:14px;padding:18px;background:var(--bg);border-radius:12px;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Dossier trouvé</div>
+            <div style="font-size:17px;font-weight:700">${found.nom_complet||((found.prenom||'')+' '+(found.nom||''))}</div>
+            <div style="font-size:13px;color:var(--text2);margin-top:4px">📁 ${found.type||found.service||'—'} · N° <strong>${found.num}</strong></div>
+            <div style="font-size:12px;color:var(--text2)">Déposé le ${found.created_at||'—'}</div>
+          </div>
+          <div style="font-weight:700;color:${s.c};font-size:14px">${s.l}</div>
+        </div>
+        ${st==='pret'||st==='en_attente_retrait'?`<div style="margin-top:12px;padding:10px 12px;background:rgba(0,98,51,.08);border-radius:8px;font-size:12.5px;color:var(--green);font-weight:500">📬 Votre document est prêt. Présentez-vous avec une pièce d'identité.</div>`:''}
+      </div>`;
     } else {
-      el.innerHTML = `
-        <div style="margin-top:16px;padding:16px;background:#fff5f5;border-radius:12px;border:1px solid #fca5a5;font-size:14px;color:#991b1b">
-          ❌ Aucun dossier trouvé avec le numéro <strong>${num}</strong>.<br/>
-          <span style="font-size:12px;color:var(--text2)">Vérifiez le numéro ou contactez l'ambassade.</span>
-        </div>`;
+      el.innerHTML = `<div style="margin-top:12px;padding:14px;background:#fff5f5;border-radius:10px;border:1px solid #fca5a5;font-size:13px;color:#991b1b">❌ Aucun dossier trouvé pour "<strong>${num}</strong>". Vérifiez le numéro ou contactez l'ambassade.</div>`;
     }
-  } catch(e) {
-    el.innerHTML = '<p style="color:#D21034;margin-top:12px">❌ Erreur de connexion. Veuillez réessayer.</p>';
+  } catch(err){
+    el.innerHTML = '<div style="padding:10px;color:var(--red);font-size:13px">❌ Erreur de connexion. Réessayez.</div>';
   }
 }
+document.getElementById('trackNum')?.addEventListener('keydown', e=>{ if(e.key==='Enter') searchDossier(); });
 
-document.getElementById('trackingNum')?.addEventListener('keydown', e => {
-  if(e.key === 'Enter') searchDossier();
-});
+// ══════════════════════════════════════════════════════
+//  AGENT VIRTUEL
+// ══════════════════════════════════════════════════════
+let chatOpen=false, chatGreeted=false, chatHist=[];
 
-// ════════════════════════════════════════════════════════
-//  UI HELPERS
-// ════════════════════════════════════════════════════════
-function showToast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.background = type==='error' ? '#D21034' : '#006233';
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 4000);
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
+  document.getElementById('chat-bubble').innerHTML = chatOpen
+    ? '<div class="pulse"></div>✕' : '<div class="pulse"></div>💬<div id="chat-notif" style="display:none">!</div>';
+  if(chatOpen && !chatGreeted){
+    chatGreeted=true;
+    setTimeout(()=>addBot('Bonjour ! 👋 Je suis votre assistant consulaire, disponible <strong>24h/24 · 7j/7</strong>.\n\nJe peux vous aider avec :\n• 🛂 Passeport & CNI\n• ✈️ Visa pour l\'Algérie\n• 📅 <a href="#rdv" onclick="toggleChat()" style="color:var(--green);font-weight:600">Prise de rendez-vous</a>\n• 🔍 <a href="#suivi" onclick="toggleChat()" style="color:var(--green);font-weight:600">Suivi de dossier</a>\n\nComment puis-je vous aider ?'), 400);
+  }
+  if(chatOpen) setTimeout(()=>document.getElementById('chatIn')?.focus(), 300);
 }
 
-function toggleMobileNav() {
+function addBot(txt, typing=true){
+  const msgs = document.getElementById('chatMsgs');
+  const fmt = txt.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>');
+  if(typing){
+    const t=document.createElement('div');
+    t.className='msg-row'; t.id='typing-ind';
+    t.innerHTML='<div class="msg-av">🤖</div><div class="typing-ind"><span></span><span></span><span></span></div>';
+    msgs.appendChild(t); msgs.scrollTop=msgs.scrollHeight;
+    setTimeout(()=>{ t.remove(); renderBot(fmt,msgs); }, 600+Math.min(txt.length*8,1400));
+  } else renderBot(fmt,msgs);
+}
+
+function renderBot(fmt, msgs){
+  const r=document.createElement('div'); r.className='msg-row';
+  r.innerHTML=`<div class="msg-av">🤖</div><div><div class="msg-bub bot">${fmt}</div><div class="msg-time">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div></div>`;
+  msgs.appendChild(r); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addUser(txt){
+  const msgs=document.getElementById('chatMsgs');
+  const r=document.createElement('div'); r.className='msg-row user';
+  r.innerHTML=`<div><div class="msg-bub user">${txt.replace(/</g,'&lt;')}</div><div class="msg-time" style="text-align:right">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="msg-av u">👤</div>`;
+  msgs.appendChild(r); msgs.scrollTop=msgs.scrollHeight;
+  document.getElementById('chatSugg').style.display='none';
+}
+
+function match(q,kw){return kw.some(k=>q.includes(k));}
+
+function getReply(q){
+  const lq=q.toLowerCase();
+  const tel='+46 (0) 8 679 9130', email_c='consular@embalgeria.se';
+  const lien=(t,h)=>`<a href="${h}" style="color:var(--green);font-weight:600;text-decoration:underline">${t}</a>`;
+
+  if(match(lq,['horaire','ouverture','heure','quand','fermé','disponible']))
+    return `🕐 **Horaires d'ouverture :**\n\n📅 **Lundi – Vendredi**\n⏰ **09:00 – 13:00**\n\nWee-end et jours fériés : **Fermé**\n\n📞 Urgences 24h/24 : **${tel}**\n\n✅ ${lien('Prendre rendez-vous en ligne','#rdv')}`;
+
+  if(match(lq,['passeport','biométrique','renouvell','renew']))
+    return `🛂 **Passeport Biométrique**\n\n**Tarifs :**\n• 696 SEK — Adulte\n• 348 SEK — Mineur / Étudiant\n• Pénalité perte : 1125 SEK\n\n**Délai :** 4 à 8 semaines\n📧 pass@embalgeria.se\n\n✅ ${lien('Faire une demande en ligne','#services')}`;
+
+  if(match(lq,['cni','carte','identité','cnibe']))
+    return `🪪 **Carte Nationale d'Identité (CNIBE)**\n\nSi vous avez un **passeport biométrique** : demande 100% en ligne sur <a href="https://passeport.interieur.gov.dz" target="_blank" style="color:var(--green);font-weight:600">interieur.gov.dz</a> — sans se déplacer.\n\nSans passeport biométrique : 114 SEK de droits, présence obligatoire.\n\n✅ ${lien('Faire une demande','#services')}`;
+
+  if(match(lq,['visa','algérie','algerie','voyage','séjour']))
+    return `✈️ **Visa d'entrée en Algérie**\n\n**Types :** Famille, Tourisme, Affaires, Travail, Transit, Culturel, Presse\n\n**Délai :** Minimum **14 jours** (non garanti)\n**Frais :** À partir de **957 SEK**\n\n⚠️ Tout dossier incomplet est automatiquement rejeté.\n\n📧 visa@embalgeria.se\n✅ ${lien('Déposer un dossier','#services')}`;
+
+  if(match(lq,['rendez','rdv','appointment','réservation']))
+    return `📅 **Prise de rendez-vous**\n\n✅ ${lien('Formulaire de rendez-vous en ligne →','#rdv')}\n\nRemplissez : nom, email, service souhaité.\nUn agent vous confirme sous **48h ouvrables**.\n\n📞 Ou appelez le : **${tel}**`;
+
+  if(match(lq,['suivi','dossier','statut','avancement','numéro']))
+    return `🔍 **Suivi de votre dossier**\n\n${lien('→ Suivre mon dossier en ligne','#suivi')}\n\nEntrez votre numéro de dossier (format DOS-XXXX-XXXXXX ou DEM-XXXX-XXXXXX).\n\n📞 Renseignements : **${tel}**`;
+
+  if(match(lq,['immatricul','enregistr','résider','habitez','vivre']))
+    return `🏠 **Immatriculation consulaire**\n\nObligatoire pour tout Algérien résidant en Suède ou Islande. Gratuit.\n\n**Documents requis :**\n• Passeport algérien valide\n• Acte de naissance 12S\n• Personbevis < 3 mois\n• 2 photos récentes\n\n✅ ${lien('Faire la demande','#services')}`;
+
+  if(match(lq,['légalis','legaliz','authentif','notari']))
+    return `📜 **Légalisation de documents**\n\nDélai : 5 à 10 jours ouvrables.\n\nApportez : original + copie + pièce d'identité.\n\n✅ ${lien('Faire une demande','#services')}\n📧 ${email_c}`;
+
+  if(match(lq,['acte','naissance','12s','état civil','mariage','livret']))
+    return `📋 **État civil & Acte 12S**\n\nL'acte 12S est exigé pour toute demande de passeport.\n\nNés en Algérie : demande sur <a href="https://request12s.interieur.gov.dz" target="_blank" style="color:var(--green)">interieur.gov.dz</a>\nNés en Suède : demandez à l'ambassade.\n\n📧 ${email_c}`;
+
+  if(match(lq,['urgence','urgent','accident','arrêté','prison','volé','perdu','lost']))
+    return `🚨 **URGENCE CONSULAIRE**\n\n📞 **Appelez immédiatement :**\n**${tel}**\n\nPermanence 24h/24 · 7j/7\n\nL'ambassade peut :\n• Délivrer un laissez-passer d'urgence\n• Contacter vos proches\n• Vous assister face aux autorités`;
+
+  if(match(lq,['adresse','où','situé','trouver','contact','coordonnée','email','téléphone','bankgiro']))
+    return `📍 **Ambassade d'Algérie à Stockholm**\nDanderydsgatan 3-5, BOX 26027, 100 41 Stockholm\n\n📞 **${tel}**\n📧 pass@embalgeria.se (passeports)\n📧 visa@embalgeria.se (visas)\n📧 ${email_c} (consulaire)\n\n🏦 BankGiro : **5088-9039**\n\n${lien('Voir les horaires et la carte','#contact')}`;
+
+  if(match(lq,['bonjour','salam','hello','مرحبا','السلام','bonsoir','hi ']))
+    return `Bonjour ! 👋\n\nJe suis votre assistant consulaire, disponible **24h/24** pour vous orienter.\n\nJe peux vous aider avec :\n🛂 ${lien('Passeport','#services')} · 🪪 ${lien('CNI','#services')} · ✈️ ${lien('Visa','#services')}\n📅 ${lien('Rendez-vous','#rdv')} · 🔍 ${lien('Suivi dossier','#suivi')} · 📞 Urgences\n\nQuelle est votre question ?`;
+
+  if(match(lq,['merci','thank','شكرا','au revoir','bye','bonne journée']))
+    return `Avec plaisir ! 😊\n\n📅 ${lien('Prendre rendez-vous','#rdv')} · 🔍 ${lien('Suivre votre dossier','#suivi')}\n\nBonne journée ! 🇩🇿`;
+
+  return `Je suis là pour vous aider ! 🏛️\n\n📅 ${lien('Prendre rendez-vous','#rdv')}\n📄 ${lien('Faire une demande de document','#services')}\n🔍 ${lien('Suivre votre dossier','#suivi')}\n📞 Urgences 24h/24 : **${tel}**\n📧 ${email_c}\n\nQuelle est votre question précise ?`;
+}
+
+function sendChat(){
+  const inp=document.getElementById('chatIn');
+  const txt=inp?.value.trim();
+  if(!txt) return;
+  inp.value='';
+  addUser(txt);
+  setTimeout(()=>addBot(getReply(txt)), 200);
+}
+
+function sendSugg(txt){
+  const inp=document.getElementById('chatIn');
+  if(inp) inp.value=txt;
+  sendChat();
+}
+
+// Notification après 5s
+setTimeout(()=>{ if(!chatOpen){ const n=document.getElementById('chat-notif'); if(n) n.style.display='flex'; } }, 5000);
+
+// ══════════════════════════════════════════════════════
+//  UI
+// ══════════════════════════════════════════════════════
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=type==='error'?'#D21034':'#006233';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 4000);
+}
+
+function toggleNav(){
   document.getElementById('navLinks').classList.toggle('open');
 }
 
-// ── Date institutionnelle dans le bandeau ─────────────────
-const govDateEl = document.getElementById('gov-date');
-if(govDateEl) {
-  const now = new Date();
-  govDateEl.textContent = now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-}
-
-// Navbar scroll effect
-window.addEventListener('scroll', () => {
-  const header = document.getElementById('siteHeader');
-  if(header) {
-    header.style.boxShadow = window.scrollY > 50 ? '0 4px 20px rgba(0,0,0,.12)' : '0 2px 20px rgba(0,0,0,.08)';
-  }
-  // Active nav link
-  const sections = ['accueil','services','actualites','rdv','suivi','contact'];
-  let current = 'accueil';
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if(el && window.scrollY >= el.offsetTop - 140) current = id;
-  });
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    const href = a.getAttribute('href');
-    a.classList.toggle('active', href === '#'+current);
-  });
+// Active nav on scroll
+window.addEventListener('scroll', ()=>{
+  const h=document.getElementById('siteHeader');
+  if(h) h.style.boxShadow=window.scrollY>60?'0 4px 20px rgba(0,0,0,.14)':'0 2px 12px rgba(0,0,0,.06)';
+  const secs=['accueil','services','actualites','rdv','suivi','contact'];
+  let cur='accueil';
+  secs.forEach(id=>{ const el=document.getElementById(id); if(el&&window.scrollY>=el.offsetTop-130) cur=id; });
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
 });
 
-// Close modal on overlay click
-document.getElementById('demandeModal').addEventListener('click', e => {
-  if(e.target === e.currentTarget) closeDemandeModal();
-});
+// Close overlay on click outside
+document.getElementById('serviceModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
 
-// ── INIT ──
+// ── GO ──
 initSite();
 </script>
-
-<!-- ═══════════════════════════════════════════════════════
-     AGENT VIRTUEL — Propulsé par Claude (Anthropic)
-═══════════════════════════════════════════════════════ -->
-<style>
-/* ── Chat Widget ── */
-#chat-widget{position:fixed;bottom:28px;right:28px;z-index:9998;font-family:'Inter',sans-serif}
-#chat-bubble{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 4px 20px rgba(0,98,51,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;transition:all .3s;position:relative;border:none}
-#chat-bubble:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(0,98,51,.5)}
-#chat-bubble .pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(0,98,51,.3);animation:pulse 2s infinite}
-@keyframes pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.3);opacity:0}}
-#chat-notif{position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#D21034;border-radius:50%;border:2px solid #fff;font-size:10px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-
-#chat-panel{
-  position:absolute;bottom:76px;right:0;
-  width:380px;max-height:560px;
-  background:#fff;border-radius:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.18);
-  display:none;flex-direction:column;
-  overflow:hidden;border:1px solid rgba(0,98,51,.12);
-  animation:slideUp .3s cubic-bezier(.22,1,.36,1);
-}
-@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-#chat-panel.open{display:flex}
-
-.chat-header{
-  background:linear-gradient(135deg,var(--green2),var(--green));
-  padding:16px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0
-}
-.chat-avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.chat-header-info{flex:1}
-.chat-header-info .name{color:#fff;font-weight:700;font-size:14px}
-.chat-header-info .status{color:rgba(255,255,255,.7);font-size:11px;display:flex;align-items:center;gap:4px}
-.chat-header-info .status::before{content:'';width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block}
-.chat-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.chat-close:hover{background:rgba(255,255,255,.3)}
-
-.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:200px;max-height:340px}
-.chat-messages::-webkit-scrollbar{width:4px}
-.chat-messages::-webkit-scrollbar-thumb{background:rgba(0,98,51,.2);border-radius:2px}
-
-.msg-row{display:flex;gap:8px;align-items:flex-end}
-.msg-row.user{flex-direction:row-reverse}
-.msg-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.msg-avatar.user-av{background:linear-gradient(135deg,#e0ead8,#c6d8c0);color:var(--green2)}
-.msg-bubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.6}
-.msg-bubble.bot{background:var(--bg);color:var(--text);border-bottom-left-radius:4px}
-.msg-bubble.user{background:var(--green);color:#fff;border-bottom-right-radius:4px}
-.msg-time{font-size:10px;color:#aaa;margin-top:4px;text-align:right}
-
-.chat-typing{display:flex;align-items:center;gap:4px;padding:8px 14px;background:var(--bg);border-radius:16px;border-bottom-left-radius:4px;width:fit-content}
-.chat-typing span{width:6px;height:6px;border-radius:50%;background:var(--text2);display:inline-block;animation:typing 1.2s infinite}
-.chat-typing span:nth-child(2){animation-delay:.2s}
-.chat-typing span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
-
-.chat-suggestions{padding:0 12px 12px;display:flex;flex-wrap:wrap;gap:6px}
-.suggestion-btn{padding:6px 12px;background:rgba(0,98,51,.07);color:var(--green);border:1px solid rgba(0,98,51,.2);border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;white-space:nowrap}
-.suggestion-btn:hover{background:var(--green);color:#fff}
-
-.chat-input-row{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0}
-.chat-input-row input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:24px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
-.chat-input-row input:focus{border-color:var(--green)}
-.chat-send{width:38px;height:38px;border-radius:50%;background:var(--green);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0}
-.chat-send:hover{background:var(--green2);transform:scale(1.05)}
-.chat-send:disabled{background:#ccc;cursor:not-allowed;transform:none}
-
-.chat-footer{text-align:center;padding:8px;font-size:10px;color:#aaa;border-top:1px solid var(--border);flex-shrink:0}
-
-@media(max-width:440px){
-  #chat-panel{width:calc(100vw - 32px);right:-12px}
-  #chat-widget{bottom:16px;right:16px}
-}
-</style>
-
-<!-- Widget HTML -->
-<div id="chat-widget">
-  <div id="chat-panel">
-    <!-- Header -->
-    <div class="chat-header">
-      <div class="chat-avatar">🤖</div>
-      <div class="chat-header-info">
-        <div class="name">Assistant Ambassade</div>
-        <div class="status">En ligne · Répond en quelques secondes</div>
-      </div>
-      <button class="chat-close" onclick="toggleChat()">✕</button>
-    </div>
-
-    <!-- Messages -->
-    <div class="chat-messages" id="chatMessages"></div>
-
-    <!-- Suggestions rapides -->
-    <div class="chat-suggestions" id="chatSuggestions">
-      <button class="suggestion-btn" onclick="sendSuggestion('Quels sont vos horaires ?')">🕐 Horaires</button>
-      <button class="suggestion-btn" onclick="sendSuggestion('Comment renouveler mon passeport ?')">🛂 Passeport</button>
-      <button class="suggestion-btn" onclick="sendSuggestion('Comment prendre rendez-vous ?')">📅 Rendez-vous</button>
-      <button class="suggestion-btn" onclick="sendSuggestion('Quels documents dois-je apporter ?')">📋 Documents</button>
-    </div>
-
-    <!-- Input -->
-    <div class="chat-input-row">
-      <input type="text" id="chatInput" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter') sendMessage()"/>
-      <button class="chat-send" id="chatSendBtn" onclick="sendMessage()">➤</button>
-    </div>
-    <div class="chat-footer">🔒 Propulsé par Claude · Ambassade d'Algérie</div>
-  </div>
-
-  <!-- Bubble -->
-  <button id="chat-bubble" onclick="toggleChat()" aria-label="Ouvrir l'assistant">
-    <div class="pulse"></div>
-    💬
-    <div id="chat-notif" style="display:none">1</div>
-  </button>
-</div>
-
-<script>
-// ════════════════════════════════════════════════════════
-//  AGENT VIRTUEL — Claude AI
-// ════════════════════════════════════════════════════════
-let chatOpen    = false;
-let chatHistory = [];
-let ambInfo     = {};
-let chatGreeted = false;
-
-// Charger les infos de l'ambassade pour le contexte
-async function loadAmbInfoForChat() {
-  try {
-    const [amb, web, hor] = await Promise.all([
-      loadFromFirebase('settings_amb'),
-      loadFromFirebase('settings_web'),
-      loadFromFirebase('settings_horaires'),
-    ]);
-    ambInfo = { ...amb, ...web, horaires: hor };
-  } catch(e) {
-    ambInfo = {};
-  }
-}
-
-
-async function sendMessageToAI(userMessage) {
-  chatHistory.push({ role: 'user', content: userMessage });
-
-  // Moteur de réponses intelligent — 100% local, 24h/24 7j/7
-  const reply = generateSmartReply(userMessage.toLowerCase(), userMessage);
-  chatHistory.push({ role: 'assistant', content: reply });
-  return reply;
-}
-
-// ── Base de connaissances de l'ambassade ─────────────────
-function getAmbData() {
-  const name    = ambInfo.titre || ambInfo.name || "l'Ambassade d'Algérie en Suède";
-  const adresse = ambInfo.adresse || ambInfo.addr || 'Stockholm, Suède';
-  const tel     = ambInfo.telephone || ambInfo.tel || 'Consulter le site';
-  const email   = ambInfo.email_contact || ambInfo.email || 'Consulter le site';
-  const jours   = ambInfo.horaires?.jours || ambInfo.jours || 'Lundi au Vendredi';
-  const debut   = ambInfo.horaires?.debut || '09:00';
-  const fin     = ambInfo.horaires?.fin   || '16:00';
-  return { name, adresse, tel, email, jours, debut, fin };
-}
-
-function lien(texte, ancre) {
-  return `<a href="${ancre}" style="color:var(--green);font-weight:600;text-decoration:underline">${texte}</a>`;
-}
-
-function generateSmartReply(q, original) {
-  const d = getAmbData();
-
-  // ── HORAIRES ────────────────────────────────────────────
-  if(match(q,['horaire','ouverture','ouverte','heure','quand','fermé','fermeture','disponible'])) {
-    return `🕐 **Nos horaires d'ouverture :**\n\n📅 **${d.jours}**\n⏰ **${d.debut} – ${d.fin}**\n\nEn dehors de ces horaires, vous pouvez :\n• Faire une demande en ligne → ${lien('Prendre rendez-vous', '#rdv')}\n• Nous écrire à **${d.email}**\n\nPour les **urgences consulaires** (accident, arrestation, hospitalisation), appelez le **${d.tel}** — une permanence est assurée 24h/24.`;
-  }
-
-  // ── PASSEPORT ───────────────────────────────────────────
-  if(match(q,['passeport','passport','renouveler','renouvellement','biométrique','biometr'])) {
-    return `🛂 **Renouvellement / Nouveau passeport**\n\n**Documents à fournir :**\n• Ancien passeport (ou déclaration de perte)\n• Extrait de naissance de moins de 3 mois\n• 2 photos d'identité récentes\n• Justificatif de résidence en Suède\n• Formulaire de demande (remis à l'ambassade)\n\n**Délai de traitement :** 4 à 8 semaines\n\n✅ ${lien('Faire une demande en ligne', '#services')} — un agent vous contactera sous 48h pour confirmer votre rendez-vous.\n\n📞 Pour plus d'infos : **${d.tel}**`;
-  }
-
-  // ── CNI / CARTE D'IDENTITÉ ───────────────────────────────
-  if(match(q,['carte','cni','identité','identite','national'])) {
-    return `🪪 **Carte Nationale d'Identité (CNI)**\n\n**Documents à fournir :**\n• Extrait de naissance de moins de 3 mois\n• Ancien document d'identité\n• 2 photos d'identité récentes\n• Justificatif de résidence\n\n**Délai :** 3 à 6 semaines\n\n✅ ${lien('Faire une demande en ligne', '#services')} ou prenez rendez-vous directement.`;
-  }
-
-  // ── VISA ─────────────────────────────────────────────────
-  if(match(q,['visa','séjour','sejour','algérie','algerie','voyage','visiter'])) {
-    return `✈️ **Visa pour l'Algérie**\n\nL'ambassade délivre des visas pour :\n• 🏖️ **Tourisme** — 30 à 90 jours\n• 💼 **Affaires** — séjours professionnels\n• 👨‍👩‍👧 **Famille** — pour rendre visite à des proches\n• 📚 **Études** — séjours académiques\n\n**Documents généralement requis :**\n• Passeport valide 6 mois minimum\n• Formulaire de demande rempli\n• Photos d'identité\n• Justificatifs selon le type de visa\n\n✅ ${lien('Déposer une demande en ligne', '#services')} pour être recontacté par nos services.`;
-  }
-
-  // ── RENDEZ-VOUS ──────────────────────────────────────────
-  if(match(q,['rendez','rdv','rendez-vous','appointment','réservation','reservation','prendre'])) {
-    return `📅 **Prise de rendez-vous**\n\nVous pouvez prendre rendez-vous directement en ligne :\n\n✅ ${lien('→ Formulaire de rendez-vous en ligne', '#rdv')}\n\nRemplissez le formulaire en indiquant :\n• Votre nom et prénom\n• Le service souhaité\n• Votre email\n• Une date souhaitée\n\n⏱️ Un agent de l'ambassade vous confirmera le créneau sous **48h ouvrables**.\n\n📞 Vous pouvez aussi appeler le : **${d.tel}**`;
-  }
-
-  // ── ÉTAT CIVIL ───────────────────────────────────────────
-  if(match(q,['naissance','mariage','livret','civil','acte','certificat','extrait'])) {
-    return `📋 **Services d'état civil**\n\nL'ambassade délivre et légalise :\n• Actes de naissance\n• Actes de mariage\n• Livrets de famille\n• Certificats de célibat / de vie\n\n**À apporter :** Original du document algérien + copie + pièce d'identité.\n\n✅ ${lien('Faire une demande en ligne', '#services')}\n\n📞 Pour des cas complexes : **${d.tel}**`;
-  }
-
-  // ── LÉGALISATION ─────────────────────────────────────────
-  if(match(q,['légalis','legalis','apostille','authentifi','notari','traduc'])) {
-    return `📜 **Légalisation de documents**\n\nL'ambassade légalise les documents officiels pour usage en Algérie.\n\n**Délai :** 5 à 10 jours ouvrables\n\n**À apporter :**\n• Document original à légaliser\n• Copie du document\n• Pièce d'identité\n\n✅ ${lien('Prendre rendez-vous en ligne', '#rdv')}\n\n📞 **${d.tel}** · 📧 **${d.email}**`;
-  }
-
-  // ── IMMATRICULATION ──────────────────────────────────────
-  if(match(q,['immatricul','enregistr','recensement','résider','reside','vivre','habiter'])) {
-    return `🏠 **Immatriculation consulaire**\n\nTout citoyen algérien résidant en Suède doit s'immatriculer auprès de l'ambassade.\n\n**Avantages :**\n• Accès facilité aux services consulaires\n• Droit de vote aux élections algériennes\n• Protection consulaire renforcée\n\n**Documents requis :**\n• Passeport algérien valide\n• Justificatif de résidence en Suède\n• Formulaire d'immatriculation\n\n✅ ${lien('Faire une demande en ligne', '#services')}\n📅 ${lien('Prendre rendez-vous', '#rdv')}`;
-  }
-
-  // ── LISTE ÉLECTORALE ─────────────────────────────────────
-  if(match(q,['électoral','electoral','vote','voter','élection','election','suffrage'])) {
-    return `🗳️ **Inscription sur les listes électorales**\n\nLes Algériens résidant en Suède peuvent voter aux élections algériennes depuis l'ambassade.\n\n**Condition :** être immatriculé auprès de l'ambassade.\n\n**Pour s'inscrire :**\n• Passeport ou CNI algérien\n• Justificatif de résidence\n\n✅ ${lien('Demander votre inscription en ligne', '#services')}\n\nLes dates de scrutin et bureaux de vote sont annoncés sur ce site dans la section ${lien('Actualités', '#actualites')}.`;
-  }
-
-  // ── SUIVI DOSSIER ────────────────────────────────────────
-  if(match(q,['suivi','suivre','avancement','statut','dossier','num','numéro'])) {
-    return `🔍 **Suivi de votre dossier**\n\nVous pouvez suivre l'état de votre dossier en temps réel sur ce site :\n\n✅ ${lien('→ Suivre mon dossier en ligne', '#suivi')}\n\nIl vous suffit d'entrer votre **numéro de dossier** (format : DOS-XXXX-XXXXXX) pour connaître l'état de votre demande.\n\n📞 Vous pouvez aussi appeler le **${d.tel}** pendant nos heures d'ouverture.`;
-  }
-
-  // ── URGENCE ──────────────────────────────────────────────
-  if(match(q,['urgence','urgent','accident','arrestation','hôpital','hospital','arrêté','detenu','prison','perdu','volé','vol'])) {
-    return `🚨 **Assistance consulaire d'urgence**\n\nEn cas d'urgence (accident, arrestation, hospitalisation, document volé/perdu) :\n\n📞 **Appelez immédiatement le : ${d.tel}**\nUne permanence est assurée 24h/24, 7j/7 pour les situations d'urgence.\n\n📧 Email d'urgence : **${d.email}**\n\nL'ambassade peut :\n• Délivrer un laissez-passer d'urgence\n• Contacter vos proches en Algérie\n• Vous assister face aux autorités suédoises\n• Faciliter votre rapatriement si nécessaire`;
-  }
-
-  // ── CONTACT / ADRESSE ────────────────────────────────────
-  if(match(q,['adresse','situé','trouver','contact','coordonnée','coordonnee','email','mail','telephone','téléphone'])) {
-    return `📍 **Coordonnées de l'ambassade**\n\n🏛️ **${d.name}**\n📍 ${d.adresse}\n📞 **${d.tel}**\n📧 **${d.email}**\n\n🕐 **Horaires :** ${d.jours}, ${d.debut}–${d.fin}\n\n${lien('Voir sur la carte et les horaires complets', '#contact')}\n\nPour prendre rendez-vous : ${lien('Formulaire en ligne →', '#rdv')}`;
-  }
-
-  // ── SERVICES (général) ───────────────────────────────────
-  if(match(q,['service','aide','faire','besoin','comment','quoi','quels'])) {
-    return `🏛️ **Services de l'ambassade**\n\nNous offrons les services consulaires suivants :\n\n🛂 ${lien('Passeport & CNI', '#services')}\n📋 ${lien('État civil', '#services')}\n✈️ ${lien('Visa pour l\'Algérie', '#services')}\n📜 ${lien('Légalisation de documents', '#services')}\n🗳️ ${lien('Liste électorale', '#services')}\n💬 Assistance consulaire d\'urgence\n\nPour toute demande, vous pouvez :\n✅ ${lien('Faire une demande en ligne', '#services')}\n📅 ${lien('Prendre rendez-vous', '#rdv')}\n\nQuel service vous intéresse ?`;
-  }
-
-  // ── BONJOUR / SALUTATION ─────────────────────────────────
-  if(match(q,['bonjour','bonsoir','salut','salam','hello','hi ','hey','مرحبا','السلام'])) {
-    return `Bonjour ! 👋 Bienvenue sur le site officiel de **${d.name}**.\n\nJe suis votre assistant virtuel, disponible **24h/24 et 7j/7** pour vous orienter.\n\nJe peux vous aider avec :\n• 🛂 Passeport & CNI\n• ✈️ Visa pour l'Algérie\n• 📋 État civil & légalisation\n• 📅 ${lien('Prise de rendez-vous', '#rdv')}\n• 🔍 ${lien('Suivi de dossier', '#suivi')}\n\nComment puis-je vous aider ?`;
-  }
-
-  // ── MERCI / FIN ──────────────────────────────────────────
-  if(match(q,['merci','thank','شكرا','bonne journée','au revoir','bye','ciao'])) {
-    return `Avec plaisir ! 😊\n\nN'hésitez pas à revenir si vous avez d'autres questions.\n\n📅 ${lien('Prendre rendez-vous en ligne', '#rdv')}\n🔍 ${lien('Suivre votre dossier', '#suivi')}\n\nBonne journée ! 🇩🇿`;
-  }
-
-  // ── RÉPONSE GÉNÉRIQUE INTELLIGENTE ──────────────────────
-  return `Je suis là pour vous aider ! 🏛️\n\nVoici comment je peux vous orienter :\n\n📅 ${lien('Prendre rendez-vous en ligne', '#rdv')} — confirmé sous 48h\n📄 ${lien('Faire une demande de document', '#services')} — passeport, visa, état civil...\n🔍 ${lien('Suivre votre dossier', '#suivi')} — avec votre numéro de dossier\n📞 Appeler l'ambassade : **${d.tel}**\n📧 Email : **${d.email}**\n🕐 Horaires : **${d.jours}**, ${d.debut}–${d.fin}\n\nQuelle est votre question précise ?`;
-}
-
-function match(q, keywords) {
-  return keywords.some(kw => q.includes(kw));
-}
-
-function toggleChat() {
-  chatOpen = !chatOpen;
-  const panel  = document.getElementById('chat-panel');
-  const bubble = document.getElementById('chat-bubble');
-  const notif  = document.getElementById('chat-notif');
-
-  panel.classList.toggle('open', chatOpen);
-  bubble.innerHTML = chatOpen
-    ? '<div class="pulse"></div>✕'
-    : '<div class="pulse"></div>💬';
-  notif.style.display = 'none';
-
-  if(chatOpen && !chatGreeted) {
-    chatGreeted = true;
-    setTimeout(() => addBotMessage(
-      `Bonjour ! 👋 Je suis l'assistant virtuel de l'ambassade.\n\nJe peux vous aider avec vos questions sur nos services consulaires, horaires, procédures et prises de rendez-vous.\n\nComment puis-je vous aider ?`
-    ), 400);
-  }
-
-  if(chatOpen) {
-    setTimeout(() => document.getElementById('chatInput')?.focus(), 300);
-  }
-}
-
-function addBotMessage(text, typing=true) {
-  const messages = document.getElementById('chatMessages');
-  if(!messages) return;
-
-  if(typing) {
-    // Show typing indicator
-    const typingEl = document.createElement('div');
-    typingEl.className = 'msg-row';
-    typingEl.id = 'typing-indicator';
-    typingEl.innerHTML = `
-      <div class="msg-avatar">🤖</div>
-      <div class="chat-typing"><span></span><span></span><span></span></div>`;
-    messages.appendChild(typingEl);
-    messages.scrollTop = messages.scrollHeight;
-
-    setTimeout(() => {
-      typingEl.remove();
-      renderBotBubble(text, messages);
-    }, 800 + Math.min(text.length * 10, 1500));
-  } else {
-    renderBotBubble(text, messages);
-  }
-}
-
-function renderBotBubble(text, messages) {
-  const row = document.createElement('div');
-  row.className = 'msg-row';
-  // Format: convert **bold** to <strong>, \n to <br>, preserve HTML links
-  const formatted = text
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g,'<br/>');
-  row.innerHTML = `
-    <div class="msg-avatar">🤖</div>
-    <div>
-      <div class="msg-bubble bot">${formatted}</div>
-      <div class="msg-time">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
-    </div>`;
-  messages.appendChild(row);
-  messages.scrollTop = messages.scrollHeight;
-}
-
-function addUserMessage(text) {
-  const messages = document.getElementById('chatMessages');
-  if(!messages) return;
-  const row = document.createElement('div');
-  row.className = 'msg-row user';
-  row.innerHTML = `
-    <div>
-      <div class="msg-bubble user">${text.replace(/</g,'&lt;')}</div>
-      <div class="msg-time">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
-    </div>
-    <div class="msg-avatar user-av">👤</div>`;
-  messages.appendChild(row);
-  messages.scrollTop = messages.scrollHeight;
-}
-
-async function sendMessage() {
-  const input = document.getElementById('chatInput');
-  const btn   = document.getElementById('chatSendBtn');
-  const text  = input?.value.trim();
-  if(!text) return;
-
-  // Hide suggestions after first message
-  const sugg = document.getElementById('chatSuggestions');
-  if(sugg) sugg.style.display = 'none';
-
-  input.value = '';
-  input.disabled = true;
-  btn.disabled = true;
-
-  addUserMessage(text);
-
-  // Show typing
-  const messages = document.getElementById('chatMessages');
-  const typingEl = document.createElement('div');
-  typingEl.className = 'msg-row';
-  typingEl.id = 'typing-indicator';
-  typingEl.innerHTML = `<div class="msg-avatar">🤖</div><div class="chat-typing"><span></span><span></span><span></span></div>`;
-  messages.appendChild(typingEl);
-  messages.scrollTop = messages.scrollHeight;
-
-  const reply = await sendMessageToAI(text);
-
-  typingEl.remove();
-  renderBotBubble(reply, messages);
-
-  input.disabled = false;
-  btn.disabled = false;
-  input.focus();
-}
-
-function sendSuggestion(text) {
-  const input = document.getElementById('chatInput');
-  if(input) { input.value = text; }
-  sendMessage();
-}
-
-// Show notification after 5 seconds to attract attention
-setTimeout(() => {
-  if(!chatOpen) {
-    const notif = document.getElementById('chat-notif');
-    if(notif) notif.style.display = 'flex';
-  }
-}, 5000);
-
-// Load amb info for AI context
-loadAmbInfoForChat();
-</script>
+</body>
+</html>
