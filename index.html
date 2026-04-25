@@ -2945,6 +2945,8 @@ body.rtl .stripe-l{left:auto;right:0}
     <div class="modal-body" id="contactModalBody"></div>
     <div class="modal-foot">
       <button class="btn btn-outline" onclick="closeModal('contactModal')">Annuler</button>
+      <button class="btn btn-outline btn-sm" id="btnGenPasseport" style="display:none" onclick="genPasseportAlgerien()" title="Générer passeport">🛂 Passeport</button>
+      <button class="btn btn-outline btn-sm" id="btnGenCNI" style="display:none" onclick="genCNIAlgerienne()" title="Générer CNI">🪪 CNI</button>
       <button class="btn btn-green" onclick="saveContact()">💾 Enregistrer</button>
     </div>
   </div>
@@ -3498,22 +3500,56 @@ const REALTIME_TABLES = ['sig_requests','accounts','dossiers','notifications','e
 function startRealtimeSync() {
   if(!_fbReady || !_db) return;
   REALTIME_TABLES.forEach(k => {
-    if(_subs[k]) { _subs[k](); } // unsub
+    if(_subs[k]) { _subs[k](); }
     _subs[k] = _db.collection('gaa').doc(k).onSnapshot(snap => {
       if(!snap.exists) return;
       try {
         const fresh = JSON.parse(snap.data().d);
         const changed = JSON.stringify(_cache[k]) !== JSON.stringify(fresh);
         if(!changed) return;
+
+        // ── Détection de nouvelles signatures en attente ──────
+        if(k === 'sig_requests') {
+          const prev = _cache[k] || [];
+          const prevPending = new Set((Array.isArray(prev)?prev:[]).filter(r=>r.status==='pending').map(r=>r.id));
+          const newPending  = (Array.isArray(fresh)?fresh:[]).filter(r=>r.status==='pending'&&!prevPending.has(r.id));
+          newPending.forEach(r => {
+            // Notification visuelle dans l'app
+            notify(`✍️ Nouvelle demande de signature : "${r.template}" (${r.recipient})`, 'info', 6000);
+            // Notification navigateur (si autorisée)
+            if(Notification?.permission === 'granted') {
+              new Notification('✍️ Signature requise', {
+                body: `"${r.template}" pour ${r.recipient}`,
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="8" fill="%23006233"/></svg>',
+                tag: 'sig_'+r.id,
+              });
+            }
+            // Badge nav
+            updateSigBadge();
+          });
+        }
+
+        // ── Détection de nouvelles notifications ──────────────
+        if(k === 'notifications') {
+          const prev = Array.isArray(_cache[k]) ? _cache[k] : [];
+          const newNotifs = (Array.isArray(fresh)?fresh:[]).filter(n=>!n.lu && !prev.find(p=>p.id===n.id));
+          newNotifs.forEach(n => {
+            if(n.createdBy !== currentUser?.name) { // ne pas notifier ses propres actions
+              notify(`🔔 ${n.message||n.titre||'Nouvelle notification'}`, 'info', 5000);
+            }
+          });
+        }
+
         _cache[k] = fresh;
         localStorage.setItem('emb_'+k, JSON.stringify(fresh));
-        // Re-render si la page est visible
+
+        // Re-render la page active si concernée
         const page = document.querySelector('.page.active')?.id?.replace('page-','');
         const map = {
-          sig_requests: ()=>{ if(page==='signatures') renderSignatures(); },
+          sig_requests: ()=>{ if(page==='signatures') renderSignatures(); updateSigBadge(); },
           accounts:     ()=>{ if(page==='accounts')   renderAccounts(); },
           dossiers:     ()=>{ if(page==='dossiers')   renderDossiers?.(); },
-          notifications:()=>{ if(page==='notifications') renderNotifsList(); updateNotifBadge(); },
+          notifications:()=>{ updateNotifBadge(); if(page==='notifications') renderNotifsList(); },
           evenements:   ()=>{ if(page==='evenements') renderEvenements(); },
           invitations:  ()=>{ if(page==='evenements') renderEvenements(); },
         };
@@ -3521,7 +3557,11 @@ function startRealtimeSync() {
       } catch(e) {}
     }, e => console.warn('FB listen:', k, e.message));
   });
-  console.log('👂 Écoute temps réel activée');
+  // Demander permission notifications navigateur
+  if(Notification?.permission === 'default') {
+    Notification.requestPermission();
+  }
+  console.log('👂 Écoute temps réel activée — notifications push actives');
 }
 
 // ── UI : indicateur de statut ─────────────────────────────
@@ -3827,6 +3867,8 @@ async function doLogin() {
 
   currentUser = acc;
   DB.set('session', acc);
+  // Backup in sessionStorage for instant restore on refresh
+  try { sessionStorage.setItem('gaa_session', JSON.stringify({id:acc.id, ts:Date.now()})); } catch(e){}
   if(acc.mustChangePin) setTimeout(()=>{ notify('⚠️ Vous devez changer votre PIN','error'); openChangePassword(); }, 800);
   launchApp();
 }
@@ -3860,7 +3902,9 @@ function doRegister() {
 }
 
 function doLogout() {
-  currentUser=null;DB.set('session',null);
+  currentUser=null;
+  DB.set('session',null);
+  try { sessionStorage.removeItem('gaa_session'); } catch(e) {}
   document.getElementById('app').classList.remove('active');
   document.getElementById('loginScreen').classList.add('active');
   pinStates['loginPinPad']='';
@@ -5141,6 +5185,12 @@ function openContactModal(type, id=null) {
         <div class="form-full"><label class="lbl">Notes</label><textarea class="inp" id="cf_notes">${ec.notes||''}</textarea></div>
       </div>`;
   }
+  // Show document generation buttons for existing citizens
+  const btnP = document.getElementById('btnGenPasseport');
+  const btnC = document.getElementById('btnGenCNI');
+  if(btnP) btnP.style.display = (type==='user' && id) ? 'inline-flex' : 'none';
+  if(btnC) btnC.style.display = (type==='user' && id) ? 'inline-flex' : 'none';
+
   openModal('contactModal');
 }
 
@@ -10071,6 +10121,289 @@ function rsvpErrorHTML(msg) {
 }
 
 
+
+// ════════════════════════════════════════════════════════
+//  GÉNÉRATION PASSEPORT & CNI ALGÉRIENS
+// ════════════════════════════════════════════════════════
+
+function getCurrentCitoyen() {
+  // Lire les champs actuels du modal citoyen
+  const id = editingContact;
+  if(id) {
+    const c = DB.getArr('contacts_user').find(x=>x.id===id) || {};
+    return c;
+  }
+  return null;
+}
+
+function genPasseportAlgerien() {
+  const c = getCurrentCitoyen();
+  if(!c) { notify('⚠️ Ouvrez la fiche d\'un citoyen existant','error'); return; }
+
+  const amb = DB.get('settings_amb')||{};
+  const photo = c.photo || '';
+  const nom   = (c.nom||'').toUpperCase();
+  const prenom = (c.prenom||'').toUpperCase();
+  const ddn   = c.date_naissance || '—';
+  const lieu  = (c.lieu_naissance||'ALGÉRIE').toUpperCase();
+  const num   = c.passeport || ('A' + String(Math.floor(10000000+Math.random()*90000000)));
+  const sexe  = c.sexe==='F' ? 'F' : 'M';
+  const expire= (() => { const d=new Date(); d.setFullYear(d.getFullYear()+10); return d.toLocaleDateString('fr-FR'); })();
+  const today = new Date().toLocaleDateString('fr-FR');
+  const mrz1  = `P<DZA${nom.replace(/\s/g,'<').padEnd(39,'<')}`.slice(0,44);
+  const mrz2  = `${num.padEnd(9,'<')}0DZA${ddn.replace(/\//g,'').replace(/-/g,'').slice(2,8)||'000000'}${sexe}${expire.replace(/\//g,'').replace(/-/g,'').slice(2,8)||'000000'}${String(Math.floor(Math.random()*100000000000000)).padEnd(14,'0')}<`.slice(0,44);
+
+  const w = window.open('','_blank','width=800,height:600');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#e8e8e8;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;padding:20px}
+    .passport{width:125mm;background:#f0f2e8;border-radius:6px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);position:relative}
+    /* Couverture effet livret */
+    .passport-cover{background:linear-gradient(145deg,#1a4a2a,#006233,#1a4a2a);padding:20px 16px 16px;text-align:center;color:#fff;position:relative}
+    .passport-cover::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23ffffff08'/%3E%3C/svg%3E");background-size:20px}
+    .cover-republic{font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;color:rgba(201,168,76,.9);letter-spacing:.05em;margin-bottom:4px}
+    .cover-republic-fr{font-size:8.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:10px}
+    /* Emblème SVG */
+    .cover-emblem{width:56px;height:56px;margin:0 auto 8px}
+    .cover-title-ar{font-family:'Tajawal',sans-serif;font-size:18px;font-weight:700;color:var(--g,#C9A84C);margin-bottom:3px}
+    .cover-title-fr{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:2px}
+    .cover-title-en{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+    .cover-type{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.7);margin-top:8px}
+    /* Corps du passeport */
+    .passport-body{background:#fdfdf8;padding:14px}
+    /* Photo + données */
+    .data-row{display:flex;gap:14px;margin-bottom:12px}
+    .photo-box{width:86px;height:110px;border:2px solid #ccc;background:#f0f0f0;flex-shrink:0;overflow:hidden;border-radius:2px;display:flex;align-items:center;justify-content:center}
+    .photo-box img{width:100%;height:100%;object-fit:cover}
+    .photo-placeholder{font-size:40px;color:#ccc}
+    .data-fields{flex:1}
+    .field{margin-bottom:8px}
+    .field-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#888;margin-bottom:2px}
+    .field-val{font-size:12px;font-weight:700;color:#111;letter-spacing:.04em;border-bottom:1px solid #ddd;padding-bottom:3px}
+    /* Bande de données */
+    .data-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+    /* Numéro */
+    .passport-num{text-align:right;font-size:14px;font-weight:700;color:#006233;letter-spacing:.08em;margin-bottom:8px;font-family:'Courier Prime',monospace}
+    /* MRZ */
+    .mrz{background:#1a1a1a;padding:10px 12px;margin:10px -14px -14px;border-top:2px solid #006233}
+    .mrz-line{font-family:'Courier Prime',monospace;font-size:10.5px;letter-spacing:.12em;color:#00cc66;white-space:pre;line-height:1.8}
+    /* Filigrane */
+    .watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;opacity:.04;pointer-events:none;z-index:0;color:#006233}
+    /* Cachets */
+    .stamps{display:flex;gap:8px;margin:8px 0}
+    .stamp{width:45px;height:45px;border-radius:50%;border:2px solid #006233;display:flex;align-items:center;justify-content:center;font-size:8px;text-align:center;color:#006233;font-weight:700;line-height:1.2;transform:rotate(-15deg);opacity:.3}
+    /* Barre tricolore */
+    .tribar{display:flex;height:4px;margin:8px -14px}
+    .tribar div{flex:1}
+    .t1{background:#006233}.t2{background:#fff}.t3{background:#D21034}
+    @media print{body{background:#fff;padding:0}.passport{box-shadow:none}}
+  </style>
+  </head><body>
+  <div class="passport">
+    <!-- Couverture intégrée en haut -->
+    <div class="passport-cover">
+      <div class="cover-republic">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+      <div class="cover-republic-fr">République Algérienne Démocratique et Populaire</div>
+      <svg class="cover-emblem" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="46" r="34" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+        <circle cx="50" cy="46" r="24" fill="none" stroke="#C9A84C" stroke-width="2"/>
+        <ellipse cx="50" cy="46" rx="12" ry="34" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+        <line x1="16" y1="46" x2="84" y2="46" stroke="#C9A84C" stroke-width="1.5"/>
+        <line x1="50" y1="12" x2="50" y2="80" stroke="#C9A84C" stroke-width="1.5"/>
+        <rect x="26" y="86" width="48" height="4" rx="2" fill="#C9A84C"/>
+        <rect x="32" y="94" width="36" height="3" rx="1.5" fill="#C9A84C" opacity=".7"/>
+      </svg>
+      <div class="cover-title-ar">جواز السفر</div>
+      <div class="cover-title-fr">PASSEPORT</div>
+      <div class="cover-title-en">PASSPORT · PASAPORTE</div>
+      <div class="cover-type">Type P</div>
+    </div>
+
+    <!-- Corps -->
+    <div class="passport-body" style="position:relative">
+      <div class="watermark">🇩🇿</div>
+      <div class="tribar"><div class="t1"></div><div class="t2"></div><div class="t3"></div></div>
+      <div class="passport-num" style="margin-top:8px">N° ${num}</div>
+
+      <div class="data-row">
+        <div class="photo-box">
+          ${photo ? `<img src="${photo}" alt="Photo"/>` : '<div class="photo-placeholder">👤</div>'}
+        </div>
+        <div class="data-fields">
+          <div class="field"><div class="field-lbl">Nom / Surname / اللقب</div><div class="field-val">${nom}</div></div>
+          <div class="field"><div class="field-lbl">Prénom / Given names / الاسم</div><div class="field-val">${prenom}</div></div>
+          <div class="field"><div class="field-lbl">Nationalité</div><div class="field-val">ALGÉRIENNE</div></div>
+          <div class="field"><div class="field-lbl">Sexe</div><div class="field-val">${sexe==='F'?'F — Féminin':'M — Masculin'}</div></div>
+        </div>
+      </div>
+
+      <div class="data-grid">
+        <div class="field"><div class="field-lbl">Date de naissance</div><div class="field-val">${ddn}</div></div>
+        <div class="field"><div class="field-lbl">Lieu de naissance</div><div class="field-val">${lieu}</div></div>
+        <div class="field"><div class="field-lbl">Date de délivrance</div><div class="field-val">${today}</div></div>
+        <div class="field"><div class="field-lbl">Date d'expiration</div><div class="field-val" style="color:#D21034">${expire}</div></div>
+        <div class="field"><div class="field-lbl">Lieu de délivrance</div><div class="field-val">${amb.country||'STOCKHOLM'}</div></div>
+        <div class="field"><div class="field-lbl">Autorité</div><div class="field-val" style="font-size:10px">${amb.name||"AMBASSADE D'ALGÉRIE"}</div></div>
+      </div>
+
+      <div class="stamps">
+        <div class="stamp">ALGÉRIE</div>
+        <div class="stamp" style="transform:rotate(10deg)">VISA</div>
+        <div class="stamp" style="transform:rotate(-5deg)">DZA</div>
+      </div>
+
+      <!-- MRZ -->
+      <div class="mrz">
+        <div class="mrz-line">${mrz1}</div>
+        <div class="mrz-line">${mrz2}</div>
+      </div>
+    </div>
+  </div>
+  <script>setTimeout(()=>window.print(), 800);<\/script>
+  </body></html>`);
+  w.document.close();
+  notify('🛂 Passeport généré — impression en cours');
+}
+
+function genCNIAlgerienne() {
+  const c = getCurrentCitoyen();
+  if(!c) { notify('⚠️ Ouvrez la fiche d\'un citoyen existant','error'); return; }
+
+  const amb   = DB.get('settings_amb')||{};
+  const photo = c.photo || '';
+  const nom   = (c.nom||'').toUpperCase();
+  const prenom = (c.prenom||'').toUpperCase();
+  const ddn   = c.date_naissance || '—';
+  const lieu  = (c.lieu_naissance||'ALGÉRIE').toUpperCase();
+  const nin   = c.nin || ('10' + String(Math.floor(Math.random()*100000000000000)).slice(0,12));
+  const sexe  = c.sexe==='F' ? 'F' : 'M';
+  const today = new Date().toLocaleDateString('fr-FR');
+  const expire= (() => { const d=new Date(); d.setFullYear(d.getFullYear()+10); return d.toLocaleDateString('fr-FR'); })();
+
+  const w = window.open('','_blank','width=900,height:500');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#e8e8e8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;padding:20px;gap:20px}
+    h2{font-size:13px;color:#666;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+    .cni-wrap{display:flex;gap:20px;align-items:flex-start}
+    /* Carte recto */
+    .cni{width:85.6mm;height:54mm;border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.25);position:relative;flex-shrink:0}
+    .cni-front{background:linear-gradient(135deg,#f8f6ee 0%,#ebe8d8 40%,#f0ede0 100%);width:100%;height:100%;padding:10px;position:relative}
+    .cni-front::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='15' cy='15' r='1.5' fill='%23006233' fill-opacity='.05'/%3E%3C/svg%3E");background-size:30px}
+    .cni-header{display:flex;align-items:center;gap:6px;margin-bottom:6px;border-bottom:2px solid #006233;padding-bottom:5px}
+    .cni-emblem{width:28px;height:28px;flex-shrink:0}
+    .cni-header-text .rep{font-family:'Tajawal',sans-serif;font-size:7px;font-weight:700;color:#006233;line-height:1.3}
+    .cni-header-text .rep-fr{font-size:6.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#444}
+    .cni-header-text .type{font-size:8px;font-weight:700;letter-spacing:.08em;color:#006233;text-transform:uppercase}
+    .cni-body{display:flex;gap:8px;position:relative;z-index:1}
+    .cni-photo{width:38mm;height:44mm;border:1.5px solid #ccc;background:#f5f5f5;overflow:hidden;flex-shrink:0;border-radius:2px;display:flex;align-items:center;justify-content:center}
+    .cni-photo img{width:100%;height:100%;object-fit:cover}
+    .cni-photo-ph{font-size:28px;color:#ccc}
+    .cni-data{flex:1}
+    .cf{margin-bottom:4px}
+    .cf-l{font-size:5.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:1px}
+    .cf-v{font-size:8px;font-weight:700;color:#111;border-bottom:.5px solid #ddd;padding-bottom:1px;letter-spacing:.02em}
+    .cni-num{position:absolute;bottom:6px;right:10px;font-family:'Courier Prime',monospace;font-size:9px;font-weight:700;color:#006233;letter-spacing:.06em}
+    /* Flags stripe */
+    .flag-stripe{display:flex;height:3px;width:100%;margin-bottom:6px}
+    .flag-stripe div{flex:1}
+    .fs-g{background:#006233}.fs-w{background:#fff}.fs-r{background:#D21034}
+    /* Verso */
+    .cni-back{background:linear-gradient(135deg,#006233 0%,#004d28 100%);width:100%;height:100%;padding:10px;color:#fff;position:relative}
+    .cni-back::before{content:'';position:absolute;inset:0;opacity:.08;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='18' fill='none' stroke='%23ffffff' stroke-width='.5'/%3E%3C/svg%3E");background-size:40px}
+    .back-title{font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(201,168,76,.9);text-transform:uppercase;margin-bottom:6px;text-align:center}
+    .back-nin{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:.12em;text-align:center;padding:6px;background:rgba(255,255,255,.1);border-radius:4px;margin-bottom:8px}
+    .back-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .bf{margin-bottom:4px}
+    .bf-l{font-size:6px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.5);margin-bottom:2px}
+    .bf-v{font-size:8px;font-weight:600;color:#fff}
+    .back-chip{width:28px;height:22px;background:linear-gradient(135deg,#C9A84C,#d4a832);border-radius:3px;margin-bottom:8px;display:flex;align-items:center;justify-content:center}
+    .back-chip-lines{display:flex;flex-direction:column;gap:2px}
+    .back-chip-line{height:1.5px;background:rgba(0,0,0,.2);border-radius:1px}
+    @media print{body{background:#fff;padding:0}.cni{box-shadow:none}}
+  </style>
+  </head><body>
+  <h2>Carte Nationale d'Identité Biométrique Électronique — CNIBE</h2>
+  <div class="cni-wrap">
+    <!-- RECTO -->
+    <div>
+      <div style="font-size:11px;color:#888;margin-bottom:6px;text-align:center">RECTO</div>
+      <div class="cni">
+        <div class="cni-front">
+          <div class="flag-stripe"><div class="fs-g"></div><div class="fs-w"></div><div class="fs-r"></div></div>
+          <div class="cni-header">
+            <svg class="cni-emblem" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="46" r="34" fill="none" stroke="#006233" stroke-width="3"/>
+              <circle cx="50" cy="46" r="22" fill="none" stroke="#006233" stroke-width="2"/>
+              <ellipse cx="50" cy="46" rx="11" ry="34" fill="none" stroke="#006233" stroke-width="1.5"/>
+              <line x1="16" y1="46" x2="84" y2="46" stroke="#006233" stroke-width="1.5"/>
+              <line x1="50" y1="12" x2="50" y2="80" stroke="#006233" stroke-width="1.5"/>
+              <rect x="28" y="86" width="44" height="4" rx="2" fill="#006233"/>
+            </svg>
+            <div class="cni-header-text">
+              <div class="rep">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+              <div class="rep-fr">République Algérienne Démocratique et Populaire</div>
+              <div class="type">Carte Nationale d'Identité — بطاقة التعريف الوطنية</div>
+            </div>
+          </div>
+          <div class="cni-body">
+            <div class="cni-photo">
+              ${photo ? `<img src="${photo}" alt="Photo"/>` : '<div class="cni-photo-ph">👤</div>'}
+            </div>
+            <div class="cni-data">
+              <div class="cf"><div class="cf-l">Nom / اللقب</div><div class="cf-v">${nom}</div></div>
+              <div class="cf"><div class="cf-l">Prénom / الاسم</div><div class="cf-v">${prenom}</div></div>
+              <div class="cf"><div class="cf-l">Date de naissance</div><div class="cf-v">${ddn}</div></div>
+              <div class="cf"><div class="cf-l">Lieu de naissance</div><div class="cf-v">${lieu}</div></div>
+              <div class="cf"><div class="cf-l">Sexe / الجنس</div><div class="cf-v">${sexe==='F'?'F — Féminin':'M — Masculin'}</div></div>
+              <div class="cf"><div class="cf-l">Nationalité</div><div class="cf-v">ALGÉRIENNE</div></div>
+              <div class="cf"><div class="cf-l">Expire le</div><div class="cf-v" style="color:#D21034">${expire}</div></div>
+            </div>
+          </div>
+          <div class="cni-num">DZA-${nin.slice(0,12)}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSO -->
+    <div>
+      <div style="font-size:11px;color:#888;margin-bottom:6px;text-align:center">VERSO</div>
+      <div class="cni">
+        <div class="cni-back">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative;z-index:1">
+            <div class="back-chip"><div class="back-chip-lines"><div class="back-chip-line"></div><div class="back-chip-line"></div><div class="back-chip-line"></div></div></div>
+            <div class="back-title">Numéro d'Identification Nationale</div>
+          </div>
+          <div class="back-nin" style="position:relative;z-index:1">${nin}</div>
+          <div class="back-grid" style="position:relative;z-index:1">
+            <div class="bf"><div class="bf-l">Délivrée le</div><div class="bf-v">${today}</div></div>
+            <div class="bf"><div class="bf-l">Expire le</div><div class="bf-v">${expire}</div></div>
+            <div class="bf"><div class="bf-l">Délivrée par</div><div class="bf-v" style="font-size:7px">${amb.name||"AMBASSADE D'ALGÉRIE"}</div></div>
+            <div class="bf"><div class="bf-l">Wilaya / Code</div><div class="bf-v">${(c.lieu_naissance||'ALGER').split(' ')[0].toUpperCase()}</div></div>
+          </div>
+          <div style="position:absolute;bottom:8px;right:10px;z-index:1">
+            <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" opacity=".4">
+              <circle cx="50" cy="46" r="34" fill="none" stroke="#C9A84C" stroke-width="3"/>
+              <ellipse cx="50" cy="46" rx="12" ry="34" fill="none" stroke="#C9A84C" stroke-width="2"/>
+              <line x1="16" y1="46" x2="84" y2="46" stroke="#C9A84C" stroke-width="2"/>
+              <line x1="50" y1="12" x2="50" y2="80" stroke="#C9A84C" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>setTimeout(()=>window.print(), 800);<\/script>
+  </body></html>`);
+  w.document.close();
+  notify('🪪 CNI générée — impression en cours');
+}
+
+
 // ════════════════════════════════════════════════════════
 //  USER AVATAR MENU
 // ════════════════════════════════════════════════════════
@@ -10592,7 +10925,28 @@ function filterTemplatesLang(lang, btn) {
 //  INIT
 // ════════════════════════════════════════════════════════
 function init() {
-  // ── RSVP / RETRAIT public page — bypass login ENTIRELY ─────────────
+  // ── Restore session instantanément depuis sessionStorage (avant Firebase) ──
+  // Ceci évite le flash de la page de login au refresh
+  try {
+    const ss = sessionStorage.getItem('gaa_session');
+    if(ss) {
+      const {id, ts} = JSON.parse(ss);
+      // Valide si moins de 8 heures
+      if(Date.now() - ts < 8 * 3600 * 1000) {
+        const localAccounts = DB.getArr('accounts');
+        const acc = localAccounts.find(a=>a.id===id&&a.active);
+        if(acc) {
+          currentUser = acc;
+          launchApp();
+          // Sync Firebase en arrière-plan
+          bootFirebase();
+          return;
+        }
+      }
+    }
+  } catch(e) {}
+
+  // ── RSVP / RETRAIT public page — bypass login ─────────
   const hash = window.location.hash;
   if(hash.includes('#rsvp=') || hash.startsWith('#rsvp=')) {
     const raw = decodeURIComponent(hash.split('rsvp=')[1]?.split('&')[0]||'');
@@ -10643,9 +10997,22 @@ function init() {
       if(acc.mustChangePin) setTimeout(()=>{ notify('⚠️ Vous devez changer votre PIN','error'); openChangePassword(); }, 800);
       return;
     }
+    // Compte pas trouvé localement — attendre la sync Firebase
+    // bootFirebase() appelle syncFromFirebase() qui recharge les accounts
+    // On tente de re-connecter après sync
+    bootFirebase().then(()=>{
+      const accounts2 = DB.getArr('accounts');
+      const acc2 = accounts2.find(a=>a.id===session.id&&a.active);
+      if(acc2) {
+        currentUser=acc2;
+        launchApp();
+        if(acc2.mustChangePin) setTimeout(()=>{ notify('⚠️ Vous devez changer votre PIN','error'); openChangePassword(); }, 800);
+      } else {
+        checkFirstRun();
+      }
+    });
+    return; // Attendre la sync
   }
-  // Session non trouvée localement — attendre Firebase puis réessayer
-  // (bootFirebase ci-dessus appellera checkFirstRun qui gère l'affichage)
 
   // Load EmailJS config fields if saved
   const ejsCfg = DB.get('settings_emailjs');
