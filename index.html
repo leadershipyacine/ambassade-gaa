@@ -930,11 +930,13 @@ async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pw    = document.getElementById('login-password').value;
   try {
+    console.log('🔥 Attempting login for:', email);
     showToast('Connexion en cours…', 'success');
     await signInWithEmailAndPassword(auth, email, pw);
-    // onAuthStateChanged takes over
+    console.log('🔥 Login OK — waiting for onAuthStateChanged');
   } catch(e) {
-    showToast('Email ou mot de passe incorrect', 'error');
+    console.error('🔥 Login error:', e.code, e.message);
+    showToast('Erreur: ' + e.message, 'error');
   }
 }
 
@@ -946,9 +948,11 @@ async function handleRegister() {
   const role  = document.getElementById('reg-role').value;
   if (!fn || !email || !pw) { showToast('Veuillez remplir les champs requis', 'error'); return; }
   try {
+    console.log('🔥 Creating user:', email);
     showToast('Création du compte…', 'success');
     const cred = await createUserWithEmailAndPassword(auth, email, pw);
     const uid  = cred.user.uid;
+    console.log('🔥 User created, uid:', uid);
     const code = 'FAM-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
     const familyData = {
       name: 'Famille ' + (ln || fn), code,
@@ -957,11 +961,14 @@ async function handleRegister() {
       biens: [], docs: [], alerts: [], enfants: [], vacances: [],
       budget: { monthly: 3000 }
     };
+    console.log('🔥 Writing family to Firestore, code:', code);
     await setDoc(doc(db, 'families', code), familyData);
+    console.log('🔥 Family written OK');
     await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
-    // onAuthStateChanged will fire and call launchApp automatically
+    console.log('🔥 User doc written OK — waiting for onAuthStateChanged');
     showToast('Famille créée ! 🏠 Code: ' + code, 'success');
   } catch(e) {
+    console.error('🔥 Register error:', e.code, e.message);
     if (e.code === 'auth/email-already-in-use') {
       showToast('Email déjà utilisé. Connectez-vous à la place.', 'error');
     } else {
@@ -1011,9 +1018,9 @@ async function logout() {
 
 // ─── Single source of truth: auth state drives everything ───
 onAuthStateChanged(auth, async (user) => {
+  console.log('🔥 onAuthStateChanged fired. User:', user ? user.email : 'null');
   if (user) {
     try {
-      // Show loading indicator
       document.getElementById('auth-screen').style.display='none';
       document.body.insertAdjacentHTML('beforeend',
         '<div id="loading-screen" style="position:fixed;inset:0;background:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;">' +
@@ -1022,44 +1029,46 @@ onAuthStateChanged(auth, async (user) => {
         '<div style="font-size:14px;opacity:0.7;margin-top:8px">Chargement de votre foyer…</div>' +
         '</div>'
       );
+      console.log('🔥 Fetching user doc for uid:', user.uid);
       const userSnap = await getDoc(doc(db, 'users', user.uid));
+      console.log('🔥 User doc exists:', userSnap.exists(), userSnap.data());
       if (userSnap.exists()) {
         currentUser = { uid: user.uid, ...userSnap.data() };
+        console.log('🔥 Loading family:', currentUser.familyCode);
         await loadFamilyRealtime(currentUser.familyCode);
-        // loadFamilyRealtime's onSnapshot will set currentFamily then we launch
-        // Give it a moment to receive first snapshot
         setTimeout(() => {
           const ls = document.getElementById('loading-screen');
           if (ls) ls.remove();
           if (currentFamily) {
+            console.log('🔥 Family loaded, launching app');
             launchApp();
           } else {
-            // family not loaded yet, wait for snapshot
             const wait = setInterval(() => {
               if (currentFamily) {
                 clearInterval(wait);
                 const ls2 = document.getElementById('loading-screen');
                 if (ls2) ls2.remove();
+                console.log('🔥 Family loaded (delayed), launching app');
                 launchApp();
               }
             }, 200);
           }
         }, 800);
       } else {
-        // User exists in Auth but not Firestore (edge case) — sign them out
+        console.warn('🔥 No user doc in Firestore for uid:', user.uid);
         const ls = document.getElementById('loading-screen');
         if (ls) ls.remove();
         await signOut(auth);
         document.getElementById('auth-screen').style.display='flex';
       }
     } catch(e) {
-      console.error('Auth state error:', e);
+      console.error('🔥 Auth state error:', e);
       const ls = document.getElementById('loading-screen');
       if (ls) ls.remove();
       document.getElementById('auth-screen').style.display='flex';
     }
   } else {
-    // Not logged in
+    console.log('🔥 No user logged in');
     const ls = document.getElementById('loading-screen');
     if (ls) ls.remove();
     document.getElementById('auth-screen').style.display='flex';
