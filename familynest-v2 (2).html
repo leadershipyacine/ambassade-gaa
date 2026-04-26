@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FamilyNest v2 — Votre foyer numérique</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#F7F3EE;--warm:#E8DDD0;--terracotta:#C4714A;--rust:#A0522D;
+  --forest:#3D5A47;--sage:#7A9E87;--gold:#C9A96E;--dark:#1E1B18;
+  --mid:#5A504A;--light:#9E9089;--white:#FDFAF7;--danger:#C0392B;
+  --success:#27AE60;--warning:#E67E22;--info:#2980B9;
+  --radius:16px;--shadow:0 4px 24px rgba(30,27,24,0.10);--shadow-lg:0 12px 48px rgba(30,27,24,0.16);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;overflow-x:hidden;}
+
+/* AUTH */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--forest) 0%,#2A3D32 50%,var(--dark) 100%);position:relative;overflow:hidden;}
+#auth-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(201,169,110,0.15) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(196,113,74,0.12) 0%,transparent 60%);}
+.auth-card{background:var(--white);border-radius:24px;padding:44px;width:440px;box-shadow:var(--shadow-lg);position:relative;z-index:1;animation:slideUp 0.5s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.auth-logo .nest-icon{font-size:44px;display:block;margin-bottom:6px;}
+.auth-logo h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--forest);font-weight:900;}
+.auth-logo p{color:var(--light);font-size:13px;margin-top:4px;}
+.auth-tabs{display:flex;background:var(--cream);border-radius:12px;padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:10px;text-align:center;border:none;background:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--light);transition:all 0.2s;}
+.auth-tab.active{background:var(--white);color:var(--forest);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+
+/* SHARE CODE BOX */
+.share-code-box{background:linear-gradient(135deg,var(--forest),#2A3D32);border-radius:14px;padding:18px;margin:14px 0;color:white;text-align:center;}
+.share-code-box .sc-label{font-size:11px;opacity:0.7;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.share-code-box .sc-value{font-size:28px;font-weight:900;letter-spacing:6px;font-family:monospace;color:var(--gold);}
+.share-code-box .sc-sub{font-size:12px;opacity:0.6;margin-top:6px;}
+.share-btns{display:flex;gap:8px;margin-top:10px;justify-content:center;}
+
+/* FORMS */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:2px solid var(--warm);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dark);background:var(--white);transition:border-color 0.2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--forest);}
+.form-group textarea{resize:vertical;}
+.checkbox-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--warm);border-radius:10px;cursor:pointer;transition:border-color 0.2s;}
+.checkbox-row:hover{border-color:var(--sage);}
+.checkbox-row.checked{border-color:var(--forest);background:rgba(61,90,71,0.05);}
+.checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--forest);cursor:pointer;}
+.checkbox-row label{font-size:14px;color:var(--dark);cursor:pointer;margin:0;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 22px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn-primary{background:var(--forest);color:white;width:100%;}
+.btn-primary:hover{background:#2A3D32;transform:translateY(-1px);}
+.btn-secondary{background:var(--warm);color:var(--dark);}
+.btn-secondary:hover{background:#DDD0C0;}
+.btn-danger{background:var(--danger);color:white;}
+.btn-gold{background:var(--gold);color:white;}
+.btn-info{background:var(--info);color:white;}
+.btn-success{background:var(--success);color:white;}
+.btn-sm{padding:7px 14px;font-size:13px;border-radius:8px;}
+.btn-xs{padding:5px 10px;font-size:11px;border-radius:6px;}
+.divider{text-align:center;color:var(--light);font-size:13px;margin:14px 0;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:calc(50% - 30px);height:1px;background:var(--warm);}
+.divider::before{left:0;}.divider::after{right:0;}
+
+/* CURRENCY SELECTOR */
+.currency-bar{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.currency-btn{padding:6px 14px;border:2px solid var(--warm);border-radius:20px;background:var(--white);cursor:pointer;font-size:13px;font-weight:600;color:var(--mid);transition:all 0.2s;}
+.currency-btn.active{border-color:var(--forest);background:var(--forest);color:white;}
+
+/* APP LAYOUT */
+#app{display:none;flex-direction:row;min-height:100vh;}
+.sidebar{width:250px;background:var(--dark);color:white;display:flex;flex-direction:column;padding:0;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
+.sidebar-header{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--gold);display:flex;align-items:center;gap:7px;}
+.family-badge{background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-top:12px;}
+.family-badge .badge-name{font-size:13px;font-weight:600;color:white;}
+.family-badge .badge-code{font-size:11px;color:var(--gold);font-family:monospace;letter-spacing:2px;}
+.family-badge .badge-members{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
+.avatar{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;border:2px solid var(--dark);}
+.nav-section{padding:12px 12px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.3);}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;margin:2px 7px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;transition:all 0.15s;}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:white;}
+.nav-item.active{background:var(--forest);color:white;}
+.nav-icon{font-size:16px;width:20px;text-align:center;}
+.badge-count{background:var(--terracotta);color:white;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto;}
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,0.08);}
+.main-content{margin-left:250px;flex:1;min-height:100vh;}
+.topbar{background:var(--white);border-bottom:1px solid var(--warm);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar h2{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.content-area{padding:24px 28px;}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:8px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;border-left:4px solid transparent;}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.stat-info .label{font-size:12px;color:var(--light);font-weight:500;}
+.stat-info .value{font-size:21px;font-weight:700;color:var(--dark);font-family:'Playfair Display',serif;}
+.alert-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;margin-bottom:7px;font-size:13px;}
+.alert-urgent{background:#FEF2F2;border-left:3px solid var(--danger);}
+.alert-warn{background:#FFF7ED;border-left:3px solid var(--warning);}
+.alert-ok{background:#F0FDF4;border-left:3px solid var(--success);}
+.alert-info{background:#EFF6FF;border-left:3px solid var(--info);}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:var(--cream);padding:9px 13px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--light);}
+tbody tr{border-bottom:1px solid var(--cream);transition:background 0.15s;}
+tbody tr:hover{background:var(--cream);}
+tbody td{padding:11px 13px;color:var(--dark);}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.tag-danger{background:#FEE2E2;color:var(--danger);}
+.tag-warn{background:#FEF3C7;color:#92400E;}
+.tag-success{background:#D1FAE5;color:#065F46;}
+.tag-info{background:#DBEAFE;color:#1E40AF;}
+.tag-neutral{background:var(--cream);color:var(--mid);}
+.tag-forest{background:rgba(61,90,71,0.15);color:var(--forest);}
+.tag-monthly{background:rgba(201,169,110,0.2);color:#92400E;}
+.member-card{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);text-align:center;transition:transform 0.2s;}
+.member-card:hover{transform:translateY(-2px);}
+.member-avatar-lg{width:68px;height:68px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:white;box-shadow:0 4px 16px rgba(0,0,0,0.15);}
+.member-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;margin-bottom:2px;}
+.member-role{font-size:12px;color:var(--light);margin-bottom:10px;}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-header{text-align:center;font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;padding:7px 3px;}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:5px 3px;border-radius:8px;font-size:12px;cursor:pointer;transition:background 0.15s;min-height:46px;position:relative;}
+.cal-day:hover{background:var(--cream);}
+.cal-day.today{background:var(--forest);color:white;font-weight:700;}
+.cal-day.other-month{color:var(--warm);}
+.cal-day.has-event::after{content:'';width:4px;height:4px;background:var(--terracotta);border-radius:50%;position:absolute;bottom:4px;}
+.cal-day.today.has-event::after{background:var(--gold);}
+.modal-overlay{position:fixed;inset:0;background:rgba(30,27,24,0.5);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:20px;padding:28px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp 0.25s ease;}
+.modal-wide{max-width:700px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.modal-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;}
+.close-btn{width:32px;height:32px;border-radius:8px;border:none;background:var(--cream);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;color:var(--mid);transition:background 0.15s;}
+.close-btn:hover{background:var(--warm);}
+.section{display:none;}
+.section.active{display:block;}
+.expense-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--cream);}
+.expense-row:last-child{border-bottom:none;}
+.expense-cat{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.progress-bar{height:8px;background:var(--warm);border-radius:4px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.5s ease;}
+.input-row{display:flex;gap:10px;}
+.input-row .form-group{flex:1;}
+.doc-card{display:flex;align-items:flex-start;gap:13px;padding:14px;border-radius:12px;border:2px solid var(--warm);margin-bottom:10px;transition:border-color 0.15s;}
+.doc-card:hover{border-color:var(--sage);}
+.doc-card.expiring-soon{border-color:var(--warning);}
+.doc-card.expired{border-color:var(--danger);}
+.doc-icon{width:42px;height:42px;border-radius:10px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.doc-info{flex:1;}
+.doc-name{font-weight:600;font-size:14px;}
+.doc-meta{font-size:12px;color:var(--light);}
+.vacation-card{border-radius:16px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.vacation-header{padding:18px 22px;color:white;background:linear-gradient(135deg,var(--forest),#2A3D32);display:flex;justify-content:space-between;align-items:flex-start;}
+.vacation-body{background:var(--white);padding:18px 22px;}
+#toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:9px;}
+.toast{background:var(--dark);color:white;padding:13px 17px;border-radius:12px;font-size:13px;display:flex;align-items:center;gap:9px;box-shadow:var(--shadow-lg);animation:slideIn 0.3s ease;max-width:320px;}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.toast.success{border-left:4px solid var(--success);}
+.toast.warning{border-left:4px solid var(--warning);}
+.toast.error{border-left:4px solid var(--danger);}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--warm);border-radius:3px;}
+.child-card{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.child-avatar{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:8px;}
+
+/* SIMULATION CREDIT */
+.credit-result-box{border-radius:16px;padding:22px;margin-top:18px;text-align:center;animation:slideUp 0.3s ease;}
+.credit-result-box.green{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border:2px solid var(--success);}
+.credit-result-box.orange{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:2px solid var(--warning);}
+.credit-result-box.red{background:linear-gradient(135deg,#FEE2E2,#FECACA);border:2px solid var(--danger);}
+.credit-result-box .result-icon{font-size:44px;margin-bottom:10px;}
+.credit-result-box .result-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+.credit-result-box .result-msg{font-size:14px;line-height:1.6;}
+.credit-result-box .result-advice{margin-top:12px;padding:12px;background:rgba(255,255,255,0.6);border-radius:10px;font-size:13px;font-weight:500;}
+
+/* NOTIFICATION CHECKBOXES */
+.notif-row{display:flex;gap:10px;margin-top:8px;}
+.notif-opt{display:flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid var(--warm);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--mid);transition:all 0.2s;flex:1;justify-content:center;}
+.notif-opt.active{border-color:var(--forest);background:rgba(61,90,71,0.08);color:var(--forest);}
+.notif-opt input{display:none;}
+
+/* VACATION TIPS */
+.tip-box{background:linear-gradient(135deg,rgba(61,90,71,0.07),rgba(61,90,71,0.03));border:1px solid rgba(61,90,71,0.2);border-radius:12px;padding:16px;margin-top:14px;}
+.tip-box .tip-title{font-weight:700;font-size:14px;color:var(--forest);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.tip-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:13px;}
+.tip-item:last-child{margin-bottom:0;}
+
+/* BIEN TYPES */
+.bien-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.bien-type-btn{padding:10px 6px;border:2px solid var(--warm);border-radius:10px;background:var(--white);cursor:pointer;text-align:center;font-size:11px;font-weight:600;color:var(--mid);transition:all 0.2s;}
+.bien-type-btn:hover{border-color:var(--sage);}
+.bien-type-btn.active{border-color:var(--forest);background:rgba(61,90,71,0.08);color:var(--forest);}
+.bien-type-btn .bt-icon{font-size:22px;display:block;margin-bottom:4px;}
+
+/* MONTHLY CHARGE INDICATOR */
+.monthly-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(201,169,110,0.2);color:#92400E;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.curr-pick-item{padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;color:var(--dark);transition:background 0.15s;}
+.curr-pick-item:hover{background:var(--cream);}
+
+/* MISC */
+.text-danger{color:var(--danger);}
+.text-success{color:var(--success);}
+.text-warn{color:var(--warning);}
+.text-light{color:var(--light);}
+.text-gold{color:var(--gold);}
+.fw-600{font-weight:600;}
+.fw-700{font-weight:700;}
+.fs-12{font-size:12px;}
+.fs-13{font-size:13px;}
+.mb-4{margin-bottom:4px;}
+.mb-8{margin-bottom:8px;}
+.mb-12{margin-bottom:12px;}
+.mb-16{margin-bottom:16px;}
+.mb-20{margin-bottom:20px;}
+.mt-8{margin-top:8px;}
+.mt-12{margin-top:12px;}
+.flex{display:flex;}
+.flex-center{display:flex;align-items:center;}
+.flex-between{display:flex;align-items:center;justify-content:space-between;}
+.gap-8{gap:8px;}
+.gap-10{gap:10px;}
+.gap-12{gap:12px;}
+.w-full{width:100%;}
+hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
+@media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ AUTH SCREEN ══════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="nest-icon">🏠</span>
+      <h1>FamilyNest</h1>
+      <p>Votre foyer numérique, toujours organisé</p>
+    </div>
+
+    <!-- CURRENCY SELECTOR ON AUTH -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;">Devise</div>
+      <div class="currency-bar" id="auth-currency">
+        <div class="currency-btn active" onclick="setCurrency('EUR','€')">€ Euro</div>
+        <div class="currency-btn" onclick="setCurrency('USD','$')">$ Dollar</div>
+        <div class="currency-btn" onclick="setCurrency('DZD','دج')">دج Dinar</div>
+        <div class="currency-btn" onclick="setCurrency('SEK','kr')">kr Couronne</div>
+        <div class="currency-btn" onclick="setCurrency('MAD','درهم')">درهم Dirham</div>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Connexion</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Créer un compte</button>
+      <button class="auth-tab" onclick="switchAuthTab('join')">Rejoindre</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="votre@email.com" value="papa@famille.com">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="login-password" placeholder="••••••••" value="1234">
+      </div>
+      <button class="btn btn-primary" onclick="handleLogin()">🔑 Se connecter</button>
+      <div class="divider">pas encore de compte ?</div>
+      <button class="btn btn-secondary" style="width:100%" onclick="switchAuthTab('register')">Créer un compte famille</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="register-form" style="display:none">
+      <div class="input-row">
+        <div class="form-group"><label>Prénom</label><input type="text" id="reg-firstname" placeholder="Jean"></div>
+        <div class="form-group"><label>Nom</label><input type="text" id="reg-lastname" placeholder="Dupont"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="votre@email.com"></div>
+      <div class="form-group"><label>Mot de passe</label><input type="password" id="reg-password" placeholder="Choisir un mot de passe"></div>
+      <div class="form-group">
+        <label>Rôle dans la famille</label>
+        <select id="reg-role"><option>Papa</option><option>Maman</option><option>Grand-père</option><option>Grand-mère</option><option>Tuteur</option><option>Autre</option></select>
+      </div>
+      <div style="background:var(--cream);border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:var(--mid);">
+        ℹ️ En créant un compte, un <strong>code famille unique</strong> sera généré. Partagez-le avec les autres membres pour qu'ils rejoignent votre foyer.
+      </div>
+      <button class="btn btn-primary" onclick="handleRegister()">🏡 Créer ma famille</button>
+    </div>
+
+    <!-- JOIN FAMILY -->
+    <div id="join-form" style="display:none">
+      <div style="text-align:center;margin-bottom:18px;font-size:14px;color:var(--mid);">
+        Un membre de votre famille a déjà créé un compte ? Entrez le code famille pour rejoindre et accéder à toutes les données déjà enregistrées.
+      </div>
+      <div class="input-row">
+        <div class="form-group"><label>Prénom</label><input type="text" id="join-firstname" placeholder="Marie"></div>
+        <div class="form-group"><label>Nom</label><input type="text" id="join-lastname" placeholder="Dupont"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="join-email" placeholder="votre@email.com"></div>
+      <div class="form-group"><label>Mot de passe</label><input type="password" id="join-password" placeholder="Choisir un mot de passe"></div>
+      <div class="form-group">
+        <label>Rôle dans la famille</label>
+        <select id="join-role"><option>Maman</option><option>Papa</option><option>Grand-père</option><option>Grand-mère</option><option>Tuteur</option><option>Autre</option></select>
+      </div>
+      <div class="form-group">
+        <label>🔑 Code famille (fourni par le créateur)</label>
+        <input type="text" id="join-code" placeholder="FAM-2024-XXXX" maxlength="14" style="letter-spacing:3px;text-transform:uppercase;font-size:18px;font-weight:700;text-align:center;">
+      </div>
+      <button class="btn btn-primary" onclick="handleJoin()">👨‍👩‍👧‍👦 Rejoindre la famille</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">🏠 FamilyNest</div>
+      <div class="family-badge">
+        <div class="badge-name" id="sidebar-family-name">Famille Dupont</div>
+        <div class="badge-code" id="sidebar-family-code">FAM-2024-XKQR</div>
+        <div class="badge-members" id="sidebar-members"></div>
+      </div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active" onclick="showSection('dashboard')"><span class="nav-icon">📊</span>Tableau de bord</div>
+    <div class="nav-item" onclick="showSection('membres')"><span class="nav-icon">👨‍👩‍👧‍👦</span>Membres</div>
+    <div class="nav-item" onclick="showSection('agenda')"><span class="nav-icon">📅</span>Agenda</div>
+    <div class="nav-section">Finances</div>
+    <div class="nav-item" onclick="showSection('depenses')"><span class="nav-icon">💶</span>Dépenses & Charges</div>
+    <div class="nav-item" onclick="showSection('factures')"><span class="nav-icon">🧾</span>Factures<span class="badge-count" id="badge-factures">0</span></div>
+    <div class="nav-item" onclick="showSection('biens')"><span class="nav-icon">🏠</span>Biens & Possessions</div>
+    <div class="nav-item" onclick="showSection('simulation')"><span class="nav-icon">🧮</span>Simulation crédit</div>
+    <div class="nav-section">Documents</div>
+    <div class="nav-item" onclick="showSection('documents')"><span class="nav-icon">📄</span>Documents & IDs<span class="badge-count" id="badge-docs">0</span></div>
+    <div class="nav-item" onclick="showSection('alertes')"><span class="nav-icon">🔔</span>Alertes<span class="badge-count" id="badge-alertes">0</span></div>
+    <div class="nav-section">Famille</div>
+    <div class="nav-item" onclick="showSection('enfants')"><span class="nav-icon">🎒</span>Enfants & École</div>
+    <div class="nav-item" onclick="showSection('vacances')"><span class="nav-icon">✈️</span>Vacances</div>
+    <div class="sidebar-footer">
+      <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:8px;" id="sidebar-user"></div>
+      <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:10px;" id="sidebar-currency-info">€ Euro</div>
+      <button class="btn btn-secondary btn-sm" onclick="logout()" style="width:100%">🚪 Déconnexion</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <div class="topbar">
+      <h2 id="page-title">Tableau de bord</h2>
+      <div class="topbar-actions">
+        <span id="topbar-date" style="font-size:12px;color:var(--light);"></span>
+        <!-- CURRENCY PICKER (in-app) -->
+        <div style="position:relative;" id="currency-picker-wrap">
+          <button id="topbar-currency" onclick="toggleCurrencyPicker()" style="font-size:13px;font-weight:700;color:var(--forest);background:rgba(61,90,71,0.1);padding:5px 14px;border-radius:20px;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <span id="curr-flag">€</span> <span id="curr-label">EUR</span> <span style="font-size:10px;opacity:0.6;">▼</span>
+          </button>
+          <div id="currency-dropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--white);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;min-width:180px;z-index:200;border:1px solid var(--warm);">
+            <div style="font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:0.6px;padding:4px 8px 8px;">Choisir la devise</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('EUR','€','Euro')">€ &nbsp; Euro (EUR)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('USD','$','Dollar')">$ &nbsp; Dollar (USD)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('DZD','دج','Dinar algérien')">دج &nbsp; Dinar (DZD)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('MAD','درهم','Dirham marocain')">درهم &nbsp; Dirham (MAD)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('TND','DT','Dinar tunisien')">DT &nbsp; Dinar TN (TND)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('SEK','kr','Couronne suédoise')">kr &nbsp; Couronne (SEK)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('GBP','£','Livre sterling')">£ &nbsp; Livre (GBP)</div>
+            <div class="curr-pick-item" onclick="setCurrencyInApp('CAD','CA$','Dollar canadien')">CA$ &nbsp; Dollar CA (CAD)</div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Ajouter</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- DASHBOARD -->
+      <div class="section active" id="section-dashboard">
+        <div class="grid-4 mb-20" id="stat-cards"></div>
+        <div class="grid-2">
+          <div>
+            <div class="card"><div class="card-header"><div class="card-title">🔔 Alertes prioritaires</div><button class="btn btn-secondary btn-sm" onclick="showSection('alertes')">Voir tout</button></div><div id="dash-alerts"></div></div>
+            <div class="card"><div class="card-header"><div class="card-title">📅 Événements à venir</div></div><div id="dash-events"></div></div>
+          </div>
+          <div>
+            <div class="card"><div class="card-header"><div class="card-title">💶 Budget du mois</div></div><div id="dash-budget"></div></div>
+            <div class="card"><div class="card-header"><div class="card-title">🏖️ Prochaines vacances</div></div><div id="dash-vacation"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEMBRES -->
+      <div class="section" id="section-membres">
+        <div class="flex-between mb-20">
+          <div style="color:var(--mid);font-size:14px;">Informations personnelles et coordonnées des membres.</div>
+          <button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Ajouter un membre</button>
+        </div>
+        <div class="grid-3" id="members-grid"></div>
+        <div class="card mt-12">
+          <div class="card-header"><div class="card-title">🔗 Partager le code famille</div></div>
+          <p style="font-size:14px;color:var(--mid);margin-bottom:14px;">Partagez ce code avec un proche pour qu'il crée son compte et accède à toutes les données familiales sans rien ressaisir.</p>
+          <div class="share-code-box">
+            <div class="sc-label">Code famille — à partager</div>
+            <div class="sc-value" id="display-family-code">FAM-2024-XKQR</div>
+            <div class="sc-sub">L'autre parent clique sur "Rejoindre" à la connexion et entre ce code</div>
+          </div>
+          <div class="share-btns">
+            <button class="btn btn-secondary btn-sm" onclick="copyFamilyCode()">📋 Copier</button>
+            <button class="btn btn-primary btn-sm" onclick="shareFamilyCode()">📤 Partager</button>
+            <button class="btn btn-gold btn-sm" onclick="shareWhatsApp()">💬 WhatsApp</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENDA -->
+      <div class="section" id="section-agenda">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" id="cal-month-title">Avril 2025</div>
+              <div style="display:flex;gap:7px;">
+                <button class="btn btn-secondary btn-sm" onclick="changeMonth(-1)">‹</button>
+                <button class="btn btn-secondary btn-sm" onclick="changeMonth(1)">›</button>
+              </div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">📌 Événements du mois</div><button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Événement</button></div>
+            <div id="events-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEPENSES -->
+      <div class="section" id="section-depenses">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">💳 Dépenses récentes</div><button class="btn btn-primary btn-sm" onclick="openExpenseModal()">+ Dépense</button></div>
+            <div id="expenses-list"></div>
+          </div>
+          <div>
+            <div class="card mb-16">
+              <div class="card-header"><div class="card-title">🔄 Charges mensuelles fixes</div><button class="btn btn-secondary btn-sm" onclick="openChargeModal()">+ Charge</button></div>
+              <div id="charges-list"></div>
+              <div style="border-top:1px solid var(--warm);margin-top:10px;padding-top:10px;font-size:13px;color:var(--light);">
+                <span class="monthly-badge">🔄 Mensuel</span> = se répète chaque mois automatiquement
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">🎯 Budget mensuel</div></div>
+              <div id="budget-summary"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FACTURES -->
+      <div class="section" id="section-factures">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🧾 Factures & Abonnements</div><button class="btn btn-primary btn-sm" onclick="openFactureModal()">+ Facture</button></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Nom</th><th>Montant</th><th>Échéance</th><th>Récurrence</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody id="factures-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BIENS -->
+      <div class="section" id="section-biens">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏠 Biens & Possessions</div><button class="btn btn-primary btn-sm" onclick="openBienModal()">+ Ajouter un bien</button></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Bien</th><th>Type</th><th>Valeur estimée</th><th>Acquis le</th><th>Assurance</th><th>Notes</th><th></th></tr></thead>
+            <tbody id="biens-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIMULATION CREDIT -->
+      <div class="section" id="section-simulation">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">🧮 Simulateur de crédit</div></div>
+            <p style="font-size:13px;color:var(--mid);margin-bottom:18px;">Renseignez les données du crédit envisagé. L'application analyse votre situation financière actuelle et vous donne un conseil personnalisé.</p>
+
+            <div class="form-group"><label>Montant du crédit souhaité</label><input type="number" id="sim-amount" placeholder="25000" oninput="simUpdate()"></div>
+            <div class="input-row">
+              <div class="form-group"><label>Durée (mois)</label><input type="number" id="sim-duration" placeholder="60" oninput="simUpdate()"></div>
+              <div class="form-group"><label>Taux d'intérêt annuel (%)</label><input type="number" id="sim-rate" placeholder="4.5" step="0.1" oninput="simUpdate()"></div>
+            </div>
+            <div class="form-group"><label>Revenus mensuels nets du foyer (<span id="sim-curr-lbl">€</span>)</label><input type="number" id="sim-income" placeholder="4500" oninput="simUpdate()"></div>
+            <div class="form-group"><label>Épargne disponible (<span id="sim-curr-lbl2">€</span>)</label><input type="number" id="sim-savings" placeholder="8000" oninput="simUpdate()"></div>
+
+            <div style="background:var(--cream);border-radius:12px;padding:14px;margin-top:8px;">
+              <div style="font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;margin-bottom:10px;">Situation actuelle (calculée auto)</div>
+              <div id="sim-current-situation"></div>
+            </div>
+
+            <button class="btn btn-primary mt-12" onclick="runSimulation()">⚡ Simuler maintenant</button>
+          </div>
+
+          <div>
+            <div id="sim-result-container">
+              <div class="card" style="text-align:center;padding:40px;">
+                <div style="font-size:48px;margin-bottom:12px;">🧮</div>
+                <div style="font-size:16px;color:var(--light);">Remplissez le formulaire et cliquez sur "Simuler" pour obtenir votre analyse personnalisée.</div>
+              </div>
+            </div>
+
+            <div class="card mt-12">
+              <div class="card-title mb-12">📘 Règles de bon sens financier</div>
+              <div class="alert-item alert-info">📊 Le taux d'endettement ne doit pas dépasser <strong>33%</strong> des revenus nets</div>
+              <div class="alert-item alert-info">💰 Idéalement garder <strong>3 mois</strong> de charges en épargne de sécurité</div>
+              <div class="alert-item alert-info">⚠️ Inclure les charges fixes existantes dans le calcul</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTS -->
+      <div class="section" id="section-documents">
+        <div class="flex-between mb-20">
+          <div style="color:var(--mid);font-size:14px;">Documents officiels avec alertes d'expiration par email ou SMS.</div>
+          <button class="btn btn-primary btn-sm" onclick="openDocModal()">+ Document</button>
+        </div>
+        <div id="docs-grid"></div>
+      </div>
+
+      <!-- ALERTES -->
+      <div class="section" id="section-alertes">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔔 Centre d'alertes</div><button class="btn btn-primary btn-sm" onclick="openAlertModal()">+ Créer une alerte</button></div>
+          <div id="alertes-list"></div>
+        </div>
+      </div>
+
+      <!-- ENFANTS -->
+      <div class="section" id="section-enfants">
+        <div class="flex-between mb-20">
+          <div style="color:var(--mid);font-size:14px;">Informations scolaires et activités des enfants.</div>
+          <button class="btn btn-primary btn-sm" onclick="openEnfantModal()">+ Ajouter un enfant</button>
+        </div>
+        <div class="grid-3" id="enfants-grid"></div>
+      </div>
+
+      <!-- VACANCES -->
+      <div class="section" id="section-vacances">
+        <div class="flex-between mb-20">
+          <div style="color:var(--mid);font-size:14px;">Planification complète des vacances avec conseils et checklist.</div>
+          <button class="btn btn-primary btn-sm" onclick="openVacanceModal()">+ Planifier des vacances</button>
+        </div>
+        <div id="vacances-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- MEMBER MODAL -->
+<div class="modal-overlay" id="modal-member">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">👤 Ajouter un membre</div><button class="close-btn" onclick="closeModal('modal-member')">✕</button></div>
+    <div class="input-row">
+      <div class="form-group"><label>Prénom</label><input type="text" id="m-firstname" placeholder="Marie"></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="m-lastname" placeholder="Dupont"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Rôle</label><select id="m-role"><option>Papa</option><option>Maman</option><option>Grand-père</option><option>Grand-mère</option><option>Oncle</option><option>Tante</option><option>Autre</option></select></div>
+      <div class="form-group"><label>Date de naissance</label><input type="date" id="m-dob"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Téléphone</label><input type="tel" id="m-phone" placeholder="+33 6 00 00 00 00"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="m-email" placeholder="email@example.com"></div>
+    </div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="m-address" placeholder="123 rue des Lilas, 75001 Paris"></div>
+    <div class="input-row">
+      <div class="form-group"><label>N° Sécu / ID national</label><input type="text" id="m-ss" placeholder="1 85 06 75 ..."></div>
+      <div class="form-group"><label>Groupe sanguin</label><select id="m-blood"><option value="">— Non renseigné —</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveMember()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div class="modal-overlay" id="modal-event">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📅 Nouvel événement</div><button class="close-btn" onclick="closeModal('modal-event')">✕</button></div>
+    <div class="form-group"><label>Titre</label><input type="text" id="ev-title" placeholder="Anniversaire de Maman"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Date</label><input type="date" id="ev-date"></div>
+      <div class="form-group"><label>Heure</label><input type="time" id="ev-time"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Catégorie</label><select id="ev-category"><option value="🎉">🎉 Fête</option><option value="🏥">🏥 Médical</option><option value="🏫">🏫 École</option><option value="✈️">✈️ Voyage</option><option value="💼">💼 Pro</option><option value="🎒">🎒 Enfants</option><option value="📋">📋 Administratif</option><option value="🏠">🏠 Maison</option><option value="⭐">⭐ Autre</option></select></div>
+      <div class="form-group"><label>Membres concernés</label><select id="ev-member"><option value="Toute la famille">Toute la famille</option></select></div>
+    </div>
+    <div class="form-group"><label>Notes</label><textarea id="ev-notes" rows="2" placeholder="Détails..."></textarea></div>
+    <div class="form-group"><label>Rappel automatique</label><select id="ev-reminder"><option value="">Pas de rappel</option><option value="1">1 jour avant</option><option value="3">3 jours avant</option><option value="7">1 semaine avant</option><option value="30">1 mois avant</option></select></div>
+    <button class="btn btn-primary" onclick="saveEvent()">💾 Ajouter à l'agenda</button>
+  </div>
+</div>
+
+<!-- EXPENSE MODAL -->
+<div class="modal-overlay" id="modal-expense">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">💶 Nouvelle dépense</div><button class="close-btn" onclick="closeModal('modal-expense')">✕</button></div>
+    <div class="form-group"><label>Description</label><input type="text" id="exp-label" placeholder="Courses Carrefour"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Montant (<span class="curr-sym">€</span>)</label><input type="number" id="exp-amount" placeholder="0.00" step="0.01"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="exp-date"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Catégorie</label><select id="exp-category"><option>🛒 Alimentation</option><option>🚗 Transport</option><option>🏥 Santé</option><option>📚 Éducation</option><option>🏠 Logement</option><option>⚡ Énergie</option><option>🎮 Loisirs</option><option>👕 Vêtements</option><option>📱 Télécom</option><option>💼 Assurances</option><option>🔧 Entretien</option><option>⭐ Autre</option></select></div>
+      <div class="form-group"><label>Payé par</label><select id="exp-by"><option>Toute la famille</option></select></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveExpense()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- CHARGE MODAL -->
+<div class="modal-overlay" id="modal-charge">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🔄 Charge mensuelle fixe</div><button class="close-btn" onclick="closeModal('modal-charge')">✕</button></div>
+    <p style="font-size:13px;color:var(--mid);margin-bottom:16px;">Une charge mensuelle se répète automatiquement chaque mois et est incluse dans le calcul du budget.</p>
+    <div class="form-group"><label>Libellé</label><input type="text" id="chg-label" placeholder="EDF — Électricité"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Montant mensuel (<span class="curr-sym">€</span>)</label><input type="number" id="chg-amount" placeholder="98" step="0.01"></div>
+      <div class="form-group"><label>Catégorie</label><select id="chg-cat"><option>🏠 Loyer/Hypothèque</option><option>⚡ Électricité</option><option>💧 Eau</option><option>🌐 Internet</option><option>📱 Téléphone</option><option>🔥 Gaz</option><option>💼 Assurance habitation</option><option>🚗 Assurance auto</option><option>🏥 Mutuelle/Santé</option><option>🎓 École/Formation</option><option>📺 Abonnements</option><option>💳 Crédit en cours</option><option>⭐ Autre</option></select></div>
+    </div>
+    <div class="checkbox-row" id="chg-monthly-row" onclick="toggleCheckbox(this)">
+      <input type="checkbox" id="chg-monthly" checked>
+      <label for="chg-monthly">🔄 Charge mensuelle récurrente (se répète chaque mois)</label>
+    </div>
+    <div style="margin-top:8px;" class="checkbox-row" id="chg-auto-row" onclick="toggleCheckbox(this)">
+      <input type="checkbox" id="chg-auto-alert">
+      <label for="chg-auto-alert">🔔 Créer une alerte mensuelle automatique</label>
+    </div>
+    <button class="btn btn-primary mt-12" onclick="saveCharge()">💾 Enregistrer la charge</button>
+  </div>
+</div>
+
+<!-- FACTURE MODAL -->
+<div class="modal-overlay" id="modal-facture">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🧾 Nouvelle facture</div><button class="close-btn" onclick="closeModal('modal-facture')">✕</button></div>
+    <div class="form-group"><label>Nom / Libellé</label><input type="text" id="fac-name" placeholder="EDF — Électricité Avril"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Montant (<span class="curr-sym">€</span>)</label><input type="number" id="fac-amount" placeholder="0.00" step="0.01"></div>
+      <div class="form-group"><label>Échéance</label><input type="date" id="fac-due"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Catégorie</label><select id="fac-cat"><option>⚡ Énergie</option><option>💧 Eau</option><option>📱 Télécom</option><option>🌐 Internet</option><option>🏠 Loyer</option><option>💼 Assurance</option><option>🚗 Auto</option><option>📺 Abonnement</option><option>⭐ Autre</option></select></div>
+      <div class="form-group"><label>Récurrence</label><select id="fac-recurrence"><option value="">Ponctuelle</option><option value="mensuelle">🔄 Mensuelle</option><option value="trimestrielle">📅 Trimestrielle</option><option value="annuelle">📆 Annuelle</option></select></div>
+    </div>
+    <div class="form-group"><label>Statut</label><select id="fac-status"><option>En attente</option><option>Payée</option><option>En retard</option></select></div>
+    <button class="btn btn-primary" onclick="saveFacture()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- DOCUMENT MODAL -->
+<div class="modal-overlay" id="modal-doc">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📄 Nouveau document</div><button class="close-btn" onclick="closeModal('modal-doc')">✕</button></div>
+    <div class="form-group"><label>Type de document</label><select id="doc-type"><option>🛂 Passeport</option><option>🪪 Carte d'identité nationale</option><option>🚗 Permis de conduire</option><option>🏥 Carte Vitale / Assurance maladie</option><option>🏠 Titre de propriété</option><option>🎓 Diplôme</option><option>💼 Contrat de travail</option><option>🚘 Carte grise véhicule</option><option>💳 Carte de séjour</option><option>🌍 Visa</option><option>🛡️ Assurance habitation</option><option>🚗 Assurance auto</option><option>📋 Autre document officiel</option></select></div>
+    <div class="input-row">
+      <div class="form-group"><label>Numéro du document</label><input type="text" id="doc-number" placeholder="Ex: 15AB23456"></div>
+      <div class="form-group"><label>Appartient à</label><select id="doc-owner"><option>Toute la famille</option></select></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Date d'émission</label><input type="date" id="doc-issued"></div>
+      <div class="form-group"><label>Date d'expiration</label><input type="date" id="doc-expiry"></div>
+    </div>
+
+    <div style="margin-top:4px;margin-bottom:6px;font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.6px;">🔔 Alertes avant expiration</div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+      <div class="notif-opt" id="notif-email-wrap" onclick="toggleNotif('email')">
+        <input type="checkbox" id="doc-notif-email"><span>📧 Email</span>
+      </div>
+      <div class="notif-opt" id="notif-sms-wrap" onclick="toggleNotif('sms')">
+        <input type="checkbox" id="doc-notif-sms"><span>📱 SMS</span>
+      </div>
+      <div class="notif-opt" id="notif-app-wrap" onclick="toggleNotif('app')">
+        <input type="checkbox" id="doc-notif-app"><span>🔔 Notification app</span>
+      </div>
+    </div>
+    <div class="form-group"><label>Délai d'alerte avant expiration</label>
+      <select id="doc-alert-delay">
+        <option value="30">1 mois avant</option>
+        <option value="60">2 mois avant</option>
+        <option value="90" selected>3 mois avant</option>
+        <option value="180">6 mois avant</option>
+        <option value="365">1 an avant</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Notes</label><textarea id="doc-notes" rows="2" placeholder="Informations complémentaires..."></textarea></div>
+    <button class="btn btn-primary" onclick="saveDoc()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- BIEN MODAL -->
+<div class="modal-overlay" id="modal-bien">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🏠 Ajouter un bien</div><button class="close-btn" onclick="closeModal('modal-bien')">✕</button></div>
+
+    <div style="margin-bottom:6px;font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.6px;">Type de bien</div>
+    <div class="bien-type-grid" id="bien-type-grid">
+      <div class="bien-type-btn active" onclick="selectBienType(this,'🏠 Immobilier')"><span class="bt-icon">🏠</span>Immobilier</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🚗 Véhicule')"><span class="bt-icon">🚗</span>Véhicule</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'📱 Électronique')"><span class="bt-icon">📱</span>Électronique</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'💎 Bijoux / Art')"><span class="bt-icon">💎</span>Bijoux/Art</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🛋️ Mobilier')"><span class="bt-icon">🛋️</span>Mobilier</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🏦 Épargne / Investissement')"><span class="bt-icon">🏦</span>Épargne</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🌳 Terrain')"><span class="bt-icon">🌳</span>Terrain</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🚢 Nautique / Aérien')"><span class="bt-icon">🚢</span>Nautique</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🏍️ Deux-roues')"><span class="bt-icon">🏍️</span>Deux-roues</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🎵 Instruments')"><span class="bt-icon">🎵</span>Instrument</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'🐾 Animal')"><span class="bt-icon">🐾</span>Animal</div>
+      <div class="bien-type-btn" onclick="selectBienType(this,'⭐ Autre')"><span class="bt-icon">📦</span>Autre</div>
+    </div>
+    <input type="hidden" id="bien-cat" value="🏠 Immobilier">
+
+    <div class="form-group"><label>Nom du bien</label><input type="text" id="bien-name" placeholder="Appartement Paris 11e"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Valeur estimée (<span class="curr-sym">€</span>)</label><input type="number" id="bien-value" placeholder="0"></div>
+      <div class="form-group"><label>Date d'acquisition</label><input type="date" id="bien-date"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Assurance</label><select id="bien-insurance"><option value="">Non assuré</option><option value="Assuré">Assuré ✅</option><option value="À renouveler">À renouveler ⚠️</option><option value="Expiré">Expiré ❌</option></select></div>
+      <div class="form-group"><label>Numéro de série / Immat.</label><input type="text" id="bien-serial" placeholder="Ex: AB-123-CD"></div>
+    </div>
+    <div class="form-group"><label>Notes / Localisation</label><textarea id="bien-notes" rows="2" placeholder="Lieu de stockage, détails..."></textarea></div>
+    <button class="btn btn-primary" onclick="saveBien()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- ALERT MODAL -->
+<div class="modal-overlay" id="modal-alert">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🔔 Nouvelle alerte</div><button class="close-btn" onclick="closeModal('modal-alert')">✕</button></div>
+    <div class="form-group"><label>Titre</label><input type="text" id="al-title" placeholder="Renouvellement passeport"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Échéance</label><input type="date" id="al-date"></div>
+      <div class="form-group"><label>Priorité</label><select id="al-priority"><option value="urgent">🔴 Urgente</option><option value="warning">🟠 Attention</option><option value="info">🔵 Information</option><option value="ok">🟢 OK</option></select></div>
+    </div>
+    <div class="form-group"><label>Catégorie</label><select id="al-cat"><option>📄 Document</option><option>💶 Finance</option><option>🏥 Santé</option><option>🏠 Maison</option><option>🚗 Véhicule</option><option>⭐ Autre</option></select></div>
+    <div class="form-group"><label>Description</label><textarea id="al-notes" rows="2" placeholder="Détails..."></textarea></div>
+    <button class="btn btn-primary" onclick="saveAlert()">💾 Créer l'alerte</button>
+  </div>
+</div>
+
+<!-- ENFANT MODAL -->
+<div class="modal-overlay" id="modal-enfant">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🎒 Ajouter un enfant</div><button class="close-btn" onclick="closeModal('modal-enfant')">✕</button></div>
+    <div class="input-row">
+      <div class="form-group"><label>Prénom</label><input type="text" id="enf-name" placeholder="Lucas"></div>
+      <div class="form-group"><label>Date de naissance</label><input type="date" id="enf-dob"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>École</label><input type="text" id="enf-school" placeholder="École Primaire Jean Moulin"></div>
+      <div class="form-group"><label>Classe</label><select id="enf-class"><option>Petite Section</option><option>Moyenne Section</option><option>Grande Section</option><option>CP</option><option>CE1</option><option>CE2</option><option>CM1</option><option>CM2</option><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option><option>Seconde</option><option>Première</option><option>Terminale</option><option>BTS/IUT</option><option>Licence</option><option>Master</option></select></div>
+    </div>
+    <div class="form-group"><label>Activités extrascolaires</label><input type="text" id="enf-activities" placeholder="Football, Piano, Natation"></div>
+    <div class="form-group"><label>Médecin traitant</label><input type="text" id="enf-doctor" placeholder="Dr. Leroy — 01 23 45 67 89"></div>
+    <div class="form-group"><label>Allergies / Informations médicales</label><textarea id="enf-medical" rows="2" placeholder="Ex: Allergie aux arachides..."></textarea></div>
+    <button class="btn btn-primary" onclick="saveEnfant()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- VACANCE MODAL — EXPANDED -->
+<div class="modal-overlay" id="modal-vacance">
+  <div class="modal modal-wide">
+    <div class="modal-header"><div class="modal-title">✈️ Planifier des vacances</div><button class="close-btn" onclick="closeModal('modal-vacance')">✕</button></div>
+
+    <div class="grid-2">
+      <div>
+        <div class="form-group">
+          <label>Destination</label>
+          <input type="text" id="vac-dest" placeholder="Barcelone, Espagne" oninput="updateVacTips()">
+        </div>
+        <div class="input-row">
+          <div class="form-group"><label>Pays</label>
+            <select id="vac-country" onchange="updateVacTips()">
+              <option value="">— Sélectionner —</option>
+              <option>🇫🇷 France</option><option>🇪🇸 Espagne</option><option>🇮🇹 Italie</option>
+              <option>🇵🇹 Portugal</option><option>🇬🇷 Grèce</option><option>🇲🇦 Maroc</option>
+              <option>🇩🇿 Algérie</option><option>🇹🇳 Tunisie</option><option>🇹🇷 Turquie</option>
+              <option>🇪🇬 Égypte</option><option>🇦🇪 Émirats Arabes Unis</option>
+              <option>🇹🇭 Thaïlande</option><option>🇯🇵 Japon</option>
+              <option>🇺🇸 États-Unis</option><option>🇨🇦 Canada</option>
+              <option>🇨🇺 Cuba</option><option>🇲🇽 Mexique</option>
+              <option>🌍 Autre pays</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Type de voyage</label>
+            <select id="vac-type">
+              <option>✈️ Avion</option><option>🚗 Voiture</option><option>🚂 Train</option>
+              <option>🚢 Croisière</option><option>🏕️ Camping</option><option>🚌 Bus/Car</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="form-group"><label>Date de départ</label><input type="date" id="vac-start"></div>
+          <div class="form-group"><label>Date de retour</label><input type="date" id="vac-end"></div>
+        </div>
+        <div class="input-row">
+          <div class="form-group"><label>Budget total prévu (<span class="curr-sym">€</span>)</label><input type="number" id="vac-budget" placeholder="3000"></div>
+          <div class="form-group"><label>Nombre de personnes</label><input type="number" id="vac-persons" placeholder="4" min="1"></div>
+        </div>
+        <div class="form-group"><label>Type d'hébergement</label>
+          <select id="vac-lodging">
+            <option>🏨 Hôtel</option><option>🏠 Location / Airbnb</option>
+            <option>⛺ Camping</option><option>🛳️ Bateau de croisière</option>
+            <option>🏡 Chez la famille / Amis</option><option>🛖 Gîte / Chalet</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Nom de l'hébergement / Réf.</label><input type="text" id="vac-hotel" placeholder="Hôtel Sol Barcelona — Réf: BK12345"></div>
+        <div class="form-group"><label>Compagnie aérienne / Transport</label><input type="text" id="vac-transport" placeholder="Vueling — Vol VY8397"></div>
+        <div class="form-group"><label>Membres participants</label><input type="text" id="vac-members" placeholder="Toute la famille"></div>
+        <div class="form-group"><label>Notes libres</label><textarea id="vac-notes" rows="2" placeholder="Passeports OK ✓, Billets réservés..."></textarea></div>
+      </div>
+      <div>
+        <div id="vac-tips-container">
+          <div class="tip-box">
+            <div class="tip-title">💡 Conseils de planification</div>
+            <div class="tip-item">🌍 Sélectionnez un pays pour des conseils personnalisés</div>
+          </div>
+        </div>
+
+        <div class="tip-box mt-12" style="margin-top:12px;">
+          <div class="tip-title">✅ Checklist universelle</div>
+          <div id="vac-checklist"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-12" onclick="saveVacance()">💾 Planifier les vacances</button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+// ═══════════════════════ FIREBASE INIT ═══════════════════════
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCUCpG_6ojWjoCVIPDGXf1yvbnEYPjkZnM",
+  authDomain: "familynest-app-6c2d2.firebaseapp.com",
+  projectId: "familynest-app-6c2d2",
+  storageBucket: "familynest-app-6c2d2.firebasestorage.app",
+  messagingSenderId: "758203397286",
+  appId: "1:758203397286:web:1eba782a145464c221b067"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+
+let unsubscribeFamily = null; // live listener cleanup
+
+// ═══════════════════════ GLOBAL STATE ═══════════════════════
+let CURRENCY = { code:'EUR', sym:'€' };
+let currentUser = null, currentFamily = null;
+let currentMonth = new Date();
+let selectedBienType = '🏠 Immobilier';
+
+const CURRENCIES = { EUR:'€', USD:'$', DZD:'دج', SEK:'kr', MAD:'درهم' };
+
+// ═══════════════════════ FIRESTORE HELPERS ═══════════════════════
+async function saveToFirestore() {
+  if (!currentFamily) return;
+  try {
+    await updateDoc(doc(db, 'families', currentFamily.code), currentFamily);
+  } catch(e) { console.error('Save error:', e); }
+}
+
+async function loadFamilyRealtime(code) {
+  if (unsubscribeFamily) unsubscribeFamily(); // stop previous listener
+  unsubscribeFamily = onSnapshot(doc(db, 'families', code), (snap) => {
+    if (snap.exists()) {
+      currentFamily = snap.data();
+      // Refresh whichever section is active
+      const active = document.querySelector('.section.active');
+      if (active) {
+        const id = active.id.replace('section-', '');
+        const renders = {
+          dashboard: renderDashboard, membres: renderMembers, agenda: renderCalendar,
+          depenses: renderExpenses, factures: renderFactures, biens: renderBiens,
+          documents: renderDocs, alertes: renderAlerts, enfants: renderEnfants,
+          vacances: renderVacances, simulation: renderSimulation
+        };
+        if (renders[id]) renders[id]();
+      }
+      updateSidebar();
+      updateBadges();
+    }
+  });
+}
+
+// Wrap every data-mutation to auto-save
+function withSave(fn) {
+  return async function(...args) {
+    fn(...args);
+    await saveToFirestore();
+  };
+}
+
+// ═══════════════════════ AUTH (Firebase) ═══════════════════════
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-password').value;
+  try {
+    showToast('Connexion en cours…', 'success');
+    await signInWithEmailAndPassword(auth, email, pw);
+    // onAuthStateChanged takes over
+  } catch(e) {
+    showToast('Email ou mot de passe incorrect', 'error');
+  }
+}
+
+async function handleRegister() {
+  const fn    = document.getElementById('reg-firstname').value.trim();
+  const ln    = document.getElementById('reg-lastname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw    = document.getElementById('reg-password').value;
+  const role  = document.getElementById('reg-role').value;
+  if (!fn || !email || !pw) { showToast('Veuillez remplir les champs requis', 'error'); return; }
+  try {
+    showToast('Création du compte…', 'success');
+    const cred = await createUserWithEmailAndPassword(auth, email, pw);
+    const uid  = cred.user.uid;
+    const code = 'FAM-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    const familyData = {
+      name: 'Famille ' + (ln || fn), code,
+      members: [{id: uid, firstname: fn, lastname: ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color: randomColor()}],
+      events: [], expenses: [], charges: [], factures: [],
+      biens: [], docs: [], alerts: [], enfants: [], vacances: [],
+      budget: { monthly: 3000 }
+    };
+    await setDoc(doc(db, 'families', code), familyData);
+    await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
+    currentUser = { uid, firstname: fn, lastname: ln, role, email, familyCode: code };
+    currentFamily = familyData;
+    showToast('Famille créée ! 🏠 Code: ' + code, 'success');
+    await loadFamilyRealtime(code);
+    launchApp();
+  } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+}
+
+async function handleJoin() {
+  const fn    = document.getElementById('join-firstname').value.trim();
+  const ln    = document.getElementById('join-lastname').value.trim();
+  const email = document.getElementById('join-email').value.trim();
+  const pw    = document.getElementById('join-password').value;
+  const role  = document.getElementById('join-role').value;
+  const code  = document.getElementById('join-code').value.trim().toUpperCase();
+  if (!fn || !email || !pw || !code) { showToast('Veuillez remplir tous les champs', 'error'); return; }
+  try {
+    showToast('Vérification du code famille…', 'success');
+    const familySnap = await getDoc(doc(db, 'families', code));
+    if (!familySnap.exists()) { showToast('Code famille introuvable. Vérifiez le code.', 'error'); return; }
+    const cred = await createUserWithEmailAndPassword(auth, email, pw);
+    const uid  = cred.user.uid;
+    const familyData = familySnap.data();
+    const newMember = {id: uid, firstname: fn, lastname: ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color: randomColor()};
+    familyData.members.push(newMember);
+    await updateDoc(doc(db, 'families', code), { members: familyData.members });
+    await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
+    currentUser = { uid, firstname: fn, lastname: ln, role, email, familyCode: code };
+    currentFamily = familyData;
+    showToast('Bienvenue dans la famille ' + familyData.name + ' ! 🎉', 'success');
+    await loadFamilyRealtime(code);
+    launchApp();
+  } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+}
+
+async function logout() {
+  if (unsubscribeFamily) unsubscribeFamily();
+  await signOut(auth);
+  currentUser = null; currentFamily = null;
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ─── Auto-login if session exists ───
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userSnap = await getDoc(doc(db, 'users', user.uid));
+      if (userSnap.exists()) {
+        currentUser = { uid: user.uid, ...userSnap.data() };
+        await loadFamilyRealtime(currentUser.familyCode);
+        launchApp();
+      }
+    } catch(e) { console.error('Auth state error:', e); }
+  }
+});
+
+// Expose auth functions globally (needed because type="module" is scoped)
+window.handleLogin    = handleLogin;
+window.handleRegister = handleRegister;
+window.handleJoin     = handleJoin;
+window.logout         = logout;
+
+// ═══════════════════════ LEGACY LOCAL DB (kept as fallback/demo data structure) ═══════════════════════
+// Not used for persistence — Firebase is the source of truth
+const DB = {
+  families: {
+    'FAM-2024-XKQR': {
+      name:'Famille Dupont', code:'FAM-2024-XKQR',
+      members:[
+        {id:1,firstname:'Jean',lastname:'Dupont',role:'Papa',dob:'1982-03-15',phone:'+33 6 12 34 56 78',email:'jean@dupont.fr',address:'12 rue des Lilas, 75011 Paris',ss:'1 82 03 75 115 042 10',blood:'O+',color:'#3D5A47'},
+        {id:2,firstname:'Sophie',lastname:'Dupont',role:'Maman',dob:'1985-07-22',phone:'+33 6 98 76 54 32',email:'sophie@dupont.fr',address:'12 rue des Lilas, 75011 Paris',ss:'2 85 07 75 115 042 48',blood:'A+',color:'#C4714A'}
+      ],
+      events:[
+        {id:1,title:'Anniversaire Sophie',date:'2025-07-22',time:'19:00',category:'🎉',member:'Toute la famille',notes:'Réserver restaurant',reminder:'7'},
+        {id:2,title:'Rdv médecin Lucas',date:'2025-05-14',time:'10:30',category:'🏥',member:'Lucas',notes:'Bilan annuel',reminder:'3'},
+      ],
+      expenses:[
+        {id:1,label:'Courses Carrefour',amount:187.50,date:'2025-04-20',category:'🛒 Alimentation',by:'Sophie'},
+        {id:2,label:'Plein essence',amount:75.00,date:'2025-04-19',category:'🚗 Transport',by:'Jean'},
+        {id:3,label:'Médicaments',amount:28.40,date:'2025-04-18',category:'🏥 Santé',by:'Sophie'},
+      ],
+      charges:[
+        {id:1,label:'Loyer',amount:1450,cat:'🏠 Loyer/Hypothèque',monthly:true,color:'#3D5A47'},
+        {id:2,label:'EDF Électricité',amount:98,cat:'⚡ Électricité',monthly:true,color:'#C4714A'},
+        {id:3,label:'Internet Fibre',amount:35,cat:'🌐 Internet',monthly:true,color:'#C9A96E'},
+        {id:4,label:'Mutuelle famille',amount:180,cat:'🏥 Mutuelle/Santé',monthly:true,color:'#7A9E87'},
+        {id:5,label:'Crédit voiture',amount:320,cat:'💳 Crédit en cours',monthly:true,color:'#A0522D'},
+      ],
+      factures:[
+        {id:1,name:'EDF — Électricité Avril',amount:98.40,due:'2025-05-05',status:'En attente',cat:'⚡ Énergie',recurrence:'mensuelle'},
+        {id:2,name:'SFR Mobile',amount:49.99,due:'2025-04-28',status:'Payée',cat:'📱 Télécom',recurrence:'mensuelle'},
+        {id:3,name:'Assurance Auto AXA',amount:892,due:'2025-04-30',status:'En attente',cat:'🚗 Auto',recurrence:'annuelle'},
+      ],
+      biens:[
+        {id:1,name:'Appartement Paris 11e',cat:'🏠 Immobilier',value:380000,date:'2018-06-15',insurance:'Assuré',serial:'',notes:'3 pièces, 68m²'},
+        {id:2,name:'Peugeot 308 SW',cat:'🚗 Véhicule',value:18500,date:'2021-03-10',insurance:'Assuré',serial:'AB-123-CD',notes:''},
+      ],
+      docs:[
+        {id:1,type:'🛂 Passeport',number:'15AB23456',owner:'Jean',issued:'2019-03-10',expiry:'2029-03-09',notes:'',notifEmail:true,notifSms:false,notifApp:true,alertDelay:90},
+        {id:2,type:'🛂 Passeport',number:'16CD78901',owner:'Sophie',issued:'2021-07-15',expiry:'2026-07-14',notes:'',notifEmail:true,notifSms:true,notifApp:true,alertDelay:180},
+        {id:3,type:'🚗 Permis de conduire',number:'12AA34567',owner:'Jean',issued:'2005-09-14',expiry:'2035-09-13',notes:'Cat. B',notifEmail:false,notifSms:false,notifApp:true,alertDelay:90},
+      ],
+      alerts:[
+        {id:1,title:'Renouvellement passeport Sophie',date:'2026-07-14',priority:'warning',cat:'📄 Document',notes:'Expire dans ~15 mois'},
+        {id:2,title:'Contrôle technique Peugeot',date:'2025-06-10',priority:'warning',cat:'🚗 Véhicule',notes:'À faire avant juin'},
+      ],
+      enfants:[
+        {id:1,name:'Lucas',dob:'2013-09-05',school:'École Primaire Jean Moulin',class:'CM2',activities:'Football, Piano',doctor:'Dr. Leroy — 01 23 45 67 89',medical:'RAS',color:'#2980B9'},
+        {id:2,name:'Emma',dob:'2016-04-12',school:'École Maternelle Les Tournesols',class:'Grande Section',activities:'Danse, Dessin',doctor:'Dr. Leroy — 01 23 45 67 89',medical:'Allergie légère arachides',color:'#8E44AD'},
+      ],
+      vacances:[
+        {id:1,dest:'Barcelone, Espagne',country:'🇪🇸 Espagne',start:'2025-08-01',end:'2025-08-14',budget:3500,type:'✈️ Avion',lodging:'🏨 Hôtel',hotel:'Hôtel Arts Barcelona',transport:'Vueling',members:'Toute la famille (4)',persons:4,notes:'Billets réservés ✓, hôtel confirmé ✓'},
+      ],
+      budget:{monthly:5000}
+    }
+  },
+  users:[
+    {email:'papa@famille.com',password:'1234',firstname:'Jean',lastname:'Dupont',role:'Papa',familyCode:'FAM-2024-XKQR'},
+    {email:'maman@famille.com',password:'1234',firstname:'Sophie',lastname:'Dupont',role:'Maman',familyCode:'FAM-2024-XKQR'},
+  ]
+};
+
+// ═══════════════════════ CURRENCY ═══════════════════════
+function setCurrency(code, sym) {
+  CURRENCY = {code, sym};
+  document.querySelectorAll('#auth-currency .currency-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(sym)));
+  document.querySelectorAll('.curr-sym').forEach(el => el.textContent = sym);
+  if (document.getElementById('topbar-currency')) {
+    document.getElementById('topbar-currency').textContent = sym + ' ' + code;
+    document.getElementById('sidebar-currency-info').textContent = sym + ' ' + code;
+    if (currentFamily) renderDashboard();
+  }
+  ['sim-curr-lbl','sim-curr-lbl2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=sym; });
+}
+function fmt(n) { return (n||0).toLocaleString('fr-FR',{minimumFractionDigits:0,maximumFractionDigits:2})+' '+CURRENCY.sym; }
+
+// ═══════════════════════ AUTH ═══════════════════════
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',['login','register','join'][i]===tab));
+  ['login-form','register-form','join-form'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById(tab+'-form').style.display='block';
+}
+
+function handleLogin() {
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pw=document.getElementById('login-password').value;
+  let user=DB.users.find(u=>u.email===email&&u.password===pw);
+  if (!user) { showToast('Email ou mot de passe incorrect','error'); return; }
+  if (!DB.families[user.familyCode]) { showToast('Famille non trouvée','error'); return; }
+  currentUser=user; currentFamily=DB.families[user.familyCode];
+  launchApp();
+}
+
+function handleRegister() {
+  const fn=document.getElementById('reg-firstname').value.trim();
+  const ln=document.getElementById('reg-lastname').value.trim();
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
+  const pw=document.getElementById('reg-password').value;
+  const role=document.getElementById('reg-role').value;
+  if (!fn||!email||!pw) { showToast('Veuillez remplir les champs requis','error'); return; }
+  const code='FAM-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  DB.families[code]={
+    name:'Famille '+(ln||fn), code,
+    members:[], events:[], expenses:[], charges:[], factures:[], biens:[], docs:[], alerts:[], enfants:[], vacances:[],
+    budget:{monthly:3000}
+  };
+  const user={email,password:pw,firstname:fn,lastname:ln,role,familyCode:code};
+  DB.users.push(user);
+  currentUser=user; currentFamily=DB.families[code];
+  currentFamily.members.push({id:Date.now(),firstname:fn,lastname:ln,role,dob:'',phone:'',email,address:'',ss:'',blood:'',color:randomColor()});
+  showToast('Famille créée ! 🏠','success');
+  launchApp();
+}
+
+function handleJoin() {
+  const fn=document.getElementById('join-firstname').value.trim();
+  const ln=document.getElementById('join-lastname').value.trim();
+  const email=document.getElementById('join-email').value.trim().toLowerCase();
+  const pw=document.getElementById('join-password').value;
+  const role=document.getElementById('join-role').value;
+  const code=document.getElementById('join-code').value.trim().toUpperCase();
+  if (!fn||!email||!pw||!code) { showToast('Veuillez remplir tous les champs','error'); return; }
+  if (!DB.families[code]) { showToast('Code famille introuvable. Vérifiez le code.','error'); return; }
+  if (DB.users.find(u=>u.email===email)) { showToast('Email déjà utilisé. Essayez de vous connecter.','error'); return; }
+  const user={email,password:pw,firstname:fn,lastname:ln,role,familyCode:code};
+  DB.users.push(user);
+  currentUser=user; currentFamily=DB.families[code];
+  currentFamily.members.push({id:Date.now(),firstname:fn,lastname:ln,role,dob:'',phone:'',email,address:'',ss:'',blood:'',color:randomColor()});
+  showToast('Bienvenue dans la famille '+currentFamily.name+' ! 🎉','success');
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  setCurrency(CURRENCY.code, CURRENCY.sym);
+  updateSidebar(); renderDashboard(); renderCalendar(); updateBadges(); updateTopbarDate();
+  setTimeout(checkAutoAlerts,1200);
+}
+
+function logout() {
+  currentUser=null; currentFamily=null;
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+// ═══════════════════════ SIDEBAR & NAV ═══════════════════════
+function updateSidebar() {
+  document.getElementById('sidebar-family-name').textContent=currentFamily.name;
+  document.getElementById('sidebar-family-code').textContent=currentFamily.code;
+  document.getElementById('display-family-code').textContent=currentFamily.code;
+  document.getElementById('sidebar-user').textContent=currentUser.firstname+' '+currentUser.lastname+' — '+currentUser.role;
+  const el=document.getElementById('sidebar-members');
+  el.innerHTML=currentFamily.members.slice(0,6).map(m=>`<div class="avatar" style="background:${m.color||'#3D5A47'}" title="${m.firstname}">${m.firstname[0]}${m.lastname?.[0]||''}</div>`).join('');
+}
+
+function updateTopbarDate() {
+  document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const cf=el('curr-flag'); const cl=el('curr-label');
+  if(cf) cf.textContent=CURRENCY.sym;
+  if(cl) cl.textContent=CURRENCY.code;
+}
+
+function updateBadges() {
+  const now=new Date();
+  const docsA=currentFamily.docs.filter(d=>Math.ceil((new Date(d.expiry)-now)/(1000*86400))<365).length;
+  const facA=currentFamily.factures.filter(f=>f.status==='En attente').length;
+  const alA=currentFamily.alerts.filter(a=>['urgent','warning'].includes(a.priority)).length+getComputedAlerts().filter(a=>a.level==='urgent'||a.level==='warn').length;
+  el('badge-docs').textContent=docsA; el('badge-docs').style.display=docsA?'inline-block':'none';
+  el('badge-factures').textContent=facA; el('badge-factures').style.display=facA?'inline-block':'none';
+  el('badge-alertes').textContent=Math.min(alA,99); el('badge-alertes').style.display=alA?'inline-block':'none';
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")));
+  const titles={dashboard:'Tableau de bord',membres:'Membres de la famille',agenda:'Agenda',depenses:'Dépenses & Charges',factures:'Factures',biens:'Biens & Possessions',simulation:'Simulation Crédit',documents:'Documents & Identité',alertes:'Centre d\'alertes',enfants:'Enfants & École',vacances:'Vacances'};
+  el('page-title').textContent=titles[id]||id;
+  const renders={dashboard:renderDashboard,membres:renderMembers,agenda:renderCalendar,depenses:renderExpenses,factures:renderFactures,biens:renderBiens,documents:renderDocs,alertes:renderAlerts,enfants:renderEnfants,vacances:renderVacances,simulation:renderSimulation};
+  if (renders[id]) renders[id]();
+}
+
+function openAddModal() {
+  const active=document.querySelector('.section.active');
+  if (!active) return;
+  const id=active.id.replace('section-','');
+  const map={membres:openMemberModal,agenda:openEventModal,depenses:openExpenseModal,factures:openFactureModal,biens:openBienModal,documents:openDocModal,alertes:openAlertModal,enfants:openEnfantModal,vacances:openVacanceModal};
+  if (map[id]) map[id]();
+}
+
+// ═══════════════════════ DASHBOARD ═══════════════════════
+function renderDashboard() {
+  const now=new Date();
+  const totalExp=currentFamily.expenses.reduce((s,e)=>s+e.amount,0);
+  const totalChg=currentFamily.charges.reduce((s,c)=>s+c.amount,0);
+  const pendFac=currentFamily.factures.filter(f=>f.status==='En attente').length;
+  const expDocs=currentFamily.docs.filter(d=>Math.ceil((new Date(d.expiry)-now)/(1000*86400))<365).length;
+
+  el('stat-cards').innerHTML=`
+    <div class="stat-card" style="border-left-color:var(--forest)"><div class="stat-icon" style="background:rgba(61,90,71,0.12)">👨‍👩‍👧‍👦</div><div class="stat-info"><div class="label">Membres</div><div class="value">${currentFamily.members.length}</div></div></div>
+    <div class="stat-card" style="border-left-color:var(--terracotta)"><div class="stat-icon" style="background:rgba(196,113,74,0.12)">💶</div><div class="stat-info"><div class="label">Dépenses mois</div><div class="value">${fmt(totalExp)}</div></div></div>
+    <div class="stat-card" style="border-left-color:var(--warning)"><div class="stat-icon" style="background:rgba(230,126,34,0.12)">🧾</div><div class="stat-info"><div class="label">Factures en attente</div><div class="value">${pendFac}</div></div></div>
+    <div class="stat-card" style="border-left-color:var(--danger)"><div class="stat-icon" style="background:rgba(192,57,43,0.12)">📄</div><div class="stat-info"><div class="label">Docs à surveiller</div><div class="value">${expDocs}</div></div></div>
+  `;
+
+  const urgents=getComputedAlerts().slice(0,4);
+  el('dash-alerts').innerHTML=urgents.length?urgents.map(a=>`<div class="alert-item alert-${a.level}"><span>${a.icon}</span><div><div style="font-weight:600;font-size:13px;">${a.title}</div><div style="font-size:12px;opacity:0.7;">${a.sub}</div></div></div>`).join(''):'<div class="alert-item alert-ok">✅ Aucune alerte urgente</div>';
+
+  const upcoming=currentFamily.events.filter(e=>new Date(e.date)>=now).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
+  el('dash-events').innerHTML=upcoming.map(e=>`<div class="expense-row"><div style="display:flex;align-items:center;gap:10px;"><div class="expense-cat" style="background:var(--cream)">${e.category}</div><div><div style="font-weight:600;font-size:13px;">${e.title}</div><div style="font-size:12px;color:var(--light)">${formatDate(e.date)} ${e.time?'à '+e.time:''}</div></div></div><span class="tag tag-forest">${e.member}</span></div>`).join('')||'<p style="color:var(--light);font-size:13px">Aucun événement à venir</p>';
+
+  const budget=currentFamily.budget.monthly;
+  const spent=totalExp+totalChg;
+  const pct=Math.min(100,Math.round(spent/budget*100));
+  el('dash-budget').innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px"><span style="color:var(--mid)">Dépenses + charges fixes</span><span style="font-weight:700">${fmt(spent)} / ${fmt(budget)}</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pct>85?'var(--danger)':pct>60?'var(--warning)':'var(--forest)'}"></div></div>
+    <div style="font-size:12px;color:${budget-spent>0?'var(--success)':'var(--danger)'};margin-top:6px;font-weight:600">${budget-spent>0?'✅ Reste '+fmt(budget-spent):'⚠️ Dépassement '+fmt(Math.abs(budget-spent))}</div>
+    <hr class="divider-line">
+    ${currentFamily.charges.map(c=>`<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>${c.label} ${c.monthly?'<span class="monthly-badge">🔄</span>':''}</span><span style="font-weight:600">${fmt(c.amount)}</span></div>`).join('')}
+  `;
+
+  const nextVac=currentFamily.vacances.filter(v=>new Date(v.start)>=now).sort((a,b)=>new Date(a.start)-new Date(b.start))[0];
+  if (nextVac) {
+    const daysLeft=Math.ceil((new Date(nextVac.start)-now)/(1000*86400));
+    el('dash-vacation').innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:30px">${nextVac.type?.split(' ')[0]||'✈️'}</div><div><div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700">${nextVac.dest}</div><div style="font-size:12px;color:var(--light)">${formatDate(nextVac.start)} → ${formatDate(nextVac.end)}</div></div></div><div class="tag tag-forest">🗓️ Dans ${daysLeft} jours</div><div style="margin-top:10px;font-size:13px;color:var(--mid)">Budget: <strong>${fmt(nextVac.budget)}</strong> · ${nextVac.persons} pers.</div>`;
+  } else {
+    el('dash-vacation').innerHTML='<p style="color:var(--light);font-size:13px">Aucunes vacances planifiées</p><button class="btn btn-secondary btn-sm mt-12" onclick="showSection(\'vacances\')">Planifier maintenant</button>';
+  }
+}
+
+function getComputedAlerts() {
+  const now=new Date(), alerts=[];
+  currentFamily.docs.forEach(d=>{
+    const days=Math.ceil((new Date(d.expiry)-now)/(1000*86400));
+    if (days<0) alerts.push({title:d.type+' de '+d.owner+' expiré',sub:'Expiré depuis '+Math.abs(days)+' jours',level:'urgent',icon:'📄'});
+    else if (days<90) alerts.push({title:d.type+' de '+d.owner,sub:'Expire dans '+days+' jours',level:'warn',icon:'📄'});
+    else if (days<365) alerts.push({title:d.type+' de '+d.owner,sub:'Expire dans '+days+' jours',level:'info',icon:'📄'});
+  });
+  currentFamily.factures.forEach(f=>{
+    if (f.status==='En attente') {
+      const days=Math.ceil((new Date(f.due)-now)/(1000*86400));
+      if (days<0) alerts.push({title:f.name+' en retard',sub:'Échue il y a '+Math.abs(days)+'j',level:'urgent',icon:'🧾'});
+      else if (days<7) alerts.push({title:f.name,sub:'Échéance dans '+days+'j — '+fmt(f.amount),level:'warn',icon:'🧾'});
+    }
+  });
+  currentFamily.alerts.forEach(a=>{
+    const days=Math.ceil((new Date(a.date)-now)/(1000*86400));
+    const level=a.priority==='urgent'?'urgent':a.priority==='warning'?'warn':'info';
+    alerts.push({title:a.title,sub:days<0?'Passé':'Dans '+days+' jours',level,icon:a.cat?.split(' ')[0]||'🔔'});
+  });
+  return alerts.sort((a,b)=>{const o={urgent:0,warn:1,info:2,ok:3};return o[a.level]-o[b.level];});
+}
+
+function checkAutoAlerts() {
+  const urgent=getComputedAlerts().filter(a=>a.level==='urgent');
+  if (urgent.length>0) showToast('⚠️ '+urgent.length+' alerte(s) urgente(s) !','warning');
+}
+
+// ═══════════════════════ MEMBERS ═══════════════════════
+function renderMembers() {
+  el('members-grid').innerHTML=currentFamily.members.map(m=>`
+    <div class="member-card">
+      <div class="member-avatar-lg" style="background:${m.color||'#3D5A47'}">${m.firstname[0]}${m.lastname?.[0]||''}</div>
+      <div class="member-name">${m.firstname} ${m.lastname}</div>
+      <div class="member-role">${m.role}</div>
+      ${m.dob?`<div style="font-size:12px;color:var(--light);margin-bottom:7px">🎂 ${formatDate(m.dob)} · ${calcAge(m.dob)} ans</div>`:''}
+      ${m.blood?`<span class="tag tag-danger" style="margin-bottom:7px">🩸 ${m.blood}</span><br>`:''}
+      ${m.phone?`<div style="font-size:12px;margin-top:5px">📱 ${m.phone}</div>`:''}
+      ${m.email?`<div style="font-size:12px">✉️ ${m.email}</div>`:''}
+      ${m.ss?`<div style="font-size:11px;color:var(--light);margin-top:5px;font-family:monospace">SS: ${m.ss}</div>`:''}
+    </div>
+  `).join('');
+  populateDropdowns();
+}
+
+function openMemberModal() { populateDropdowns(); openModal('modal-member'); }
+function saveMember() {
+  const m={id:Date.now(),firstname:el('m-firstname').value.trim(),lastname:el('m-lastname').value.trim(),role:el('m-role').value,dob:el('m-dob').value,phone:el('m-phone').value,email:el('m-email').value,address:el('m-address').value,ss:el('m-ss').value,blood:el('m-blood').value,color:randomColor()};
+  if (!m.firstname){showToast('Prénom requis','error');return;}
+  currentFamily.members.push(m); closeModal('modal-member'); renderMembers(); updateSidebar();
+  saveToFirestore(); showToast('Membre ajouté !','success');
+}
+
+function populateDropdowns() {
+  const all=['Toute la famille',...currentFamily.members.map(m=>m.firstname)];
+  ['ev-member','exp-by','doc-owner'].forEach(id=>{const e=document.getElementById(id);if(e){const v=e.value;e.innerHTML=all.map(n=>`<option>${n}</option>`).join('');e.value=v||all[0];}});
+}
+
+// SHARE FAMILY CODE
+const APP_URL = 'https://familinest.netlify.app';
+
+function copyFamilyCode() {
+  const text=`Code famille: ${currentFamily.code}\nLien: ${APP_URL}?code=${currentFamily.code}`;
+  navigator.clipboard.writeText(text).catch(()=>{});
+  showToast('Code + lien copiés !','success');
+}
+function shareFamilyCode() {
+  const msg=`🏠 FamilyNest — Rejoins notre famille numérique !\n\n🔑 Code famille : ${currentFamily.code}\n🔗 Lien direct : ${APP_URL}?code=${currentFamily.code}\n\n1️⃣ Ouvre le lien ci-dessus\n2️⃣ Clique sur "Rejoindre"\n3️⃣ Entre le code : ${currentFamily.code}\n\n✅ Toutes les données sont déjà là, rien à ressaisir !`;
+  if (navigator.share) navigator.share({title:'FamilyNest — Code famille',text:msg,url:APP_URL+'?code='+currentFamily.code}).catch(()=>{});
+  else { navigator.clipboard.writeText(msg).catch(()=>{}); showToast('Message copié dans le presse-papier !','success'); }
+}
+function shareWhatsApp() {
+  const msg=encodeURIComponent(`🏠 *FamilyNest* — Rejoins notre foyer numérique !\n\n🔑 *Code famille :* ${currentFamily.code}\n🔗 *Lien direct :* ${APP_URL}?code=${currentFamily.code}\n\n1️⃣ Ouvre le lien\n2️⃣ Clique "Rejoindre"\n3️⃣ Entre le code : *${currentFamily.code}*\n\n✅ Toutes les données de la famille t'attendent !`);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+// IN-APP CURRENCY PICKER
+function toggleCurrencyPicker() {
+  const d=el('currency-dropdown');
+  d.style.display=d.style.display==='none'?'block':'none';
+}
+function setCurrencyInApp(code, sym, name) {
+  setCurrency(code, sym);
+  el('curr-flag').textContent=sym;
+  el('curr-label').textContent=code;
+  el('currency-dropdown').style.display='none';
+  el('sidebar-currency-info').textContent=sym+' '+name;
+  // re-render current section
+  const active=document.querySelector('.section.active');
+  if(active){const id=active.id.replace('section-','');const renders={dashboard:renderDashboard,depenses:renderExpenses,factures:renderFactures,biens:renderBiens,simulation:renderSimulation};if(renders[id])renders[id]();}
+  showToast('Devise : '+sym+' '+name,'success');
+}
+// Close dropdown on outside click
+document.addEventListener('click',function(e){
+  const wrap=el('currency-picker-wrap');
+  if(wrap&&!wrap.contains(e.target)){const d=el('currency-dropdown');if(d)d.style.display='none';}
+});
+
+// ═══════════════════════ CALENDAR ═══════════════════════
+function renderCalendar() {
+  const y=currentMonth.getFullYear(), mo=currentMonth.getMonth();
+  el('cal-month-title').textContent=currentMonth.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
+  const firstDay=new Date(y,mo,1).getDay(), daysInMonth=new Date(y,mo+1,0).getDate(), daysInPrev=new Date(y,mo,0).getDate();
+  const today=new Date(), startOffset=(firstDay+6)%7;
+  const monthEvts=currentFamily.events.filter(e=>{const d=new Date(e.date);return d.getFullYear()===y&&d.getMonth()===mo;});
+  const evtDays=new Set(monthEvts.map(e=>new Date(e.date).getDate()));
+  const days=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  let html=days.map(d=>`<div class="cal-header">${d}</div>`).join('');
+  for(let i=startOffset-1;i>=0;i--) html+=`<div class="cal-day other-month">${daysInPrev-i}</div>`;
+  for(let d=1;d<=daysInMonth;d++){const isT=today.getFullYear()===y&&today.getMonth()===mo&&today.getDate()===d;html+=`<div class="cal-day ${isT?'today':''} ${evtDays.has(d)?'has-event':''}">${d}</div>`;}
+  const rem=(startOffset+daysInMonth)%7;
+  for(let i=1;i<=(rem===0?0:7-rem);i++) html+=`<div class="cal-day other-month">${i}</div>`;
+  el('calendar-grid').innerHTML=html;
+  const list=currentFamily.events.filter(e=>{const d=new Date(e.date);return d.getFullYear()===y&&d.getMonth()===mo;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  el('events-list').innerHTML=list.length?list.map(e=>`<div class="alert-item alert-info" style="margin-bottom:7px"><span style="font-size:17px">${e.category}</span><div style="flex:1"><div style="font-weight:600;font-size:13px">${e.title}</div><div style="font-size:12px;opacity:0.7">${formatDate(e.date)} ${e.time?'à '+e.time:''} — ${e.member}</div></div><button onclick="deleteEvent(${e.id})" style="border:none;background:none;cursor:pointer;color:var(--light)">✕</button></div>`).join(''):'<p style="color:var(--light);font-size:13px">Aucun événement ce mois</p>';
+}
+function changeMonth(d){currentMonth.setMonth(currentMonth.getMonth()+d);renderCalendar();}
+function openEventModal(){populateDropdowns();openModal('modal-event');}
+function saveEvent(){
+  const e={id:Date.now(),title:el('ev-title').value.trim(),date:el('ev-date').value,time:el('ev-time').value,category:el('ev-category').value,member:el('ev-member').value,notes:el('ev-notes').value,reminder:el('ev-reminder').value};
+  if(!e.title||!e.date){showToast('Titre et date requis','error');return;}
+  currentFamily.events.push(e); closeModal('modal-event'); renderCalendar();
+  saveToFirestore(); showToast('Événement ajouté !','success');
+}
+function deleteEvent(id){currentFamily.events=currentFamily.events.filter(e=>e.id!==id);renderCalendar();saveToFirestore();}
+
+// ═══════════════════════ EXPENSES & CHARGES ═══════════════════════
+function renderExpenses() {
+  el('expenses-list').innerHTML=currentFamily.expenses.slice().reverse().map(e=>`
+    <div class="expense-row">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="expense-cat" style="background:var(--cream)">${e.category.split(' ')[0]}</div>
+        <div><div style="font-weight:600;font-size:13px">${e.label}</div><div style="font-size:12px;color:var(--light)">${formatDate(e.date)} — ${e.by}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:700;color:var(--terracotta)">${fmt(e.amount)}</span>
+        <button onclick="deleteExpense(${e.id})" style="border:none;background:none;cursor:pointer;color:var(--light);font-size:14px">✕</button>
+      </div>
+    </div>
+  `).join('')||'<p style="color:var(--light);font-size:13px">Aucune dépense</p>';
+
+  el('charges-list').innerHTML=currentFamily.charges.map(c=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:9px;height:9px;border-radius:50%;background:${c.color||'#3D5A47'}"></div>
+        <span style="font-size:13px">${c.label}</span>
+        ${c.monthly?'<span class="monthly-badge">🔄 Mensuel</span>':''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:700;font-size:13px">${fmt(c.amount)}</span>
+        <button onclick="deleteCharge(${c.id})" style="border:none;background:none;cursor:pointer;color:var(--light);font-size:12px">✕</button>
+      </div>
+    </div>
+  `).join('');
+
+  const total=currentFamily.expenses.reduce((s,e)=>s+e.amount,0);
+  const totalC=currentFamily.charges.reduce((s,c)=>s+c.amount,0);
+  const budget=currentFamily.budget.monthly;
+  const pct=Math.min(100,Math.round((total+totalC)/budget*100));
+  el('budget-summary').innerHTML=`
+    <div style="font-size:13px">
+      <div class="flex-between mb-8"><span>Dépenses variables</span><span style="font-weight:700">${fmt(total)}</span></div>
+      <div class="flex-between mb-8"><span>Charges fixes mensuelles</span><span style="font-weight:700">${fmt(totalC)}</span></div>
+      <div class="flex-between mb-8" style="border-top:1px solid var(--warm);padding-top:8px"><span>Budget mensuel</span><span style="font-weight:700">${fmt(budget)}</span></div>
+      <div class="flex-between" style="font-weight:700;color:${budget-total-totalC>0?'var(--success)':'var(--danger)'}"><span>Disponible</span><span>${fmt(budget-total-totalC)}</span></div>
+    </div>
+    <div class="progress-bar mt-8"><div class="progress-fill" style="width:${pct}%;background:${pct>85?'var(--danger)':pct>60?'var(--warning)':'var(--forest)'}"></div></div>
+    <div style="font-size:12px;color:var(--light);margin-top:5px">${pct}% du budget utilisé</div>
+  `;
+}
+
+function openExpenseModal(){populateDropdowns();el('exp-date').value=todayStr();openModal('modal-expense');}
+function saveExpense(){
+  const e={id:Date.now(),label:el('exp-label').value.trim(),amount:parseFloat(el('exp-amount').value)||0,date:el('exp-date').value,category:el('exp-category').value,by:el('exp-by').value};
+  if(!e.label){showToast('Description requise','error');return;}
+  currentFamily.expenses.push(e); closeModal('modal-expense'); renderExpenses(); renderDashboard();
+  saveToFirestore(); showToast('Dépense enregistrée !','success');
+}
+function deleteExpense(id){currentFamily.expenses=currentFamily.expenses.filter(e=>e.id!==id);renderExpenses();renderDashboard();saveToFirestore();}
+
+function openChargeModal(){openModal('modal-charge');}
+function saveCharge(){
+  const monthly=el('chg-monthly').checked;
+  const c={id:Date.now(),label:el('chg-label').value.trim(),amount:parseFloat(el('chg-amount').value)||0,cat:el('chg-cat').value,monthly,color:randomColor()};
+  if(!c.label){showToast('Libellé requis','error');return;}
+  currentFamily.charges.push(c);
+  if(el('chg-auto-alert').checked&&monthly){
+    currentFamily.alerts.push({id:Date.now()+1,title:'Charge mensuelle: '+c.label,date:new Date(new Date().getFullYear(),new Date().getMonth()+1,1).toISOString().split('T')[0],priority:'info',cat:'💶 Finance',notes:fmt(c.amount)+' — charge mensuelle récurrente'});
+  }
+  closeModal('modal-charge'); renderExpenses(); renderDashboard(); updateBadges();
+  saveToFirestore();
+  showToast(c.label+(monthly?' ajouté comme charge mensuelle 🔄':' ajouté'),'success');
+}
+function deleteCharge(id){currentFamily.charges=currentFamily.charges.filter(c=>c.id!==id);renderExpenses();renderDashboard();saveToFirestore();}
+function toggleCheckbox(row){
+  const cb=row.querySelector('input[type=checkbox]');
+  cb.checked=!cb.checked;
+  row.classList.toggle('checked',cb.checked);
+}
+
+// ═══════════════════════ FACTURES ═══════════════════════
+function renderFactures() {
+  const now=new Date();
+  el('factures-body').innerHTML=currentFamily.factures.map(f=>{
+    const days=Math.ceil((new Date(f.due)-now)/(1000*86400));
+    const statusTag=f.status==='Payée'?'tag-success':days<0?'tag-danger':days<7?'tag-warn':'tag-info';
+    return `<tr>
+      <td><span style="font-weight:600">${f.name}</span></td>
+      <td style="font-weight:700">${fmt(f.amount)}</td>
+      <td>${formatDate(f.due)} ${f.status!=='Payée'&&days>=0?`<span style="font-size:11px;color:${days<7?'var(--danger)':'var(--light)'};">(${days}j)</span>`:''}</td>
+      <td>${f.recurrence?`<span class="monthly-badge">${f.recurrence==='mensuelle'?'🔄':'📅'} ${f.recurrence}</span>`:'-'}</td>
+      <td><span class="tag ${statusTag}">${f.status}</span></td>
+      <td style="display:flex;gap:6px">
+        ${f.status!=='Payée'?`<button class="btn btn-success btn-xs" onclick="markFacturePaid(${f.id})">✓ Payer</button>`:''}
+        <button class="btn btn-secondary btn-xs" onclick="deleteFacture(${f.id})">🗑</button>
+      </td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--light);padding:20px">Aucune facture</td></tr>';
+}
+function openFactureModal(){openModal('modal-facture');}
+function saveFacture(){
+  const f={id:Date.now(),name:el('fac-name').value.trim(),amount:parseFloat(el('fac-amount').value)||0,due:el('fac-due').value,status:el('fac-status').value,cat:el('fac-cat').value,recurrence:el('fac-recurrence').value};
+  if(!f.name){showToast('Nom requis','error');return;}
+  currentFamily.factures.push(f); closeModal('modal-facture'); renderFactures(); updateBadges();
+  saveToFirestore(); showToast('Facture enregistrée !','success');
+}
+function markFacturePaid(id){const f=currentFamily.factures.find(f=>f.id===id);if(f){f.status='Payée';renderFactures();updateBadges();saveToFirestore();showToast('Facture payée ✓','success');}}
+function deleteFacture(id){currentFamily.factures=currentFamily.factures.filter(f=>f.id!==id);renderFactures();updateBadges();saveToFirestore();}
+
+// ═══════════════════════ BIENS ═══════════════════════
+function selectBienType(btn, type) {
+  document.querySelectorAll('.bien-type-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); selectedBienType=type; el('bien-cat').value=type;
+}
+function renderBiens() {
+  el('biens-body').innerHTML=currentFamily.biens.map(b=>`
+    <tr>
+      <td><span style="font-weight:600">${b.name}</span>${b.serial?`<div style="font-size:11px;color:var(--light);font-family:monospace">${b.serial}</div>`:''}</td>
+      <td><span class="tag tag-neutral">${b.cat}</span></td>
+      <td style="font-weight:700">${fmt(b.value)}</td>
+      <td>${b.date?formatDate(b.date):'-'}</td>
+      <td>${b.insurance?`<span class="tag ${b.insurance==='Assuré'?'tag-success':b.insurance==='À renouveler'?'tag-warn':'tag-danger'}">${b.insurance}</span>`:'-'}</td>
+      <td style="font-size:12px;color:var(--light)">${b.notes||'-'}</td>
+      <td><button class="btn btn-secondary btn-xs" onclick="deleteBien(${b.id})">🗑</button></td>
+    </tr>
+  `).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--light);padding:20px">Aucun bien enregistré</td></tr>';
+}
+function openBienModal(){openModal('modal-bien');}
+function saveBien(){
+  const b={id:Date.now(),name:el('bien-name').value.trim(),cat:selectedBienType,value:parseFloat(el('bien-value').value)||0,date:el('bien-date').value,insurance:el('bien-insurance').value,serial:el('bien-serial').value,notes:el('bien-notes').value};
+  if(!b.name){showToast('Nom requis','error');return;}
+  currentFamily.biens.push(b); closeModal('modal-bien'); renderBiens();
+  saveToFirestore(); showToast('Bien enregistré !','success');
+}
+function deleteBien(id){currentFamily.biens=currentFamily.biens.filter(b=>b.id!==id);renderBiens();saveToFirestore();}
+
+// ═══════════════════════ SIMULATION CRÉDIT ═══════════════════════
+function renderSimulation() { simUpdate(); }
+function simUpdate() {
+  const income=parseFloat(el('sim-income').value)||0;
+  const totalChg=currentFamily.charges.reduce((s,c)=>s+c.amount,0);
+  const totalExp=currentFamily.expenses.reduce((s,e)=>s+e.amount,0);
+  const currentDebt=currentFamily.charges.filter(c=>c.cat==='💳 Crédit en cours').reduce((s,c)=>s+c.amount,0);
+  el('sim-current-situation').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+      <div><span style="color:var(--light)">Charges fixes/mois</span><div style="font-weight:700">${fmt(totalChg)}</div></div>
+      <div><span style="color:var(--light)">Dépenses variables</span><div style="font-weight:700">${fmt(totalExp)}</div></div>
+      <div><span style="color:var(--light)">Crédits en cours</span><div style="font-weight:700">${fmt(currentDebt)}</div></div>
+      <div><span style="color:var(--light)">Taux endettement actuel</span><div style="font-weight:700;color:${income>0&&currentDebt/income>0.33?'var(--danger)':'var(--success)'}">
+        ${income>0?Math.round(currentDebt/income*100)+'%':'—'}
+      </div></div>
+    </div>
+  `;
+}
+function runSimulation() {
+  const amount=parseFloat(el('sim-amount').value)||0;
+  const duration=parseInt(el('sim-duration').value)||12;
+  const rate=parseFloat(el('sim-rate').value)||0;
+  const income=parseFloat(el('sim-income').value)||0;
+  const savings=parseFloat(el('sim-savings').value)||0;
+  if(!amount||!income){showToast('Montant du crédit et revenus requis','error');return;}
+
+  // Monthly payment calculation
+  const monthlyRate=rate/100/12;
+  let monthlyPayment;
+  if(monthlyRate===0) monthlyPayment=amount/duration;
+  else monthlyPayment=amount*(monthlyRate*Math.pow(1+monthlyRate,duration))/(Math.pow(1+monthlyRate,duration)-1);
+  const totalCost=monthlyPayment*duration;
+  const totalInterest=totalCost-amount;
+
+  const totalChg=currentFamily.charges.reduce((s,c)=>s+c.amount,0);
+  const existingCredit=currentFamily.charges.filter(c=>c.cat==='💳 Crédit en cours').reduce((s,c)=>s+c.amount,0);
+  const totalDebtWithNew=existingCredit+monthlyPayment;
+  const debtRatio=totalDebtWithNew/income;
+  const totalExpenses=totalChg+monthlyPayment;
+  const remaining=income-totalExpenses;
+  const safetyMonths=savings/totalChg;
+
+  // DECISION LOGIC
+  let result, cls, icon, title, msg, advice;
+  if(debtRatio>0.40) {
+    cls='red'; icon='🚫'; title='Crédit déconseillé';
+    result='ROUGE';
+    msg=`Le taux d'endettement serait de <strong>${Math.round(debtRatio*100)}%</strong>, bien au-dessus de la limite recommandée de 33%.`;
+    advice=`💡 Conseil : Attendez d'avoir remboursé ${existingCredit>0?'vos crédits actuels':'davantage'} ou augmentez vos revenus. Avec vos finances actuelles, un crédit serait soutenable dans environ ${Math.ceil((totalDebtWithNew-income*0.33)/monthlyPayment)} mois de remboursement de crédits existants.`;
+  } else if(debtRatio>0.33) {
+    cls='orange'; icon='⚠️'; title='Crédit à risque';
+    result='ORANGE';
+    msg=`Le taux d'endettement serait de <strong>${Math.round(debtRatio*100)}%</strong>, légèrement au-dessus des 33% recommandés. La banque pourrait refuser ou proposer un taux plus élevé.`;
+    advice=`💡 Conseil : Vous pourriez obtenir ce crédit, mais il serait plus sécurisé dans ${Math.ceil((totalDebtWithNew-income*0.30)/monthlyPayment)} mois en réduisant d'autres charges. Assurez-vous d'avoir ${fmt(totalChg*3)} d'épargne de sécurité (vous en avez ${fmt(savings)}).`;
+  } else if(safetyMonths<3) {
+    cls='orange'; icon='⚠️'; title='Crédit possible avec prudence';
+    msg=`Taux d'endettement acceptable à <strong>${Math.round(debtRatio*100)}%</strong>, mais votre épargne de sécurité est insuffisante (${safetyMonths.toFixed(1)} mois de charges).`;
+    advice=`💡 Conseil : Avant de contracter ce crédit, constituez une épargne de sécurité d'au moins ${fmt(totalChg*3)}. Dans ${Math.ceil((totalChg*3-savings)/(remaining*0.3))} mois d'épargne à 30% du disponible, vous serez dans une position idéale.`;
+    cls='orange'; icon='⚠️'; title='Crédit possible avec prudence';
+  } else {
+    cls='green'; icon='✅'; title='Crédit envisageable';
+    result='VERT';
+    msg=`Votre taux d'endettement serait de <strong>${Math.round(debtRatio*100)}%</strong>, dans les normes. Il vous resterait <strong>${fmt(remaining)}</strong>/mois après toutes charges.`;
+    advice=`💡 Conseil : Votre situation est favorable. Vous avez ${fmt(savings)} d'épargne (${safetyMonths.toFixed(1)} mois de sécurité). Comparez les offres de plusieurs banques pour obtenir le meilleur taux.`;
+  }
+
+  el('sim-result-container').innerHTML=`
+    <div class="credit-result-box ${cls}">
+      <div class="result-icon">${icon}</div>
+      <div class="result-title">${title}</div>
+      <div class="result-msg">${msg}</div>
+      <div class="result-advice">${advice}</div>
+    </div>
+    <div class="card mt-12">
+      <div class="card-title mb-12">📊 Détail du crédit</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+        <div style="background:var(--cream);padding:12px;border-radius:10px"><div style="color:var(--light);margin-bottom:4px">Mensualité</div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif">${fmt(monthlyPayment)}</div></div>
+        <div style="background:var(--cream);padding:12px;border-radius:10px"><div style="color:var(--light);margin-bottom:4px">Coût total</div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif">${fmt(totalCost)}</div></div>
+        <div style="background:var(--cream);padding:12px;border-radius:10px"><div style="color:var(--light);margin-bottom:4px">Coût des intérêts</div><div style="font-size:16px;font-weight:700;color:var(--terracotta)">${fmt(totalInterest)}</div></div>
+        <div style="background:var(--cream);padding:12px;border-radius:10px"><div style="color:var(--light);margin-bottom:4px">Taux endettement</div><div style="font-size:16px;font-weight:700;color:${debtRatio>0.33?'var(--danger)':'var(--success)'}">${Math.round(debtRatio*100)}%</div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════ DOCUMENTS ═══════════════════════
+let docNotifs={email:false, sms:false, app:false};
+function toggleNotif(type) {
+  docNotifs[type]=!docNotifs[type];
+  el('notif-'+type+'-wrap').classList.toggle('active',docNotifs[type]);
+  el('doc-notif-'+type).checked=docNotifs[type];
+}
+function renderDocs() {
+  const now=new Date();
+  const html=currentFamily.docs.map(d=>{
+    const days=Math.ceil((new Date(d.expiry)-now)/(1000*86400));
+    let cls='',statusTag='';
+    if(days<0){cls='expired';statusTag='<span class="tag tag-danger">EXPIRÉ</span>';}
+    else if(days<90){cls='expiring-soon';statusTag=`<span class="tag tag-warn">⚠️ Expire dans ${days}j</span>`;}
+    else if(days<365){statusTag=`<span class="tag tag-info">Expire dans ${Math.ceil(days/30)} mois</span>`;}
+    else{statusTag='<span class="tag tag-success">Valide ✓</span>';}
+
+    const notifIcons=[d.notifEmail?'📧':'',d.notifSms?'📱':'',d.notifApp?'🔔':''].filter(Boolean).join(' ');
+    return `
+      <div class="doc-card ${cls}">
+        <div class="doc-icon">${d.type.split(' ')[0]}</div>
+        <div class="doc-info">
+          <div class="doc-name">${d.type.split(' ').slice(1).join(' ')} — ${d.owner}</div>
+          <div class="doc-meta">N° ${d.number} · Émis le ${formatDate(d.issued)}</div>
+          <div class="doc-meta">Expire le ${formatDate(d.expiry)}</div>
+          <div style="margin-top:6px;display:flex;align-items:center;gap:8px">${statusTag}${notifIcons?`<span style="font-size:12px;color:var(--light)">Alertes: ${notifIcons}</span>`:''}</div>
+        </div>
+        <button onclick="deleteDoc(${d.id})" style="border:none;background:none;cursor:pointer;color:var(--light)">✕</button>
+      </div>
+    `;
+  }).join('')||'<p style="color:var(--light)">Aucun document enregistré</p>';
+  el('docs-grid').innerHTML=`<div>${html}</div>`;
+}
+function openDocModal() {
+  populateDropdowns(); docNotifs={email:false,sms:false,app:false};
+  ['email','sms','app'].forEach(t=>{el('notif-'+t+'-wrap').classList.remove('active');el('doc-notif-'+t).checked=false;});
+  openModal('modal-doc');
+}
+function saveDoc() {
+  const d={id:Date.now(),type:el('doc-type').value,number:el('doc-number').value.trim(),owner:el('doc-owner').value,issued:el('doc-issued').value,expiry:el('doc-expiry').value,notes:el('doc-notes').value,notifEmail:docNotifs.email,notifSms:docNotifs.sms,notifApp:docNotifs.app,alertDelay:parseInt(el('doc-alert-delay').value)||90};
+  if(!d.expiry){showToast('Date d\'expiration requise','error');return;}
+  currentFamily.docs.push(d);
+  // Auto-create alert
+  if(d.notifEmail||d.notifSms||d.notifApp) {
+    const alertDate=new Date(d.expiry); alertDate.setDate(alertDate.getDate()-d.alertDelay);
+    currentFamily.alerts.push({id:Date.now()+1,title:'⏰ Expiration: '+d.type+' de '+d.owner,date:alertDate.toISOString().split('T')[0],priority:'warning',cat:'📄 Document',notes:(d.notifEmail?'Email ':'')+(d.notifSms?'SMS ':'')+(d.notifApp?'App':'')});
+  }
+  closeModal('modal-doc'); renderDocs(); updateBadges();
+  saveToFirestore(); showToast('Document enregistré !','success');
+}
+function deleteDoc(id){currentFamily.docs=currentFamily.docs.filter(d=>d.id!==id);renderDocs();updateBadges();saveToFirestore();}
+
+// ═══════════════════════ ALERTS ═══════════════════════
+function renderAlerts() {
+  const computed=getComputedAlerts();
+  el('alertes-list').innerHTML=computed.length?computed.map(a=>`
+    <div class="alert-item alert-${a.level}" style="margin-bottom:7px">
+      <span style="font-size:18px">${a.icon}</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${a.title}</div><div style="font-size:12px;opacity:0.7">${a.sub}</div></div>
+      <span class="tag ${a.level==='urgent'?'tag-danger':a.level==='warn'?'tag-warn':'tag-info'}">${a.level==='urgent'?'🔴 Urgent':a.level==='warn'?'🟠 Attention':'🔵 Info'}</span>
+    </div>
+  `).join(''):'<div class="alert-item alert-ok">✅ Aucune alerte active</div>';
+}
+function openAlertModal(){openModal('modal-alert');}
+function saveAlert(){
+  const a={id:Date.now(),title:el('al-title').value.trim(),date:el('al-date').value,priority:el('al-priority').value,cat:el('al-cat').value,notes:el('al-notes').value};
+  if(!a.title){showToast('Titre requis','error');return;}
+  currentFamily.alerts.push(a); closeModal('modal-alert'); renderAlerts(); updateBadges();
+  saveToFirestore(); showToast('Alerte créée !','success');
+}
+
+// ═══════════════════════ ENFANTS ═══════════════════════
+function renderEnfants() {
+  const colors=['#2980B9','#8E44AD','#27AE60','#E67E22','#C0392B'];
+  el('enfants-grid').innerHTML=currentFamily.enfants.map((e,i)=>`
+    <div class="child-card">
+      <div class="child-avatar" style="background:${(e.color||colors[i%5])}20">${['🧒','👧','👦','🧒'][i%4]}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:3px">${e.name}</div>
+      <div style="font-size:12px;color:var(--light);margin-bottom:10px">${formatDate(e.dob)} · ${calcAge(e.dob)} ans</div>
+      <div style="font-size:13px;margin-bottom:5px">🏫 ${e.school}</div>
+      <div style="font-size:13px;margin-bottom:5px">📚 Classe: <strong>${e.class}</strong></div>
+      ${e.activities?`<div style="font-size:13px;margin-bottom:5px">⚽ ${e.activities}</div>`:''}
+      ${e.doctor?`<div style="font-size:12px;color:var(--mid);margin-bottom:5px">👨‍⚕️ ${e.doctor}</div>`:''}
+      ${e.medical&&e.medical!=='RAS'?`<div style="font-size:12px;padding:8px;background:#FEF2F2;border-radius:8px;margin-top:8px;color:var(--danger)">⚠️ ${e.medical}</div>`:''}
+      <button onclick="deleteEnfant(${e.id})" class="btn btn-secondary btn-xs" style="margin-top:12px">🗑 Retirer</button>
+    </div>
+  `).join('')||'<p style="color:var(--light)">Aucun enfant enregistré</p>';
+}
+function openEnfantModal(){openModal('modal-enfant');}
+function saveEnfant(){
+  const e={id:Date.now(),name:el('enf-name').value.trim(),dob:el('enf-dob').value,school:el('enf-school').value,class:el('enf-class').value,activities:el('enf-activities').value,doctor:el('enf-doctor').value,medical:el('enf-medical').value,color:randomColor()};
+  if(!e.name){showToast('Prénom requis','error');return;}
+  currentFamily.enfants.push(e); closeModal('modal-enfant'); renderEnfants();
+  saveToFirestore(); showToast(e.name+' ajouté(e) !','success');
+}
+function deleteEnfant(id){currentFamily.enfants=currentFamily.enfants.filter(e=>e.id!==id);renderEnfants();saveToFirestore();}
+
+// ═══════════════════════ VACANCES ═══════════════════════
+const VAC_TIPS = {
+  '🇪🇸 Espagne':['Vérifiez la validité des passeports (6 mois min.)','Prévoyez une carte EHIC/assurance santé','Été : réservez tôt, les plages sont bondées','Décalage horaire : +1h vs France','Budget moyen famille : 150-250€/jour','Carte SIM locale conseillée pour les données mobiles'],
+  '🇮🇹 Italie':['Vérifiez les ZTL (zones à trafic limité) si vous conduisez','Réservez les sites incontournables (Colisée, Uffizi) à l\'avance','Couvrez-vous les épaules/genoux pour visiter les églises','L\'eau du robinet est potable dans la plupart des villes'],
+  '🇲🇦 Maroc':['Passeport valide (6 mois min.) ou carte d\'identité pour les ressortissants UE','Vaccinations : consultez votre médecin','Évitez l\'eau du robinet — eau en bouteille','Négociation dans les souks : normale et attendue','Monnaie locale : Dirham — changez à l\'arrivée','Ramadan : horaires adaptés, respectez les usages locaux'],
+  '🇩🇿 Algérie':['Visa obligatoire pour les non-ressortissants','Passeport valide 6 mois minimum','Assurance santé internationale recommandée','Change en Dinar uniquement à l\'arrivée (taux officiel)','Respect des coutumes locales et dress code','Évitez de photographier bâtiments officiels/militaires'],
+  '🇹🇳 Tunisie':['Carte d\'identité suffisante pour les ressortissants UE','Attention à la chaleur estivale (40°+)','Crème solaire indice élevé indispensable','Assurance rapatriement recommandée','Conduire prudemment (routes parfois difficiles)'],
+  '🇬🇷 Grèce':['Haute saison juillet-août : réservez tout à l\'avance','Îles : prévoir les ferries entre les îles à l\'avance','Certaines îles : pas de distributeurs, emportez du liquide','Bâtiments anciens : sols irréguliers avec enfants'],
+  '🇦🇪 Émirats Arabes Unis':['Respectez les codes vestimentaires dans les lieux publics','Alcool uniquement dans les hôtels licenciés','Saison idéale : oct-avril (évitez l\'été 40-50°)','Monnaie : Dirham AED — cartes acceptées partout','Visa obtenu à l\'arrivée pour ressortissants UE'],
+  '🇹🇭 Thaïlande':['Visa : 30 jours sans visa pour UE','Vaccinations recommandées : Hépatite A/B, typhoïde','Respectez les temples (tenues appropriées)','Eau en bouteille uniquement','Couverture de santé internationale indispensable','Prévenez votre banque avant le départ'],
+  '🇯🇵 Japon':['Réservez les JR Pass avant le départ (moins cher)','Yen en espèces souvent nécessaire','Transports impeccables — applications utiles: HyperDia','Prévoyez une SIM ou pocket WiFi','Décalage horaire : +8h vs France — fatigue les premiers jours'],
+  '🇺🇸 États-Unis':['ESTA obligatoire (à faire 72h avant)','Assurance santé INDISPENSABLE (soins très coûteux)','Permis de conduire international recommandé','Pourboires : 15-20% en restauration','Décalage : -6h à -9h selon l\'État'],
+  '🇫🇷 France':['Idéale pour les premières vacances en famille','Réservez les hébergements 3-4 mois à l\'avance en été','Carte Famille Nombreuse pour réductions','Vérifiez les calendriers scolaires des zones A, B, C'],
+};
+
+const CHECKLIST_UNIVERSAL=[
+  {icon:'🛂',text:'Passeports / CNI valides pour tous'},
+  {icon:'✈️',text:'Billets de transport confirmés'},
+  {icon:'🏨',text:'Réservation hébergement imprimée'},
+  {icon:'💊',text:'Trousse à pharmacie de voyage'},
+  {icon:'💳',text:'Carte bancaire et liquide'},
+  {icon:'📱',text:'Chargeurs et adaptateurs de prises'},
+  {icon:'👙',text:'Vêtements adaptés au climat'},
+  {icon:'🔐',text:'Copie numérique des documents'},
+  {icon:'🏥',text:'Attestation assurance voyage'},
+  {icon:'📋',text:'Numéros d\'urgence notés'},
+  {icon:'📸',text:'Appareil photo / stockage cloud'},
+  {icon:'🧴',text:'Crème solaire et produits d\'hygiène'},
+];
+
+function updateVacTips() {
+  const country=el('vac-country').value;
+  const tips=VAC_TIPS[country];
+  const container=el('vac-tips-container');
+  container.innerHTML=`<div class="tip-box"><div class="tip-title">💡 ${country||'Conseils'} — Choses à prévoir</div>${
+    tips?tips.map(t=>`<div class="tip-item"><span>✅</span><span>${t}</span></div>`).join('')
+    :'<div class="tip-item">🌍 Sélectionnez un pays pour des conseils spécifiques</div>'
+  }</div>`;
+
+  el('vac-checklist').innerHTML=CHECKLIST_UNIVERSAL.map(c=>`<div class="tip-item"><span>${c.icon}</span><span>${c.text}</span></div>`).join('');
+}
+
+function renderVacances() {
+  const list=document.getElementById('vacances-list');
+  if(!currentFamily.vacances.length){list.innerHTML='<div class="card"><p style="color:var(--light)">Aucunes vacances planifiées.</p></div>';return;}
+  const now=new Date();
+  list.innerHTML=currentFamily.vacances.map(v=>{
+    const daysLeft=Math.ceil((new Date(v.start)-now)/(1000*86400));
+    const duration=Math.ceil((new Date(v.end)-new Date(v.start))/(1000*86400));
+    return `
+      <div class="vacation-card">
+        <div class="vacation-header">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:3px">${v.dest}</div>
+            <div style="opacity:0.7;font-size:13px">${v.country||''} · ${formatDate(v.start)} → ${formatDate(v.end)} · ${duration} jours</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:26px">${v.type?.split(' ')[0]||'✈️'}</div>
+            <div style="font-size:12px;opacity:0.6;margin-top:3px">${daysLeft>0?'Dans '+daysLeft+' jours':daysLeft===0?'Aujourd\'hui !':'En cours ou passé'}</div>
+          </div>
+        </div>
+        <div class="vacation-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-size:12px">
+            <div><div style="color:var(--light);margin-bottom:3px">HÉBERGEMENT</div><div style="font-weight:600;font-size:13px">${v.lodging?.split(' ').slice(1).join(' ')||'-'}</div><div style="font-size:11px;color:var(--light)">${v.hotel||''}</div></div>
+            <div><div style="color:var(--light);margin-bottom:3px">TRANSPORT</div><div style="font-weight:600;font-size:13px">${v.type||'-'}</div><div style="font-size:11px;color:var(--light)">${v.transport||''}</div></div>
+            <div><div style="color:var(--light);margin-bottom:3px">BUDGET PRÉVU</div><div style="font-weight:700;font-size:15px">${fmt(v.budget)}</div><div style="font-size:11px;color:var(--light)">${v.persons?v.persons+' pers. — '+fmt(v.budget/v.persons)+'/pers.':''}</div></div>
+            <div><div style="color:var(--light);margin-bottom:3px">PARTICIPANTS</div><div style="font-weight:600;font-size:13px">${v.members||'Famille'}</div></div>
+          </div>
+          ${v.notes?`<div style="margin-top:12px;padding:10px;background:var(--cream);border-radius:8px;font-size:13px">${v.notes}</div>`:''}
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button onclick="deleteVacance(${v.id})" class="btn btn-secondary btn-sm">🗑 Supprimer</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+function openVacanceModal(){
+  openModal('modal-vacance');
+  el('vac-start').value=todayStr(); el('vac-end').value=todayStr();
+  updateVacTips();
+}
+function saveVacance(){
+  const v={id:Date.now(),dest:el('vac-dest').value.trim(),country:el('vac-country').value,start:el('vac-start').value,end:el('vac-end').value,budget:parseFloat(el('vac-budget').value)||0,type:el('vac-type').value,lodging:el('vac-lodging').value,hotel:el('vac-hotel').value,transport:el('vac-transport').value,members:el('vac-members').value,persons:parseInt(el('vac-persons').value)||1,notes:el('vac-notes').value};
+  if(!v.dest||!v.start){showToast('Destination et date requises','error');return;}
+  currentFamily.vacances.push(v);
+  currentFamily.events.push({id:Date.now(),title:'✈️ Vacances — '+v.dest,date:v.start,time:'',category:'✈️',member:v.members||'Toute la famille',notes:v.notes,reminder:'7'});
+  closeModal('modal-vacance'); renderVacances(); renderDashboard(); renderCalendar();
+  saveToFirestore(); showToast('Vacances planifiées ! 🏖️','success');
+}
+function deleteVacance(id){currentFamily.vacances=currentFamily.vacances.filter(v=>v.id!==id);renderVacances();saveToFirestore();}
+
+// ═══════════════════════ UTILS ═══════════════════════
+function el(id){return document.getElementById(id);}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function formatDate(str){if(!str)return '-';return new Date(str).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});}
+function calcAge(dob){const t=new Date(),b=new Date(dob);let a=t.getFullYear()-b.getFullYear();const m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a;}
+function randomColor(){const c=['#3D5A47','#C4714A','#C9A96E','#7A9E87','#2980B9','#8E44AD','#A0522D','#27AE60','#E67E22'];return c[Math.floor(Math.random()*c.length)];}
+function showToast(msg,type='success'){const c=el('toast-container'),t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':type==='warning'?'⚠️':'❌'}</span><span>${msg}</span>`;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// ── Expose everything globally (required for type="module") ──
+Object.assign(window, {
+  // nav
+  showSection, openAddModal, switchAuthTab,
+  // currency
+  setCurrency, setCurrencyInApp, toggleCurrencyPicker,
+  // members
+  openMemberModal, saveMember,
+  // calendar
+  changeMonth, openEventModal, saveEvent, deleteEvent,
+  // expenses/charges
+  openExpenseModal, saveExpense, deleteExpense,
+  openChargeModal, saveCharge, deleteCharge, toggleCheckbox,
+  // factures
+  openFactureModal, saveFacture, markFacturePaid, deleteFacture,
+  // biens
+  openBienModal, saveBien, deleteBien, selectBienType,
+  // simulation
+  runSimulation, simUpdate,
+  // documents
+  openDocModal, saveDoc, deleteDoc, toggleNotif,
+  // alerts
+  openAlertModal, saveAlert,
+  // enfants
+  openEnfantModal, saveEnfant, deleteEnfant,
+  // vacances
+  openVacanceModal, saveVacance, deleteVacance, updateVacTips,
+  // share
+  copyFamilyCode, shareFamilyCode, shareWhatsApp,
+  // inline currency dropdown close
+  toggleCurrencyPicker, setCurrencyInApp,
+});
+
+// Auto-fill join code from URL ?code=FAM-XXXX-XXXX
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('code');
+  if(code){
+    switchAuthTab('join');
+    const inp=document.getElementById('join-code');
+    if(inp) inp.value=code.toUpperCase();
+    showToast('Code famille détecté : '+code.toUpperCase(),'success');
+  }
+})();
+
+</script>
+</body>
+</html>
