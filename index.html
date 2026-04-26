@@ -853,15 +853,13 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
 
 <div id="toast-container"></div>
 
-<!-- Firebase SDK -->
-<script type="module">
-// ═══════════════════════ FIREBASE INIT ═══════════════════════
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<!-- Firebase CDN — classic scripts (no module, fully global scope) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+<script>
+// ═══════════════════════ FIREBASE INIT ═══════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyCUCpG_6ojWjoCVIPDGXf1yvbnEYPjkZnM",
   authDomain: "familynest-app-6c2d2.firebaseapp.com",
@@ -870,11 +868,183 @@ const firebaseConfig = {
   messagingSenderId: "758203397286",
   appId: "1:758203397286:web:1eba782a145464c221b067"
 };
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
 
-let unsubscribeFamily = null; // live listener cleanup
+let unsubscribeFamily = null;
+
+// ═══════════════════════ FIRESTORE HELPERS ═══════════════════════
+function saveToFirestore() {
+  if (!currentFamily) return;
+  db.collection('families').doc(currentFamily.code).update(currentFamily)
+    .catch(e => console.error('🔥 Save error:', e));
+}
+
+function loadFamilyRealtime(code) {
+  if (unsubscribeFamily) unsubscribeFamily();
+  unsubscribeFamily = db.collection('families').doc(code).onSnapshot(snap => {
+    if (snap.exists) {
+      currentFamily = snap.data();
+      if (document.getElementById('app').style.display === 'flex') {
+        const active = document.querySelector('.section.active');
+        if (active) {
+          const id = active.id.replace('section-', '');
+          const renders = {
+            dashboard:renderDashboard, membres:renderMembers, agenda:renderCalendar,
+            depenses:renderExpenses, factures:renderFactures, biens:renderBiens,
+            documents:renderDocs, alertes:renderAlerts, enfants:renderEnfants,
+            vacances:renderVacances, simulation:renderSimulation
+          };
+          if (renders[id]) renders[id]();
+        }
+        updateSidebar(); updateBadges();
+      }
+    }
+  }, e => console.error('🔥 Snapshot error:', e));
+}
+
+// ═══════════════════════ AUTH FUNCTIONS ═══════════════════════
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-password').value;
+  if (!email || !pw) { showToast('Email et mot de passe requis', 'error'); return; }
+  console.log('🔥 Login attempt:', email);
+  showToast('Connexion en cours…', 'success');
+  auth.signInWithEmailAndPassword(email, pw)
+    .then(() => console.log('🔥 Login OK'))
+    .catch(e => {
+      console.error('🔥 Login error:', e.code, e.message);
+      showToast('Email ou mot de passe incorrect', 'error');
+    });
+}
+
+function handleRegister() {
+  const fn   = document.getElementById('reg-firstname').value.trim();
+  const ln   = document.getElementById('reg-lastname').value.trim();
+  const email= document.getElementById('reg-email').value.trim();
+  const pw   = document.getElementById('reg-password').value;
+  const role = document.getElementById('reg-role').value;
+  if (!fn || !email || !pw) { showToast('Veuillez remplir les champs requis', 'error'); return; }
+  console.log('🔥 Register:', email);
+  showToast('Création du compte…', 'success');
+  auth.createUserWithEmailAndPassword(email, pw)
+    .then(cred => {
+      const uid  = cred.user.uid;
+      const code = 'FAM-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+      console.log('🔥 User created:', uid, '— Family code:', code);
+      const familyData = {
+        name: 'Famille ' + (ln || fn), code,
+        members: [{id:uid, firstname:fn, lastname:ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color:randomColor()}],
+        events:[], expenses:[], charges:[], factures:[],
+        biens:[], docs:[], alerts:[], enfants:[], vacances:[],
+        budget:{monthly:3000}
+      };
+      return db.collection('families').doc(code).set(familyData)
+        .then(() => db.collection('users').doc(uid).set({firstname:fn, lastname:ln, role, email, familyCode:code}))
+        .then(() => { console.log('🔥 Firestore docs written OK'); showToast('Famille créée ! Code: ' + code, 'success'); });
+    })
+    .catch(e => {
+      console.error('🔥 Register error:', e.code, e.message);
+      showToast(e.code === 'auth/email-already-in-use' ? 'Email déjà utilisé' : 'Erreur: ' + e.message, 'error');
+    });
+}
+
+function handleJoin() {
+  const fn   = document.getElementById('join-firstname').value.trim();
+  const ln   = document.getElementById('join-lastname').value.trim();
+  const email= document.getElementById('join-email').value.trim();
+  const pw   = document.getElementById('join-password').value;
+  const role = document.getElementById('join-role').value;
+  const code = document.getElementById('join-code').value.trim().toUpperCase();
+  if (!fn || !email || !pw || !code) { showToast('Veuillez remplir tous les champs', 'error'); return; }
+  console.log('🔥 Join attempt with code:', code);
+  showToast('Vérification du code famille…', 'success');
+  db.collection('families').doc(code).get()
+    .then(snap => {
+      if (!snap.exists) { showToast('Code famille introuvable', 'error'); return; }
+      const familyData = snap.data();
+      console.log('🔥 Family found:', familyData.name);
+      showToast('Création du compte…', 'success');
+      return auth.createUserWithEmailAndPassword(email, pw)
+        .then(cred => {
+          const uid = cred.user.uid;
+          const newMember = {id:uid, firstname:fn, lastname:ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color:randomColor()};
+          familyData.members.push(newMember);
+          return db.collection('families').doc(code).update({members: familyData.members})
+            .then(() => db.collection('users').doc(uid).set({firstname:fn, lastname:ln, role, email, familyCode:code}))
+            .then(() => { console.log('🔥 Joined family OK'); showToast('Bienvenue dans ' + familyData.name + ' ! 🎉', 'success'); });
+        });
+    })
+    .catch(e => {
+      console.error('🔥 Join error:', e.code, e.message);
+      showToast(e.code === 'auth/email-already-in-use' ? 'Email déjà utilisé — connectez-vous' : 'Erreur: ' + e.message, 'error');
+    });
+}
+
+function logout() {
+  if (unsubscribeFamily) unsubscribeFamily();
+  auth.signOut().then(() => {
+    currentUser = null; currentFamily = null;
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  });
+}
+
+// ═══════════════════════ AUTH STATE LISTENER ═══════════════════════
+auth.onAuthStateChanged(user => {
+  console.log('🔥 onAuthStateChanged:', user ? user.email : 'null');
+  if (user) {
+    // Show loader
+    if (!document.getElementById('loading-screen')) {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.body.insertAdjacentHTML('beforeend',
+        '<div id="loading-screen" style="position:fixed;inset:0;background:#3D5A47;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white">' +
+        '<div style="font-size:52px;margin-bottom:16px">🏠</div>' +
+        '<div style="font-family:serif;font-size:24px;font-weight:700;color:#C9A96E;margin-bottom:8px">FamilyNest</div>' +
+        '<div style="font-size:14px;opacity:0.7">Chargement de votre foyer…</div>' +
+        '</div>');
+    }
+    db.collection('users').doc(user.uid).get()
+      .then(snap => {
+        console.log('🔥 User doc exists:', snap.exists, snap.data());
+        if (snap.exists) {
+          currentUser = { uid: user.uid, ...snap.data() };
+          loadFamilyRealtime(currentUser.familyCode);
+          // Wait for first snapshot
+          const wait = setInterval(() => {
+            if (currentFamily) {
+              clearInterval(wait);
+              const ls = document.getElementById('loading-screen');
+              if (ls) ls.remove();
+              launchApp();
+            }
+          }, 150);
+          // Timeout after 8s
+          setTimeout(() => {
+            clearInterval(wait);
+            const ls = document.getElementById('loading-screen');
+            if (ls) { ls.remove(); showToast('Erreur de chargement — réessayez', 'error'); }
+            document.getElementById('auth-screen').style.display = 'flex';
+          }, 8000);
+        } else {
+          console.warn('🔥 No Firestore user doc for uid:', user.uid);
+          document.getElementById('loading-screen')?.remove();
+          auth.signOut();
+          document.getElementById('auth-screen').style.display = 'flex';
+        }
+      })
+      .catch(e => {
+        console.error('🔥 User fetch error:', e);
+        document.getElementById('loading-screen')?.remove();
+        document.getElementById('auth-screen').style.display = 'flex';
+      });
+  } else {
+    document.getElementById('loading-screen')?.remove();
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
 
 // ═══════════════════════ GLOBAL STATE ═══════════════════════
 let CURRENCY = { code:'EUR', sym:'€' };
@@ -882,208 +1052,7 @@ let currentUser = null, currentFamily = null;
 let currentMonth = new Date();
 let selectedBienType = '🏠 Immobilier';
 
-const CURRENCIES = { EUR:'€', USD:'$', DZD:'دج', SEK:'kr', MAD:'درهم' };
-
-// ═══════════════════════ FIRESTORE HELPERS ═══════════════════════
-async function saveToFirestore() {
-  if (!currentFamily) return;
-  try {
-    await updateDoc(doc(db, 'families', currentFamily.code), currentFamily);
-  } catch(e) { console.error('Save error:', e); }
-}
-
-async function loadFamilyRealtime(code) {
-  if (unsubscribeFamily) unsubscribeFamily();
-  unsubscribeFamily = onSnapshot(doc(db, 'families', code), (snap) => {
-    if (snap.exists()) {
-      currentFamily = snap.data();
-      // Only refresh UI if app is already launched (not on first load)
-      if (document.getElementById('app').style.display === 'flex') {
-        const active = document.querySelector('.section.active');
-        if (active) {
-          const id = active.id.replace('section-', '');
-          const renders = {
-            dashboard: renderDashboard, membres: renderMembers, agenda: renderCalendar,
-            depenses: renderExpenses, factures: renderFactures, biens: renderBiens,
-            documents: renderDocs, alertes: renderAlerts, enfants: renderEnfants,
-            vacances: renderVacances, simulation: renderSimulation
-          };
-          if (renders[id]) renders[id]();
-        }
-        updateSidebar();
-        updateBadges();
-      }
-    }
-  });
-}
-
-// Wrap every data-mutation to auto-save
-function withSave(fn) {
-  return async function(...args) {
-    fn(...args);
-    await saveToFirestore();
-  };
-}
-
-// ═══════════════════════ AUTH (Firebase) ═══════════════════════
-async function handleLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const pw    = document.getElementById('login-password').value;
-  try {
-    console.log('🔥 Attempting login for:', email);
-    showToast('Connexion en cours…', 'success');
-    await signInWithEmailAndPassword(auth, email, pw);
-    console.log('🔥 Login OK — waiting for onAuthStateChanged');
-  } catch(e) {
-    console.error('🔥 Login error:', e.code, e.message);
-    showToast('Erreur: ' + e.message, 'error');
-  }
-}
-
-async function handleRegister() {
-  const fn    = document.getElementById('reg-firstname').value.trim();
-  const ln    = document.getElementById('reg-lastname').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const pw    = document.getElementById('reg-password').value;
-  const role  = document.getElementById('reg-role').value;
-  if (!fn || !email || !pw) { showToast('Veuillez remplir les champs requis', 'error'); return; }
-  try {
-    console.log('🔥 Creating user:', email);
-    showToast('Création du compte…', 'success');
-    const cred = await createUserWithEmailAndPassword(auth, email, pw);
-    const uid  = cred.user.uid;
-    console.log('🔥 User created, uid:', uid);
-    const code = 'FAM-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
-    const familyData = {
-      name: 'Famille ' + (ln || fn), code,
-      members: [{id: uid, firstname: fn, lastname: ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color: randomColor()}],
-      events: [], expenses: [], charges: [], factures: [],
-      biens: [], docs: [], alerts: [], enfants: [], vacances: [],
-      budget: { monthly: 3000 }
-    };
-    console.log('🔥 Writing family to Firestore, code:', code);
-    await setDoc(doc(db, 'families', code), familyData);
-    console.log('🔥 Family written OK');
-    await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
-    console.log('🔥 User doc written OK — waiting for onAuthStateChanged');
-    showToast('Famille créée ! 🏠 Code: ' + code, 'success');
-  } catch(e) {
-    console.error('🔥 Register error:', e.code, e.message);
-    if (e.code === 'auth/email-already-in-use') {
-      showToast('Email déjà utilisé. Connectez-vous à la place.', 'error');
-    } else {
-      showToast('Erreur: ' + e.message, 'error');
-    }
-  }
-}
-
-async function handleJoin() {
-  const fn    = document.getElementById('join-firstname').value.trim();
-  const ln    = document.getElementById('join-lastname').value.trim();
-  const email = document.getElementById('join-email').value.trim();
-  const pw    = document.getElementById('join-password').value;
-  const role  = document.getElementById('join-role').value;
-  const code  = document.getElementById('join-code').value.trim().toUpperCase();
-  if (!fn || !email || !pw || !code) { showToast('Veuillez remplir tous les champs', 'error'); return; }
-  try {
-    showToast('Vérification du code famille…', 'success');
-    const familySnap = await getDoc(doc(db, 'families', code));
-    if (!familySnap.exists()) { showToast('Code famille introuvable. Vérifiez le code.', 'error'); return; }
-    showToast('Création du compte…', 'success');
-    const cred = await createUserWithEmailAndPassword(auth, email, pw);
-    const uid  = cred.user.uid;
-    const familyData = familySnap.data();
-    const newMember = {id: uid, firstname: fn, lastname: ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color: randomColor()};
-    familyData.members.push(newMember);
-    await updateDoc(doc(db, 'families', code), { members: familyData.members });
-    await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
-    // onAuthStateChanged will fire and call launchApp automatically
-    showToast('Bienvenue dans la famille ' + familyData.name + ' ! 🎉', 'success');
-  } catch(e) {
-    if (e.code === 'auth/email-already-in-use') {
-      showToast('Email déjà utilisé. Connectez-vous à la place.', 'error');
-    } else {
-      showToast('Erreur: ' + e.message, 'error');
-    }
-  }
-}
-
-async function logout() {
-  if (unsubscribeFamily) unsubscribeFamily();
-  await signOut(auth);
-  currentUser = null; currentFamily = null;
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-}
-
-// ─── Single source of truth: auth state drives everything ───
-onAuthStateChanged(auth, async (user) => {
-  console.log('🔥 onAuthStateChanged fired. User:', user ? user.email : 'null');
-  if (user) {
-    try {
-      document.getElementById('auth-screen').style.display='none';
-      document.body.insertAdjacentHTML('beforeend',
-        '<div id="loading-screen" style="position:fixed;inset:0;background:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;">' +
-        '<div style="font-size:48px;margin-bottom:16px">🏠</div>' +
-        '<div style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:700;color:#C9A96E">FamilyNest</div>' +
-        '<div style="font-size:14px;opacity:0.7;margin-top:8px">Chargement de votre foyer…</div>' +
-        '</div>'
-      );
-      console.log('🔥 Fetching user doc for uid:', user.uid);
-      const userSnap = await getDoc(doc(db, 'users', user.uid));
-      console.log('🔥 User doc exists:', userSnap.exists(), userSnap.data());
-      if (userSnap.exists()) {
-        currentUser = { uid: user.uid, ...userSnap.data() };
-        console.log('🔥 Loading family:', currentUser.familyCode);
-        await loadFamilyRealtime(currentUser.familyCode);
-        setTimeout(() => {
-          const ls = document.getElementById('loading-screen');
-          if (ls) ls.remove();
-          if (currentFamily) {
-            console.log('🔥 Family loaded, launching app');
-            launchApp();
-          } else {
-            const wait = setInterval(() => {
-              if (currentFamily) {
-                clearInterval(wait);
-                const ls2 = document.getElementById('loading-screen');
-                if (ls2) ls2.remove();
-                console.log('🔥 Family loaded (delayed), launching app');
-                launchApp();
-              }
-            }, 200);
-          }
-        }, 800);
-      } else {
-        console.warn('🔥 No user doc in Firestore for uid:', user.uid);
-        const ls = document.getElementById('loading-screen');
-        if (ls) ls.remove();
-        await signOut(auth);
-        document.getElementById('auth-screen').style.display='flex';
-      }
-    } catch(e) {
-      console.error('🔥 Auth state error:', e);
-      const ls = document.getElementById('loading-screen');
-      if (ls) ls.remove();
-      document.getElementById('auth-screen').style.display='flex';
-    }
-  } else {
-    console.log('🔥 No user logged in');
-    const ls = document.getElementById('loading-screen');
-    if (ls) ls.remove();
-    document.getElementById('auth-screen').style.display='flex';
-    document.getElementById('app').style.display='none';
-  }
-});
-
-// Expose auth functions globally (needed because type="module" is scoped)
-window.handleLogin    = handleLogin;
-window.handleRegister = handleRegister;
-window.handleJoin     = handleJoin;
-window.logout         = logout;
-
-// ═══════════════════════ LEGACY LOCAL DB (kept as fallback/demo data structure) ═══════════════════════
-// Not used for persistence — Firebase is the source of truth
+// ═══════════════════════ LEGACY LOCAL DB (demo data — not used for persistence) ═══════════════════════
 const DB = {
   families: {
     'FAM-2024-XKQR': {
@@ -1799,39 +1768,6 @@ function randomColor(){const c=['#3D5A47','#C4714A','#C9A96E','#7A9E87','#2980B9
 function showToast(msg,type='success'){const c=el('toast-container'),t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':type==='warning'?'⚠️':'❌'}</span><span>${msg}</span>`;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
 
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
-
-// ── Expose everything globally (required for type="module") ──
-Object.assign(window, {
-  // nav
-  showSection, openAddModal, switchAuthTab,
-  // currency
-  setCurrency, setCurrencyInApp, toggleCurrencyPicker,
-  // members
-  openMemberModal, saveMember,
-  // calendar
-  changeMonth, openEventModal, saveEvent, deleteEvent,
-  // expenses/charges
-  openExpenseModal, saveExpense, deleteExpense,
-  openChargeModal, saveCharge, deleteCharge, toggleCheckbox,
-  // factures
-  openFactureModal, saveFacture, markFacturePaid, deleteFacture,
-  // biens
-  openBienModal, saveBien, deleteBien, selectBienType,
-  // simulation
-  runSimulation, simUpdate,
-  // documents
-  openDocModal, saveDoc, deleteDoc, toggleNotif,
-  // alerts
-  openAlertModal, saveAlert,
-  // enfants
-  openEnfantModal, saveEnfant, deleteEnfant,
-  // vacances
-  openVacanceModal, saveVacance, deleteVacance, updateVacTips,
-  // share
-  copyFamilyCode, shareFamilyCode, shareWhatsApp,
-  // inline currency dropdown close
-  toggleCurrencyPicker, setCurrencyInApp,
-});
 
 // Auto-fill join code from URL ?code=FAM-XXXX-XXXX
 (function(){
