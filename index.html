@@ -893,24 +893,26 @@ async function saveToFirestore() {
 }
 
 async function loadFamilyRealtime(code) {
-  if (unsubscribeFamily) unsubscribeFamily(); // stop previous listener
+  if (unsubscribeFamily) unsubscribeFamily();
   unsubscribeFamily = onSnapshot(doc(db, 'families', code), (snap) => {
     if (snap.exists()) {
       currentFamily = snap.data();
-      // Refresh whichever section is active
-      const active = document.querySelector('.section.active');
-      if (active) {
-        const id = active.id.replace('section-', '');
-        const renders = {
-          dashboard: renderDashboard, membres: renderMembers, agenda: renderCalendar,
-          depenses: renderExpenses, factures: renderFactures, biens: renderBiens,
-          documents: renderDocs, alertes: renderAlerts, enfants: renderEnfants,
-          vacances: renderVacances, simulation: renderSimulation
-        };
-        if (renders[id]) renders[id]();
+      // Only refresh UI if app is already launched (not on first load)
+      if (document.getElementById('app').style.display === 'flex') {
+        const active = document.querySelector('.section.active');
+        if (active) {
+          const id = active.id.replace('section-', '');
+          const renders = {
+            dashboard: renderDashboard, membres: renderMembers, agenda: renderCalendar,
+            depenses: renderExpenses, factures: renderFactures, biens: renderBiens,
+            documents: renderDocs, alertes: renderAlerts, enfants: renderEnfants,
+            vacances: renderVacances, simulation: renderSimulation
+          };
+          if (renders[id]) renders[id]();
+        }
+        updateSidebar();
+        updateBadges();
       }
-      updateSidebar();
-      updateBadges();
     }
   });
 }
@@ -957,12 +959,15 @@ async function handleRegister() {
     };
     await setDoc(doc(db, 'families', code), familyData);
     await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
-    currentUser = { uid, firstname: fn, lastname: ln, role, email, familyCode: code };
-    currentFamily = familyData;
+    // onAuthStateChanged will fire and call launchApp automatically
     showToast('Famille créée ! 🏠 Code: ' + code, 'success');
-    await loadFamilyRealtime(code);
-    launchApp();
-  } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  } catch(e) {
+    if (e.code === 'auth/email-already-in-use') {
+      showToast('Email déjà utilisé. Connectez-vous à la place.', 'error');
+    } else {
+      showToast('Erreur: ' + e.message, 'error');
+    }
+  }
 }
 
 async function handleJoin() {
@@ -977,6 +982,7 @@ async function handleJoin() {
     showToast('Vérification du code famille…', 'success');
     const familySnap = await getDoc(doc(db, 'families', code));
     if (!familySnap.exists()) { showToast('Code famille introuvable. Vérifiez le code.', 'error'); return; }
+    showToast('Création du compte…', 'success');
     const cred = await createUserWithEmailAndPassword(auth, email, pw);
     const uid  = cred.user.uid;
     const familyData = familySnap.data();
@@ -984,12 +990,15 @@ async function handleJoin() {
     familyData.members.push(newMember);
     await updateDoc(doc(db, 'families', code), { members: familyData.members });
     await setDoc(doc(db, 'users', uid), { firstname: fn, lastname: ln, role, email, familyCode: code });
-    currentUser = { uid, firstname: fn, lastname: ln, role, email, familyCode: code };
-    currentFamily = familyData;
+    // onAuthStateChanged will fire and call launchApp automatically
     showToast('Bienvenue dans la famille ' + familyData.name + ' ! 🎉', 'success');
-    await loadFamilyRealtime(code);
-    launchApp();
-  } catch(e) { showToast('Erreur: ' + e.message, 'error'); }
+  } catch(e) {
+    if (e.code === 'auth/email-already-in-use') {
+      showToast('Email déjà utilisé. Connectez-vous à la place.', 'error');
+    } else {
+      showToast('Erreur: ' + e.message, 'error');
+    }
+  }
 }
 
 async function logout() {
@@ -1000,17 +1009,61 @@ async function logout() {
   document.getElementById('app').style.display = 'none';
 }
 
-// ─── Auto-login if session exists ───
+// ─── Single source of truth: auth state drives everything ───
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
+      // Show loading indicator
+      document.getElementById('auth-screen').style.display='none';
+      document.body.insertAdjacentHTML('beforeend',
+        '<div id="loading-screen" style="position:fixed;inset:0;background:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;">' +
+        '<div style="font-size:48px;margin-bottom:16px">🏠</div>' +
+        '<div style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:700;color:#C9A96E">FamilyNest</div>' +
+        '<div style="font-size:14px;opacity:0.7;margin-top:8px">Chargement de votre foyer…</div>' +
+        '</div>'
+      );
       const userSnap = await getDoc(doc(db, 'users', user.uid));
       if (userSnap.exists()) {
         currentUser = { uid: user.uid, ...userSnap.data() };
         await loadFamilyRealtime(currentUser.familyCode);
-        launchApp();
+        // loadFamilyRealtime's onSnapshot will set currentFamily then we launch
+        // Give it a moment to receive first snapshot
+        setTimeout(() => {
+          const ls = document.getElementById('loading-screen');
+          if (ls) ls.remove();
+          if (currentFamily) {
+            launchApp();
+          } else {
+            // family not loaded yet, wait for snapshot
+            const wait = setInterval(() => {
+              if (currentFamily) {
+                clearInterval(wait);
+                const ls2 = document.getElementById('loading-screen');
+                if (ls2) ls2.remove();
+                launchApp();
+              }
+            }, 200);
+          }
+        }, 800);
+      } else {
+        // User exists in Auth but not Firestore (edge case) — sign them out
+        const ls = document.getElementById('loading-screen');
+        if (ls) ls.remove();
+        await signOut(auth);
+        document.getElementById('auth-screen').style.display='flex';
       }
-    } catch(e) { console.error('Auth state error:', e); }
+    } catch(e) {
+      console.error('Auth state error:', e);
+      const ls = document.getElementById('loading-screen');
+      if (ls) ls.remove();
+      document.getElementById('auth-screen').style.display='flex';
+    }
+  } else {
+    // Not logged in
+    const ls = document.getElementById('loading-screen');
+    if (ls) ls.remove();
+    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('app').style.display='none';
   }
 });
 
@@ -1101,54 +1154,6 @@ function switchAuthTab(tab) {
   document.getElementById(tab+'-form').style.display='block';
 }
 
-function handleLogin() {
-  const email=document.getElementById('login-email').value.trim().toLowerCase();
-  const pw=document.getElementById('login-password').value;
-  let user=DB.users.find(u=>u.email===email&&u.password===pw);
-  if (!user) { showToast('Email ou mot de passe incorrect','error'); return; }
-  if (!DB.families[user.familyCode]) { showToast('Famille non trouvée','error'); return; }
-  currentUser=user; currentFamily=DB.families[user.familyCode];
-  launchApp();
-}
-
-function handleRegister() {
-  const fn=document.getElementById('reg-firstname').value.trim();
-  const ln=document.getElementById('reg-lastname').value.trim();
-  const email=document.getElementById('reg-email').value.trim().toLowerCase();
-  const pw=document.getElementById('reg-password').value;
-  const role=document.getElementById('reg-role').value;
-  if (!fn||!email||!pw) { showToast('Veuillez remplir les champs requis','error'); return; }
-  const code='FAM-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
-  DB.families[code]={
-    name:'Famille '+(ln||fn), code,
-    members:[], events:[], expenses:[], charges:[], factures:[], biens:[], docs:[], alerts:[], enfants:[], vacances:[],
-    budget:{monthly:3000}
-  };
-  const user={email,password:pw,firstname:fn,lastname:ln,role,familyCode:code};
-  DB.users.push(user);
-  currentUser=user; currentFamily=DB.families[code];
-  currentFamily.members.push({id:Date.now(),firstname:fn,lastname:ln,role,dob:'',phone:'',email,address:'',ss:'',blood:'',color:randomColor()});
-  showToast('Famille créée ! 🏠','success');
-  launchApp();
-}
-
-function handleJoin() {
-  const fn=document.getElementById('join-firstname').value.trim();
-  const ln=document.getElementById('join-lastname').value.trim();
-  const email=document.getElementById('join-email').value.trim().toLowerCase();
-  const pw=document.getElementById('join-password').value;
-  const role=document.getElementById('join-role').value;
-  const code=document.getElementById('join-code').value.trim().toUpperCase();
-  if (!fn||!email||!pw||!code) { showToast('Veuillez remplir tous les champs','error'); return; }
-  if (!DB.families[code]) { showToast('Code famille introuvable. Vérifiez le code.','error'); return; }
-  if (DB.users.find(u=>u.email===email)) { showToast('Email déjà utilisé. Essayez de vous connecter.','error'); return; }
-  const user={email,password:pw,firstname:fn,lastname:ln,role,familyCode:code};
-  DB.users.push(user);
-  currentUser=user; currentFamily=DB.families[code];
-  currentFamily.members.push({id:Date.now(),firstname:fn,lastname:ln,role,dob:'',phone:'',email,address:'',ss:'',blood:'',color:randomColor()});
-  showToast('Bienvenue dans la famille '+currentFamily.name+' ! 🎉','success');
-  launchApp();
-}
 
 function launchApp() {
   document.getElementById('auth-screen').style.display='none';
@@ -1156,12 +1161,6 @@ function launchApp() {
   setCurrency(CURRENCY.code, CURRENCY.sym);
   updateSidebar(); renderDashboard(); renderCalendar(); updateBadges(); updateTopbarDate();
   setTimeout(checkAutoAlerts,1200);
-}
-
-function logout() {
-  currentUser=null; currentFamily=null;
-  document.getElementById('auth-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
 }
 
 // ═══════════════════════ SIDEBAR & NAV ═══════════════════════
