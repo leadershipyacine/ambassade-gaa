@@ -234,6 +234,26 @@ tbody td{padding:11px 13px;color:var(--dark);}
 .gap-12{gap:12px;}
 .w-full{width:100%;}
 hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
+.color-pick{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:border-color 0.2s;}
+.color-pick.active{border-color:var(--dark);}
+.course-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--cream);}
+.course-item:last-child{border-bottom:none;}
+.stock-bar{height:7px;background:var(--warm);border-radius:4px;overflow:hidden;margin-top:4px;}
+.stock-fill{height:100%;border-radius:4px;}
+.cl-card{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:14px;}
+.cl-item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--cream);font-size:14px;}
+.cl-item-row:last-child{border-bottom:none;}
+.cl-checkbox{width:20px;height:20px;accent-color:var(--forest);cursor:pointer;flex-shrink:0;}
+.cl-item-row.done span{text-decoration:line-through;color:var(--light);}
+.anniv-card{display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;border:2px solid var(--warm);margin-bottom:10px;transition:border-color 0.15s;}
+.anniv-card.soon{border-color:var(--terracotta);}
+.anniv-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.gift-card{background:var(--cream);border-radius:12px;padding:14px;margin-bottom:10px;}
+.gift-card .gift-title{font-weight:700;font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.gift-idea{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:5px;}
+.member-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--warm);background:var(--white);cursor:pointer;font-size:13px;font-weight:600;color:var(--mid);transition:all 0.2s;}
+.member-tab.active{background:var(--forest);color:white;border-color:var(--forest);}
+.active-filter{background:var(--forest)!important;color:white!important;}
 @media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
@@ -270,11 +290,15 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <div id="login-form">
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="login-email" placeholder="votre@email.com" value="papa@famille.com">
+        <input type="email" id="login-email" placeholder="votre@email.com">
       </div>
       <div class="form-group">
         <label>Mot de passe</label>
-        <input type="password" id="login-password" placeholder="••••••••" value="1234">
+        <input type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <input type="checkbox" id="remember-me" style="width:16px;height:16px;accent-color:var(--forest);" checked>
+        <label for="remember-me" style="font-size:13px;color:var(--mid);cursor:pointer;">Mémoriser mon email</label>
       </div>
       <button class="btn btn-primary" onclick="handleLogin()">🔑 Se connecter</button>
       <div class="divider">pas encore de compte ?</div>
@@ -349,6 +373,9 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <div class="nav-section">Famille</div>
     <div class="nav-item" onclick="showSection('enfants')"><span class="nav-icon">🎒</span>Enfants & École</div>
     <div class="nav-item" onclick="showSection('vacances')"><span class="nav-icon">✈️</span>Vacances</div>
+    <div class="nav-item" onclick="showSection('courses')"><span class="nav-icon">🛒</span>Courses<span class="badge-count" id="badge-courses">0</span></div>
+    <div class="nav-item" onclick="showSection('checklists')"><span class="nav-icon">✅</span>Checklists</div>
+    <div class="nav-item" onclick="showSection('anniversaires')"><span class="nav-icon">🎂</span>Anniversaires<span class="badge-count" id="badge-anniv">0</span></div>
     <div class="sidebar-footer">
       <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:8px;" id="sidebar-user"></div>
       <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:10px;" id="sidebar-currency-info">€ Euro</div>
@@ -561,6 +588,68 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
           <button class="btn btn-primary btn-sm" onclick="openVacanceModal()">+ Planifier des vacances</button>
         </div>
         <div id="vacances-list"></div>
+      </div>
+
+      <!-- COURSES -->
+      <div class="section" id="section-courses">
+        <div class="grid-2">
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">🛒 Liste de courses</div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn btn-secondary btn-sm" onclick="generateSmartList()">🤖 Générer auto</button>
+                  <button class="btn btn-primary btn-sm" onclick="openCourseModal()">+ Article</button>
+                </div>
+              </div>
+              <div id="courses-filters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm active-filter" onclick="filterCourses('all',this)">Tout</button>
+                <button class="btn btn-secondary btn-sm" onclick="filterCourses('manquant',this)">🔴 Manquant</button>
+                <button class="btn btn-secondary btn-sm" onclick="filterCourses('faible',this)">🟠 Faible</button>
+                <button class="btn btn-secondary btn-sm" onclick="filterCourses('ok',this)">🟢 OK</button>
+              </div>
+              <div id="courses-list"></div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">📊 Stock estimé</div></div>
+              <div id="stock-summary"></div>
+            </div>
+            <div class="card mt-12">
+              <div class="card-title mb-12">💡 Rappels de courses</div>
+              <div id="courses-reminders"></div>
+              <button class="btn btn-secondary btn-sm mt-12" onclick="openReminderModal()">+ Rappel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHECKLISTS -->
+      <div class="section" id="section-checklists">
+        <div class="flex-between mb-16">
+          <div style="color:var(--mid);font-size:14px;">Checklists personnalisées pour chaque membre de la famille.</div>
+          <button class="btn btn-primary btn-sm" onclick="openChecklistModal()">+ Nouvelle checklist</button>
+        </div>
+        <div id="checklists-member-tabs" style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;"></div>
+        <div id="checklists-container"></div>
+      </div>
+
+      <!-- ANNIVERSAIRES -->
+      <div class="section" id="section-anniversaires">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🎂 Anniversaires à venir</div>
+              <button class="btn btn-primary btn-sm" onclick="openAnnivModal()">+ Anniversaire</button>
+            </div>
+            <div id="anniv-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-title mb-16">🎁 Idées cadeaux personnalisées</div>
+            <div id="anniv-gifts"></div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -851,7 +940,116 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
   </div>
 </div>
 
-<div id="toast-container"></div>
+<!-- COURSE ARTICLE MODAL -->
+<div class="modal-overlay" id="modal-course">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🛒 Ajouter un article</div><button class="close-btn" onclick="closeModal('modal-course')">✕</button></div>
+    <div class="form-group"><label>Article</label><input type="text" id="crs-name" placeholder="Lait, Pain, Pâtes…"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Catégorie</label>
+        <select id="crs-cat">
+          <option>🥛 Produits laitiers</option><option>🍞 Boulangerie</option><option>🥩 Viande & Poisson</option>
+          <option>🥦 Fruits & Légumes</option><option>🥫 Épicerie</option><option>🧃 Boissons</option>
+          <option>🧹 Entretien maison</option><option>🧴 Hygiène</option><option>❄️ Surgelés</option>
+          <option>🍫 Snacks & Sucreries</option><option>🐾 Animaux</option><option>👶 Bébé</option><option>⭐ Autre</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Unité</label>
+        <select id="crs-unit"><option>unité(s)</option><option>L</option><option>kg</option><option>g</option><option>paquet(s)</option><option>boîte(s)</option></select>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Quantité en stock</label><input type="number" id="crs-stock" placeholder="2" min="0" step="0.5"></div>
+      <div class="form-group"><label>Quantité minimum souhaitée</label><input type="number" id="crs-min" placeholder="4" min="0" step="0.5"></div>
+    </div>
+    <div class="form-group"><label>Durée de vie estimée à la maison</label>
+      <select id="crs-lifespan">
+        <option value="3">3 jours (pain, salades…)</option>
+        <option value="7">1 semaine (yaourts, fromage…)</option>
+        <option value="14">2 semaines (lait, jus…)</option>
+        <option value="30">1 mois (épicerie, conserves…)</option>
+        <option value="90">3 mois (produits entretien…)</option>
+        <option value="180">6 mois (stock longue durée)</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Dernière date d'achat</label><input type="date" id="crs-last-bought"></div>
+    <button class="btn btn-primary" onclick="saveCourseItem()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- REMINDER MODAL -->
+<div class="modal-overlay" id="modal-reminder">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🔔 Rappel de courses</div><button class="close-btn" onclick="closeModal('modal-reminder')">✕</button></div>
+    <div class="form-group"><label>Titre du rappel</label><input type="text" id="rem-title" placeholder="Faire les courses du weekend"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Jour</label>
+        <select id="rem-day">
+          <option value="1">Lundi</option><option value="2">Mardi</option><option value="3">Mercredi</option>
+          <option value="4">Jeudi</option><option value="5">Vendredi</option><option value="6">Samedi</option><option value="0">Dimanche</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Heure</label><input type="time" id="rem-time" value="09:00"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveReminder()">💾 Créer le rappel</button>
+  </div>
+</div>
+
+<!-- CHECKLIST MODAL -->
+<div class="modal-overlay" id="modal-checklist">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✅ Nouvelle checklist</div><button class="close-btn" onclick="closeModal('modal-checklist')">✕</button></div>
+    <div class="form-group"><label>Titre de la checklist</label><input type="text" id="cl-title" placeholder="Tâches du soir, Préparation vacances…"></div>
+    <div class="form-group"><label>Assignée à</label><select id="cl-member"><option>Toute la famille</option></select></div>
+    <div class="form-group"><label>Couleur</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;" id="cl-colors">
+        <div class="color-pick active" style="background:#3D5A47" onclick="selectClColor(this,'#3D5A47')"></div>
+        <div class="color-pick" style="background:#C4714A" onclick="selectClColor(this,'#C4714A')"></div>
+        <div class="color-pick" style="background:#C9A96E" onclick="selectClColor(this,'#C9A96E')"></div>
+        <div class="color-pick" style="background:#2980B9" onclick="selectClColor(this,'#2980B9')"></div>
+        <div class="color-pick" style="background:#8E44AD" onclick="selectClColor(this,'#8E44AD')"></div>
+        <div class="color-pick" style="background:#E67E22" onclick="selectClColor(this,'#E67E22')"></div>
+      </div>
+    </div>
+    <div id="cl-items-builder">
+      <div style="font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;">Éléments de la checklist</div>
+      <div id="cl-items-list"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input type="text" id="cl-new-item" placeholder="Ajouter un élément…" style="flex:1;padding:9px 13px;border:2px solid var(--warm);border-radius:10px;font-family:inherit;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')addClItem()">
+        <button class="btn btn-secondary btn-sm" onclick="addClItem()">+ Ajouter</button>
+      </div>
+    </div>
+    <button class="btn btn-primary mt-12" onclick="saveChecklist()">💾 Créer la checklist</button>
+  </div>
+</div>
+
+<!-- ANNIVERSAIRE MODAL -->
+<div class="modal-overlay" id="modal-anniv">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🎂 Anniversaire</div><button class="close-btn" onclick="closeModal('modal-anniv')">✕</button></div>
+    <div class="input-row">
+      <div class="form-group"><label>Prénom</label><input type="text" id="an-name" placeholder="Grand-mère Fatima"></div>
+      <div class="form-group"><label>Lien</label>
+        <select id="an-relation">
+          <option>👨 Papa</option><option>👩 Maman</option><option>👦 Fils</option><option>👧 Fille</option>
+          <option>👴 Grand-père</option><option>👵 Grand-mère</option><option>👨‍👦 Oncle</option><option>👩‍👦 Tante</option>
+          <option>👫 Ami(e)</option><option>💑 Couple</option><option>⭐ Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Date de naissance</label><input type="date" id="an-dob"></div>
+      <div class="form-group"><label>Sexe</label>
+        <select id="an-gender"><option value="M">Masculin</option><option value="F">Féminin</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label>Rappel avant l'anniversaire</label>
+      <select id="an-reminder"><option value="7">1 semaine avant</option><option value="14">2 semaines avant</option><option value="30">1 mois avant</option></select>
+    </div>
+    <div class="form-group"><label>Notes</label><textarea id="an-notes" rows="2" placeholder="Allergies, préférences, idées déjà notées…"></textarea></div>
+    <button class="btn btn-primary" onclick="saveAnniv()">💾 Enregistrer</button>
+  </div>
+</div>
 
 <!-- Firebase CDN — classic scripts (no module, fully global scope) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -871,6 +1069,20 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+
+// ── Session persistante même après fermeture du navigateur ──
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.error('Persistence error:', e));
+
+// ── Mémorisation email ──
+function initRememberMe() {
+  const saved = localStorage.getItem('fn_email');
+  if (saved) {
+    const inp = document.getElementById('login-email');
+    if (inp) inp.value = saved;
+  }
+}
+// Appel après chargement DOM
+document.addEventListener('DOMContentLoaded', initRememberMe);
 
 let unsubscribeFamily = null;
 
@@ -908,14 +1120,25 @@ function loadFamilyRealtime(code) {
 function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pw    = document.getElementById('login-password').value;
+  const remember = document.getElementById('remember-me').checked;
   if (!email || !pw) { showToast('Email et mot de passe requis', 'error'); return; }
   console.log('🔥 Login attempt:', email);
+  if (remember) localStorage.setItem('fn_email', email);
+  else localStorage.removeItem('fn_email');
   showToast('Connexion en cours…', 'success');
   auth.signInWithEmailAndPassword(email, pw)
     .then(() => console.log('🔥 Login OK'))
     .catch(e => {
       console.error('🔥 Login error:', e.code, e.message);
-      showToast('Email ou mot de passe incorrect', 'error');
+      const msgs = {
+        'auth/user-not-found': 'Aucun compte avec cet email',
+        'auth/wrong-password': 'Mot de passe incorrect',
+        'auth/invalid-email': 'Email invalide',
+        'auth/too-many-requests': 'Trop de tentatives, réessayez plus tard',
+        'auth/network-request-failed': 'Problème réseau — vérifiez votre connexion',
+        'auth/invalid-credential': 'Email ou mot de passe incorrect',
+      };
+      showToast(msgs[e.code] || 'Erreur: ' + e.message, 'error');
     });
 }
 
@@ -1172,7 +1395,7 @@ function showSection(id) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-'+id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")));
-  const titles={dashboard:'Tableau de bord',membres:'Membres de la famille',agenda:'Agenda',depenses:'Dépenses & Charges',factures:'Factures',biens:'Biens & Possessions',simulation:'Simulation Crédit',documents:'Documents & Identité',alertes:'Centre d\'alertes',enfants:'Enfants & École',vacances:'Vacances'};
+  const titles={dashboard:'Tableau de bord',membres:'Membres de la famille',agenda:'Agenda',depenses:'Dépenses & Charges',factures:'Factures',biens:'Biens & Possessions',simulation:'Simulation Crédit',documents:'Documents & Identité',alertes:'Centre d\'alertes',enfants:'Enfants & École',vacances:'Vacances',courses:'Courses & Stock maison',checklists:'Checklists',anniversaires:'Anniversaires & Cadeaux'};
   el('page-title').textContent=titles[id]||id;
   const renders={dashboard:renderDashboard,membres:renderMembers,agenda:renderCalendar,depenses:renderExpenses,factures:renderFactures,biens:renderBiens,documents:renderDocs,alertes:renderAlerts,enfants:renderEnfants,vacances:renderVacances,simulation:renderSimulation};
   if (renders[id]) renders[id]();
@@ -1767,7 +1990,490 @@ function calcAge(dob){const t=new Date(),b=new Date(dob);let a=t.getFullYear()-b
 function randomColor(){const c=['#3D5A47','#C4714A','#C9A96E','#7A9E87','#2980B9','#8E44AD','#A0522D','#27AE60','#E67E22'];return c[Math.floor(Math.random()*c.length)];}
 function showToast(msg,type='success'){const c=el('toast-container'),t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':type==='warning'?'⚠️':'❌'}</span><span>${msg}</span>`;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
 
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+// ═══════════════════════ COURSES ═══════════════════════
+const COURSE_DEFAULTS = [
+  {name:'Lait',cat:'🥛 Produits laitiers',unit:'L',stock:2,min:4,lifespan:14,lastBought:''},
+  {name:'Pain',cat:'🍞 Boulangerie',unit:'unité(s)',stock:1,min:2,lifespan:3,lastBought:''},
+  {name:'Œufs',cat:'🥛 Produits laitiers',unit:'unité(s)',stock:6,min:12,lifespan:21,lastBought:''},
+  {name:'Beurre',cat:'🥛 Produits laitiers',unit:'unité(s)',stock:1,min:2,lifespan:30,lastBought:''},
+  {name:'Pâtes',cat:'🥫 Épicerie',unit:'kg',stock:1,min:2,lifespan:90,lastBought:''},
+  {name:'Riz',cat:'🥫 Épicerie',unit:'kg',stock:1,min:2,lifespan:90,lastBought:''},
+  {name:'Huile d\'olive',cat:'🥫 Épicerie',unit:'L',stock:1,min:1,lifespan:60,lastBought:''},
+  {name:'Sucre',cat:'🥫 Épicerie',unit:'kg',stock:1,min:1,lifespan:180,lastBought:''},
+  {name:'Farine',cat:'🥫 Épicerie',unit:'kg',stock:1,min:1,lifespan:90,lastBought:''},
+  {name:'Café',cat:'🧃 Boissons',unit:'unité(s)',stock:1,min:2,lifespan:30,lastBought:''},
+  {name:'Eau minérale',cat:'🧃 Boissons',unit:'unité(s)',stock:6,min:12,lifespan:180,lastBought:''},
+  {name:'Yaourts',cat:'🥛 Produits laitiers',unit:'unité(s)',stock:4,min:8,lifespan:14,lastBought:''},
+  {name:'Fromage',cat:'🥛 Produits laitiers',unit:'unité(s)',stock:1,min:2,lifespan:14,lastBought:''},
+  {name:'Poulet',cat:'🥩 Viande & Poisson',unit:'kg',stock:0,min:1,lifespan:3,lastBought:''},
+  {name:'Tomates',cat:'🥦 Fruits & Légumes',unit:'kg',stock:0.5,min:1,lifespan:7,lastBought:''},
+  {name:'Pommes de terre',cat:'🥦 Fruits & Légumes',unit:'kg',stock:1,min:2,lifespan:14,lastBought:''},
+  {name:'Oignons',cat:'🥦 Fruits & Légumes',unit:'kg',stock:1,min:2,lifespan:30,lastBought:''},
+  {name:'Ail',cat:'🥦 Fruits & Légumes',unit:'unité(s)',stock:2,min:3,lifespan:30,lastBought:''},
+  {name:'Savon vaisselle',cat:'🧹 Entretien maison',unit:'unité(s)',stock:1,min:2,lifespan:30,lastBought:''},
+  {name:'Papier toilette',cat:'🧹 Entretien maison',unit:'unité(s)',stock:4,min:12,lifespan:30,lastBought:''},
+  {name:'Lessive',cat:'🧹 Entretien maison',unit:'unité(s)',stock:1,min:2,lifespan:60,lastBought:''},
+  {name:'Shampoing',cat:'🧴 Hygiène',unit:'unité(s)',stock:1,min:2,lifespan:30,lastBought:''},
+  {name:'Dentifrice',cat:'🧴 Hygiène',unit:'unité(s)',stock:1,min:3,lifespan:60,lastBought:''},
+];
+
+let courseFilter = 'all';
+let selectedClColor = '#3D5A47';
+let clItems = [];
+let activeChecklistMember = 'Toute la famille';
+
+function getStockStatus(item) {
+  // Calculate estimated remaining based on lifespan and last bought
+  let effectiveStock = item.stock;
+  if (item.lastBought) {
+    const daysSince = Math.floor((new Date() - new Date(item.lastBought)) / (1000*86400));
+    const consumed = daysSince / item.lifespan;
+    effectiveStock = Math.max(0, item.stock - (item.min * consumed));
+  }
+  const ratio = effectiveStock / item.min;
+  if (ratio <= 0) return 'manquant';
+  if (ratio < 0.5) return 'faible';
+  return 'ok';
+}
+
+function renderCourses() {
+  if (!currentFamily.courses) currentFamily.courses = [...COURSE_DEFAULTS.map((c,i)=>({...c,id:i+1}))];
+  if (!currentFamily.courseReminders) currentFamily.courseReminders = [];
+
+  const items = currentFamily.courses.filter(c => courseFilter === 'all' || getStockStatus(c) === courseFilter);
+  
+  const statusConfig = {
+    manquant: {color:'var(--danger)', icon:'🔴', label:'Manquant'},
+    faible: {color:'var(--warning)', icon:'🟠', label:'Stock faible'},
+    ok: {color:'var(--success)', icon:'🟢', label:'OK'}
+  };
+
+  el('courses-list').innerHTML = items.length ? items.map(c => {
+    const status = getStockStatus(c);
+    const cfg = statusConfig[status];
+    const ratio = Math.min(1, c.stock / Math.max(1, c.min));
+    const barColor = status==='manquant'?'var(--danger)':status==='faible'?'var(--warning)':'var(--success)';
+    return `
+      <div class="course-item">
+        <div style="font-size:20px">${c.cat.split(' ')[0]}</div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:600;font-size:14px">${c.name}</span>
+            <span style="font-size:12px;font-weight:600;color:${cfg.color}">${cfg.icon} ${cfg.label}</span>
+          </div>
+          <div style="font-size:12px;color:var(--light)">Stock: ${c.stock} ${c.unit} / min: ${c.min} ${c.unit}</div>
+          <div class="stock-bar"><div class="stock-fill" style="width:${Math.round(ratio*100)}%;background:${barColor}"></div></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="buyItem(${c.id})" class="btn btn-success btn-xs" title="Marquer acheté">✓</button>
+          <button onclick="deleteCourseItem(${c.id})" class="btn btn-secondary btn-xs">✕</button>
+        </div>
+      </div>`;
+  }).join('') : '<p style="color:var(--light);font-size:13px">Aucun article dans cette catégorie</p>';
+
+  // Stock summary
+  const total = currentFamily.courses.length;
+  const manquants = currentFamily.courses.filter(c=>getStockStatus(c)==='manquant').length;
+  const faibles = currentFamily.courses.filter(c=>getStockStatus(c)==='faible').length;
+  el('stock-summary').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="text-align:center;padding:12px;background:#FEF2F2;border-radius:10px">
+        <div style="font-size:22px;font-weight:700;color:var(--danger)">${manquants}</div>
+        <div style="font-size:11px;color:var(--danger)">Manquants</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#FFF7ED;border-radius:10px">
+        <div style="font-size:22px;font-weight:700;color:var(--warning)">${faibles}</div>
+        <div style="font-size:11px;color:var(--warning)">Stock faible</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#F0FDF4;border-radius:10px">
+        <div style="font-size:22px;font-weight:700;color:var(--success)">${total-manquants-faibles}</div>
+        <div style="font-size:11px;color:var(--success)">OK</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px">🛒 À acheter en priorité :</div>
+    ${currentFamily.courses.filter(c=>getStockStatus(c)!=='ok').slice(0,8).map(c=>`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px">
+        <span>${getStockStatus(c)==='manquant'?'🔴':'🟠'}</span>
+        <span style="flex:1">${c.name}</span>
+        <span style="color:var(--light)">${c.min} ${c.unit}</span>
+      </div>`).join('') || '<p style="color:var(--success);font-size:13px">✅ Tout est OK !</p>'}
+  `;
+
+  // Reminders
+  const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  el('courses-reminders').innerHTML = currentFamily.courseReminders.length
+    ? currentFamily.courseReminders.map(r=>`
+        <div class="alert-item alert-info" style="margin-bottom:7px">
+          <span>🔔</span>
+          <div style="flex:1"><div style="font-weight:600;font-size:13px">${r.title}</div>
+          <div style="font-size:12px;opacity:0.7">Chaque ${days[r.day]} à ${r.time}</div></div>
+          <button onclick="deleteReminder(${r.id})" style="border:none;background:none;cursor:pointer;color:var(--light)">✕</button>
+        </div>`).join('')
+    : '<p style="color:var(--light);font-size:13px">Aucun rappel configuré</p>';
+
+  updateBadges();
+}
+
+function generateSmartList() {
+  if (!currentFamily.courses) { showToast('Configurez d\'abord votre stock', 'error'); return; }
+  const missing = currentFamily.courses.filter(c => getStockStatus(c) !== 'ok');
+  if (missing.length === 0) { showToast('✅ Tout est en stock, rien à acheter !', 'success'); return; }
+  showToast(`🛒 ${missing.length} article(s) à acheter généré(s) !`, 'success');
+  renderCourses();
+}
+
+function filterCourses(filter, btn) {
+  courseFilter = filter;
+  document.querySelectorAll('#courses-filters .btn').forEach(b => b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  renderCourses();
+}
+
+function buyItem(id) {
+  const item = currentFamily.courses.find(c=>c.id===id);
+  if (item) {
+    item.stock = item.min;
+    item.lastBought = todayStr();
+    saveToFirestore();
+    renderCourses();
+    showToast(item.name + ' marqué acheté ✓', 'success');
+  }
+}
+
+function deleteCourseItem(id) {
+  currentFamily.courses = currentFamily.courses.filter(c=>c.id!==id);
+  saveToFirestore(); renderCourses();
+}
+
+function openCourseModal() { el('crs-last-bought').value = todayStr(); openModal('modal-course'); }
+function saveCourseItem() {
+  const name = el('crs-name').value.trim();
+  if (!name) { showToast('Nom requis', 'error'); return; }
+  if (!currentFamily.courses) currentFamily.courses = [];
+  currentFamily.courses.push({
+    id: Date.now(), name,
+    cat: el('crs-cat').value,
+    unit: el('crs-unit').value,
+    stock: parseFloat(el('crs-stock').value)||0,
+    min: parseFloat(el('crs-min').value)||1,
+    lifespan: parseInt(el('crs-lifespan').value)||14,
+    lastBought: el('crs-last-bought').value
+  });
+  saveToFirestore(); closeModal('modal-course'); renderCourses(); showToast(name + ' ajouté !', 'success');
+}
+
+function openReminderModal() { openModal('modal-reminder'); }
+function saveReminder() {
+  if (!currentFamily.courseReminders) currentFamily.courseReminders = [];
+  currentFamily.courseReminders.push({
+    id: Date.now(),
+    title: el('rem-title').value.trim() || 'Rappel de courses',
+    day: parseInt(el('rem-day').value),
+    time: el('rem-time').value
+  });
+  saveToFirestore(); closeModal('modal-reminder'); renderCourses(); showToast('Rappel créé !', 'success');
+}
+function deleteReminder(id) {
+  currentFamily.courseReminders = currentFamily.courseReminders.filter(r=>r.id!==id);
+  saveToFirestore(); renderCourses();
+}
+
+// ═══════════════════════ CHECKLISTS ═══════════════════════
+function renderChecklists() {
+  if (!currentFamily.checklists) currentFamily.checklists = [];
+  populateDropdowns();
+  
+  // Member tabs
+  const members = ['Toute la famille', ...currentFamily.members.map(m=>m.firstname)];
+  el('checklists-member-tabs').innerHTML = members.map(m => `
+    <div class="member-tab ${m===activeChecklistMember?'active':''}" onclick="switchChecklistMember('${m}')">${m}</div>
+  `).join('');
+
+  const filtered = currentFamily.checklists.filter(cl => cl.member === activeChecklistMember || activeChecklistMember === 'Toute la famille');
+  
+  if (!filtered.length) {
+    el('checklists-container').innerHTML = `
+      <div class="card" style="text-align:center;padding:40px">
+        <div style="font-size:40px;margin-bottom:12px">✅</div>
+        <div style="font-size:15px;color:var(--light)">Aucune checklist pour ${activeChecklistMember}</div>
+        <button class="btn btn-primary btn-sm mt-12" style="display:inline-flex;width:auto" onclick="openChecklistModal()">+ Créer une checklist</button>
+      </div>`;
+    return;
+  }
+
+  el('checklists-container').innerHTML = `<div class="grid-2">${filtered.map(cl => {
+    const done = cl.items.filter(i=>i.done).length;
+    const total = cl.items.length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    return `
+      <div class="cl-card" style="border-left:4px solid ${cl.color||'var(--forest)'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700">${cl.title}</div>
+            <div style="font-size:12px;color:var(--light)">👤 ${cl.member} · ${done}/${total} fait${done>1?'s':''}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onclick="resetChecklist(${cl.id})" class="btn btn-secondary btn-xs">↺ Reset</button>
+            <button onclick="deleteChecklist(${cl.id})" class="btn btn-secondary btn-xs">🗑</button>
+          </div>
+        </div>
+        <div class="progress-bar mb-12"><div class="progress-fill" style="width:${pct}%;background:${cl.color||'var(--forest)'}"></div></div>
+        <div>${cl.items.map((item,idx) => `
+          <div class="cl-item-row ${item.done?'done':''}">
+            <input type="checkbox" class="cl-checkbox" ${item.done?'checked':''} onchange="toggleClItem(${cl.id},${idx})">
+            <span style="flex:1">${item.text}</span>
+          </div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input type="text" placeholder="Ajouter un élément…" id="add-item-${cl.id}" style="flex:1;padding:7px 12px;border:2px solid var(--warm);border-radius:8px;font-family:inherit;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')addItemToChecklist(${cl.id})">
+          <button class="btn btn-secondary btn-xs" onclick="addItemToChecklist(${cl.id})">+</button>
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+function switchChecklistMember(member) {
+  activeChecklistMember = member;
+  renderChecklists();
+}
+
+function openChecklistModal() {
+  populateDropdowns();
+  const sel = document.getElementById('cl-member');
+  if (sel) {
+    const all = ['Toute la famille', ...currentFamily.members.map(m=>m.firstname)];
+    sel.innerHTML = all.map(n=>`<option>${n}</option>`).join('');
+  }
+  clItems = [];
+  el('cl-items-list').innerHTML = '';
+  selectedClColor = '#3D5A47';
+  openModal('modal-checklist');
+}
+
+function selectClColor(el, color) {
+  document.querySelectorAll('.color-pick').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  selectedClColor = color;
+}
+
+function addClItem() {
+  const inp = el('cl-new-item');
+  const text = inp.value.trim();
+  if (!text) return;
+  clItems.push({text, done:false});
+  inp.value = '';
+  el('cl-items-list').innerHTML = clItems.map((it,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px">
+      <span style="flex:1">${it.text}</span>
+      <button onclick="removeClItem(${i})" style="border:none;background:none;cursor:pointer;color:var(--light)">✕</button>
+    </div>`).join('');
+}
+
+function removeClItem(idx) {
+  clItems.splice(idx,1);
+  el('cl-items-list').innerHTML = clItems.map((it,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px">
+      <span style="flex:1">${it.text}</span>
+      <button onclick="removeClItem(${i})" style="border:none;background:none;cursor:pointer;color:var(--light)">✕</button>
+    </div>`).join('');
+}
+
+function saveChecklist() {
+  const title = el('cl-title').value.trim();
+  if (!title) { showToast('Titre requis', 'error'); return; }
+  if (!currentFamily.checklists) currentFamily.checklists = [];
+  currentFamily.checklists.push({
+    id: Date.now(), title,
+    member: el('cl-member').value,
+    color: selectedClColor,
+    items: [...clItems],
+    createdAt: todayStr()
+  });
+  saveToFirestore(); closeModal('modal-checklist'); renderChecklists();
+  showToast('Checklist créée !', 'success');
+}
+
+function toggleClItem(clId, itemIdx) {
+  const cl = currentFamily.checklists.find(c=>c.id===clId);
+  if (cl) { cl.items[itemIdx].done = !cl.items[itemIdx].done; saveToFirestore(); renderChecklists(); }
+}
+
+function addItemToChecklist(clId) {
+  const inp = el('add-item-'+clId);
+  if (!inp || !inp.value.trim()) return;
+  const cl = currentFamily.checklists.find(c=>c.id===clId);
+  if (cl) { cl.items.push({text:inp.value.trim(), done:false}); saveToFirestore(); renderChecklists(); }
+}
+
+function resetChecklist(clId) {
+  const cl = currentFamily.checklists.find(c=>c.id===clId);
+  if (cl) { cl.items.forEach(i=>i.done=false); saveToFirestore(); renderChecklists(); showToast('Checklist réinitialisée', 'success'); }
+}
+
+function deleteChecklist(clId) {
+  currentFamily.checklists = currentFamily.checklists.filter(c=>c.id!==clId);
+  saveToFirestore(); renderChecklists();
+}
+
+// ═══════════════════════ ANNIVERSAIRES ═══════════════════════
+const GIFT_IDEAS = {
+  F: {
+    '0-3':   ['🧸 Peluche douce','🎵 Éveil musical','🎨 Livre illustré coloré','🛁 Jouet de bain'],
+    '4-7':   ['🎨 Kit coloriage & peinture','🧩 Puzzle enfant','🪆 Poupée ou figurine','🎠 Vélo avec stabilisateurs'],
+    '8-12':  ['📚 Roman jeunesse','🎀 Kit bijoux à fabriquer','🧁 Kit pâtisserie','💄 Kit maquillage enfant'],
+    '13-17': ['👜 Sac tendance','🎧 Écouteurs sans fil','📱 Crédit app store','🛍️ Bon cadeau boutique mode'],
+    '18-25': ['✈️ Bon voyage','🎓 Cours en ligne','👗 Shopping budget','💆 Soin spa & bien-être'],
+    '26-40': ['🍷 Soirée restaurant','🧘 Abonnement yoga','💄 Coffret beauté','📖 Livre best-seller'],
+    '41-60': ['🌸 Bouquet fleurs','🍫 Coffret chocolats fins','💎 Bijou délicat','🧖 Journée spa'],
+    '61+':   ['🌺 Plante d\'intérieur','📸 Album photo famille','🎭 Sortie culturelle','☕ Coffret thé & café'],
+  },
+  M: {
+    '0-3':   ['🚗 Petite voiture','🧸 Peluche','🎵 Éveil musical','🎨 Livre illustré'],
+    '4-7':   ['🚂 Train ou circuit','🦸 Figurine super-héros','⚽ Ballon de sport','🧩 Jeu de construction'],
+    '8-12':  ['🎮 Jeu vidéo','🔭 Télescope junior','⚽ Équipement sport','🎸 Instrument de musique'],
+    '13-17': ['🎮 Carte PSN/Xbox','🎧 Écouteurs gaming','👟 Sneakers tendance','🎸 Guitare ou cours musique'],
+    '18-25': ['✈️ Aventure weekend','🎮 Console ou jeu','🍺 Soirée entre amis','👕 Vêtements de marque'],
+    '26-40': ['⌚ Montre','🔧 Gadget tech','🍖 Barbecue ou kit cuisine','🎯 Activité paintball/kart'],
+    '41-60': ['⛳ Sortie golf','🍷 Coffret vins','🔧 Outil high-tech','🎣 Équipement pêche ou sport'],
+    '61+':   ['📺 Abonnement streaming','🎭 Sortie culturelle','🌿 Plante','☕ Machine à café'],
+  }
+};
+
+function getAgeRange(age) {
+  if (age<=3) return '0-3'; if (age<=7) return '4-7'; if (age<=12) return '8-12';
+  if (age<=17) return '13-17'; if (age<=25) return '18-25'; if (age<=40) return '26-40';
+  if (age<=60) return '41-60'; return '61+';
+}
+
+function renderAnniversaires() {
+  if (!currentFamily.anniversaires) currentFamily.anniversaires = [];
+
+  // Auto-add from members
+  currentFamily.members.forEach(m => {
+    if (m.dob && !currentFamily.anniversaires.find(a=>a.memberId===m.id)) {
+      currentFamily.anniversaires.push({
+        id: Date.now()+Math.random(), name: m.firstname+' '+m.lastname,
+        relation: m.role, dob: m.dob,
+        gender: m.role==='Maman'||m.role==='Grand-mère'||m.role==='Tante'?'F':'M',
+        memberId: m.id, notes: '', reminder: 14
+      });
+    }
+  });
+
+  const now = new Date();
+  const sorted = [...currentFamily.anniversaires].map(a => {
+    const dob = new Date(a.dob);
+    const age = now.getFullYear() - dob.getFullYear();
+    const thisYear = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+    if (thisYear < now) thisYear.setFullYear(now.getFullYear()+1);
+    const daysLeft = Math.ceil((thisYear - now)/(1000*86400));
+    return {...a, age, daysLeft, nextDate: thisYear};
+  }).sort((a,b)=>a.daysLeft-b.daysLeft);
+
+  el('anniv-list').innerHTML = sorted.map(a => {
+    const soon = a.daysLeft <= 30;
+    const today = a.daysLeft === 0;
+    return `
+      <div class="anniv-card ${soon?'soon':''}">
+        <div class="anniv-avatar" style="background:${a.gender==='F'?'rgba(196,113,74,0.15)':'rgba(41,128,185,0.15)'}">
+          ${a.gender==='F'?'👩':'👨'}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px">${a.name}</div>
+          <div style="font-size:12px;color:var(--light)">${a.relation} · ${a.age+1} ans le ${a.nextDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</div>
+          <div style="margin-top:5px">
+            ${today ? '<span class="tag tag-success">🎉 Aujourd\'hui !</span>' :
+              a.daysLeft<=7 ? `<span class="tag tag-danger">⏰ Dans ${a.daysLeft} jours</span>` :
+              a.daysLeft<=30 ? `<span class="tag tag-warn">📅 Dans ${a.daysLeft} jours</span>` :
+              `<span class="tag tag-neutral">Dans ${a.daysLeft} jours</span>`}
+          </div>
+        </div>
+        <button onclick="showGiftIdeas('${a.name}',${a.age+1},'${a.gender}')" class="btn btn-secondary btn-xs">🎁 Idées</button>
+      </div>`;
+  }).join('') || '<p style="color:var(--light);font-size:13px">Aucun anniversaire enregistré</p>';
+
+  // Show upcoming gift ideas for soonest
+  if (sorted.length > 0) showGiftIdeas(sorted[0].name, sorted[0].age+1, sorted[0].gender);
+  updateBadges();
+}
+
+function showGiftIdeas(name, age, gender) {
+  const range = getAgeRange(age);
+  const ideas = GIFT_IDEAS[gender]?.[range] || GIFT_IDEAS['M'][range];
+  el('anniv-gifts').innerHTML = `
+    <div class="gift-card">
+      <div class="gift-title">🎁 Idées cadeaux pour ${name} — ${age} ans</div>
+      <div style="font-size:12px;color:var(--light);margin-bottom:10px">
+        ${gender==='F'?'👩 Femme/Fille':'👨 Homme/Garçon'} · Tranche ${range} ans
+      </div>
+      ${ideas.map(idea=>`<div class="gift-idea"><span>${idea}</span></div>`).join('')}
+    </div>
+    <div style="font-size:13px;color:var(--mid);margin-top:10px;padding:12px;background:var(--cream);border-radius:10px">
+      💡 <strong>Conseil :</strong> Pensez à vérifier les préférences et allergies de ${name} avant d'acheter. Un cadeau personnalisé (photo, souvenir) est toujours apprécié à tout âge !
+    </div>
+  `;
+}
+
+function openAnnivModal() { openModal('modal-anniv'); }
+function saveAnniv() {
+  const name = el('an-name').value.trim();
+  const dob  = el('an-dob').value;
+  if (!name || !dob) { showToast('Prénom et date requis', 'error'); return; }
+  if (!currentFamily.anniversaires) currentFamily.anniversaires = [];
+  currentFamily.anniversaires.push({
+    id: Date.now(), name, relation: el('an-relation').value,
+    dob, gender: el('an-gender').value,
+    reminder: parseInt(el('an-reminder').value)||14,
+    notes: el('an-notes').value
+  });
+  saveToFirestore(); closeModal('modal-anniv'); renderAnniversaires();
+  showToast('Anniversaire ajouté !', 'success');
+}
+
+// ═══════════════════════ UPDATE BADGES (extended) ═══════════════════════
+const _origUpdateBadges = updateBadges;
+updateBadges = function() {
+  _origUpdateBadges();
+  // Courses badge
+  if (currentFamily && currentFamily.courses) {
+    const missing = currentFamily.courses.filter(c=>getStockStatus(c)!=='ok').length;
+    el('badge-courses').textContent = missing;
+    el('badge-courses').style.display = missing ? 'inline-block' : 'none';
+  }
+  // Anniversaires badge
+  if (currentFamily && currentFamily.anniversaires) {
+    const now = new Date();
+    const soonCount = currentFamily.anniversaires.filter(a => {
+      const dob = new Date(a.dob);
+      const thisYear = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+      if (thisYear < now) thisYear.setFullYear(now.getFullYear()+1);
+      return Math.ceil((thisYear-now)/(1000*86400)) <= 30;
+    }).length;
+    el('badge-anniv').textContent = soonCount;
+    el('badge-anniv').style.display = soonCount ? 'inline-block' : 'none';
+  }
+};
+
+// ═══════════════════════ EXTEND showSection for new sections ═══════════════════════
+const _origShowSection = showSection;
+showSection = function(id) {
+  _origShowSection(id);
+  if (id==='courses') renderCourses();
+  else if (id==='checklists') renderChecklists();
+  else if (id==='anniversaires') renderAnniversaires();
+};
+
+// ═══════════════════════ EXTEND openAddModal for new sections ═══════════════════════
+const _origOpenAddModal = openAddModal;
+openAddModal = function() {
+  const active = document.querySelector('.section.active');
+  if (!active) return;
+  const id = active.id.replace('section-','');
+  if (id==='courses') openCourseModal();
+  else if (id==='checklists') openChecklistModal();
+  else if (id==='anniversaires') openAnnivModal();
+  else _origOpenAddModal();
+};
 
 // Auto-fill join code from URL ?code=FAM-XXXX-XXXX
 (function(){
