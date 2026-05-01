@@ -326,22 +326,10 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
       <div class="auth-brand-title">FamilyNest</div>
       <div class="auth-brand-sub">Votre foyer numérique.<br>Organisez toute la vie de famille en un seul endroit.</div>
       <div class="auth-features">
-        <div class="auth-feat">
-          <span class="auth-feat-icon">👨‍👩‍👧‍👦</span>
-          <div class="auth-feat-text"><strong>Toute la famille connectée</strong>Partagez un code famille et accédez aux mêmes données</div>
-        </div>
-        <div class="auth-feat">
-          <span class="auth-feat-icon">📄</span>
-          <div class="auth-feat-text"><strong>Documents & Alertes</strong>Passeports, factures, dates d'expiration suivis automatiquement</div>
-        </div>
-        <div class="auth-feat">
-          <span class="auth-feat-icon">💶</span>
-          <div class="auth-feat-text"><strong>Budget & Dépenses</strong>Simulation de crédit, charges mensuelles, suivi en temps réel</div>
-        </div>
-        <div class="auth-feat">
-          <span class="auth-feat-icon">✈️</span>
-          <div class="auth-feat-text"><strong>Vacances & Agenda</strong>Planifiez, organisez, ne ratez plus aucun événement</div>
-        </div>
+        <div class="auth-feat"><span class="auth-feat-icon">👨‍👩‍👧‍👦</span><div class="auth-feat-text"><strong>Toute la famille connectée</strong>Partagez un code famille et accédez aux mêmes données</div></div>
+        <div class="auth-feat"><span class="auth-feat-icon">📄</span><div class="auth-feat-text"><strong>Documents & Alertes</strong>Passeports, factures, dates d'expiration suivis automatiquement</div></div>
+        <div class="auth-feat"><span class="auth-feat-icon">💶</span><div class="auth-feat-text"><strong>Budget & Dépenses</strong>Simulation de crédit, charges mensuelles, suivi en temps réel</div></div>
+        <div class="auth-feat"><span class="auth-feat-icon">✈️</span><div class="auth-feat-text"><strong>Vacances & Agenda</strong>Planifiez, organisez, ne ratez plus aucun événement</div></div>
       </div>
     </div>
   </div>
@@ -351,9 +339,9 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
 
     <!-- Tabs -->
     <div class="auth-tabs-new" id="auth-tabs">
-      <button class="auth-tab-new active" onclick="switchAuthTab('login')">Connexion</button>
-      <button class="auth-tab-new" onclick="switchAuthTab('register')">Créer un compte</button>
-      <button class="auth-tab-new" onclick="switchAuthTab('join')">Rejoindre</button>
+      <button class="auth-tab-new active"  onclick="switchAuthTab('login')">Connexion</button>
+      <button class="auth-tab-new"         onclick="switchAuthTab('register')">Créer une famille</button>
+      <button class="auth-tab-new"         onclick="switchAuthTab('join')">Rejoindre ma famille</button>
     </div>
 
     <!-- ── LOGIN ── -->
@@ -363,45 +351,85 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
         <p>Connectez-vous pour accéder à votre foyer</p>
       </div>
       <div class="auth-input-group">
-        <label>Adresse email</label>
-        <input type="email" id="login-email" placeholder="votre@email.com" autocomplete="email">
+        <label>Adresse email <span style="color:var(--danger)">*</span></label>
+        <input type="email" id="login-email" placeholder="votre@email.com" autocomplete="email" required>
       </div>
       <div class="auth-input-group">
-        <label>Mot de passe</label>
-        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
+        <label>Mot de passe <span style="color:var(--danger)">*</span></label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required
           onkeydown="if(event.key==='Enter') handleLogin()">
       </div>
       <div class="auth-remember">
         <input type="checkbox" id="remember-me" checked>
         <label for="remember-me">Mémoriser mon email</label>
       </div>
-      <button class="auth-btn-primary" onclick="handleLogin()">
-        🔑 Se connecter
-      </button>
-      <div class="auth-divider">ou</div>
-      <button class="auth-btn-secondary" onclick="switchAuthTab('register')">
-        🏡 Créer un nouveau compte famille
-      </button>
-      <button class="auth-btn-secondary" onclick="switchAuthTab('join')" style="margin-top:8px">
-        🔗 Rejoindre une famille existante
-      </button>
+      <button class="auth-btn-primary" onclick="handleLogin()">🔑 Connexion</button>
+      <div class="auth-divider">pas encore de compte ?</div>
+      <button class="auth-btn-secondary" onclick="switchAuthTab('register')">🏡 Créer une famille</button>
+      <button class="auth-btn-secondary" onclick="switchAuthTab('join')" style="margin-top:8px">🔗 Rejoindre ma famille</button>
     </div>
 
-    <!-- ── REGISTER ── -->
+    <!-- ── CRÉER UNE FAMILLE ── -->
     <div id="register-form" style="display:none">
       <div class="auth-right-header">
         <h2>Créer votre foyer 🏠</h2>
-        <p>Un code famille sera généré pour inviter les autres</p>
+        <p>Tous les champs sont obligatoires</p>
       </div>
       <div style="display:flex;gap:10px">
-        <div class="auth-input-group" style="flex:1"><label>Prénom</label><input type="text" id="reg-firstname" placeholder="Jean" autocomplete="given-name"></div>
-        <div class="auth-input-group" style="flex:1"><label>Nom</label><input type="text" id="reg-lastname" placeholder="Dupont" autocomplete="family-name"></div>
+        <div class="auth-input-group" style="flex:1">
+          <label>Prénom <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="reg-firstname" placeholder="Jean" autocomplete="given-name" required>
+        </div>
+        <div class="auth-input-group" style="flex:1">
+          <label>Nom <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="reg-lastname" placeholder="Dupont" autocomplete="family-name" required>
+        </div>
       </div>
-      <div class="auth-input-group"><label>Email</label><input type="email" id="reg-email" placeholder="votre@email.com" autocomplete="email"></div>
-      <div class="auth-input-group"><label>Mot de passe</label><input type="password" id="reg-password" placeholder="Minimum 6 caractères" autocomplete="new-password"></div>
       <div class="auth-input-group">
-        <label>Votre rôle</label>
-        <select id="reg-role"><option>Papa</option><option>Maman</option><option>Fils</option><option>Fille</option><option>Grand-père</option><option>Grand-mère</option><option>Tuteur</option><option>Autre</option></select>
+        <label>Date de naissance <span style="color:var(--danger)">*</span></label>
+        <input type="date" id="reg-dob" required>
+      </div>
+      <div class="auth-input-group">
+        <label>Email <span style="color:var(--danger)">*</span></label>
+        <input type="email" id="reg-email" placeholder="votre@email.com" autocomplete="email" required>
+      </div>
+      <div class="auth-input-group">
+        <label>Mot de passe <span style="color:var(--danger)">*</span></label>
+        <input type="password" id="reg-password" placeholder="Minimum 6 caractères" autocomplete="new-password" required>
+      </div>
+      <div class="auth-input-group">
+        <label>Rôle <span style="color:var(--danger)">*</span></label>
+        <select id="reg-role" required>
+          <option value="">— Choisir —</option>
+          <option value="Papa">👨 Papa</option>
+          <option value="Maman">👩 Maman</option>
+          <option value="Grand-père">👴 Grand-père</option>
+          <option value="Grand-mère">👵 Grand-mère</option>
+          <option value="Tuteur">🧑 Tuteur / Tutrice</option>
+        </select>
+      </div>
+      <div class="auth-input-group">
+        <label>Pays <span style="color:var(--danger)">*</span></label>
+        <select id="reg-country" required onchange="onCountryChange('reg')">
+          <option value="">— Choisir votre pays —</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div class="auth-input-group" style="flex:1">
+          <label>Langue de l'interface</label>
+          <select id="reg-lang" onchange="onLangChange('reg')">
+            <option value="fr">🇫🇷 Français</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="ar">🇩🇿 العربية</option>
+            <option value="sv">🇸🇪 Svenska</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="de">🇩🇪 Deutsch</option>
+          </select>
+        </div>
+        <div class="auth-input-group" style="flex:1">
+          <label>Devise</label>
+          <input type="text" id="reg-currency" readonly style="background:var(--cream);color:var(--mid)">
+        </div>
       </div>
       <div class="auth-info-box">ℹ️ Un <strong>code famille unique</strong> sera créé. Partagez-le avec les autres membres pour qu'ils rejoignent votre foyer.</div>
       <button class="auth-btn-primary" onclick="handleRegister()">🏡 Créer ma famille</button>
@@ -409,28 +437,62 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
       <button class="auth-btn-secondary" onclick="switchAuthTab('login')">Se connecter</button>
     </div>
 
-    <!-- ── JOIN ── -->
+    <!-- ── REJOINDRE MA FAMILLE ── -->
     <div id="join-form" style="display:none">
       <div class="auth-right-header">
-        <h2>Rejoindre la famille 🤝</h2>
-        <p>Entrez le code reçu d'un membre de votre famille</p>
+        <h2>Rejoindre ma famille 🤝</h2>
+        <p>Entrez le code reçu d'un parent — votre demande sera approuvée par un admin</p>
       </div>
       <div style="display:flex;gap:10px">
-        <div class="auth-input-group" style="flex:1"><label>Prénom</label><input type="text" id="join-firstname" placeholder="Marie"></div>
-        <div class="auth-input-group" style="flex:1"><label>Nom</label><input type="text" id="join-lastname" placeholder="Dupont"></div>
+        <div class="auth-input-group" style="flex:1">
+          <label>Prénom <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="join-firstname" placeholder="Marie" required>
+        </div>
+        <div class="auth-input-group" style="flex:1">
+          <label>Nom <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="join-lastname" placeholder="Dupont" required>
+        </div>
       </div>
-      <div class="auth-input-group"><label>Email</label><input type="email" id="join-email" placeholder="votre@email.com"></div>
-      <div class="auth-input-group"><label>Mot de passe</label><input type="password" id="join-password" placeholder="Minimum 6 caractères"></div>
       <div class="auth-input-group">
-        <label>Votre rôle</label>
-        <select id="join-role"><option>Maman</option><option>Papa</option><option>Fils</option><option>Fille</option><option>Grand-père</option><option>Grand-mère</option><option>Tuteur</option><option>Autre</option></select>
+        <label>Date de naissance <span style="color:var(--danger)">*</span></label>
+        <input type="date" id="join-dob" required>
       </div>
       <div class="auth-input-group">
-        <label>🔑 Code famille</label>
-        <input type="text" id="join-code" placeholder="FAM-2025-XXXX" maxlength="14" class="join-code-input"
+        <label>Email <span style="color:var(--danger)">*</span></label>
+        <input type="email" id="join-email" placeholder="votre@email.com" required>
+      </div>
+      <div class="auth-input-group">
+        <label>Mot de passe <span style="color:var(--danger)">*</span></label>
+        <input type="password" id="join-password" placeholder="Minimum 6 caractères" required>
+      </div>
+      <div class="auth-input-group">
+        <label>Rôle <span style="color:var(--danger)">*</span></label>
+        <select id="join-role" required>
+          <option value="">— Choisir —</option>
+          <option value="Papa">👨 Papa</option>
+          <option value="Maman">👩 Maman</option>
+          <option value="Enfant">👧 Enfant</option>
+          <option value="Grand-père">👴 Grand-père</option>
+          <option value="Grand-mère">👵 Grand-mère</option>
+          <option value="Tuteur">🧑 Tuteur / Tutrice</option>
+          <option value="Autre">⭐ Autre</option>
+        </select>
+      </div>
+      <div class="auth-input-group">
+        <label>Pays <span style="color:var(--danger)">*</span></label>
+        <select id="join-country" required onchange="onCountryChange('join')">
+          <option value="">— Choisir votre pays —</option>
+        </select>
+      </div>
+      <div class="auth-input-group">
+        <label>🔑 Code famille <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="join-code" placeholder="FAM-2025-XXXX" maxlength="14" class="join-code-input" required
           onkeydown="if(event.key==='Enter') handleJoin()">
       </div>
-      <button class="auth-btn-primary" onclick="handleJoin()">👨‍👩‍👧‍👦 Rejoindre la famille</button>
+      <div class="auth-info-box" style="background:rgba(201,169,110,0.1);border-color:rgba(201,169,110,0.3)">
+        ⏳ Votre demande sera envoyée aux parents pour approbation. Vous recevrez un email de confirmation.
+      </div>
+      <button class="auth-btn-primary" onclick="handleJoin()">📤 Envoyer ma demande</button>
       <div class="auth-divider">déjà un compte ?</div>
       <button class="auth-btn-secondary" onclick="switchAuthTab('login')">Se connecter</button>
     </div>
@@ -478,9 +540,11 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <div class="nav-item" onclick="showSection('assistant')"><span class="nav-icon">🤖</span>Assistant famille</div>
     <div class="nav-section">Compte</div>
     <div class="nav-item" onclick="showSection('parametres')"><span class="nav-icon">⚙️</span>Paramètres</div>
+    <div class="nav-item" id="nav-admin" style="display:none" onclick="showSection('admin')"><span class="nav-icon">🛡️</span>Administration</div>
     <div class="sidebar-footer">
       <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:8px;" id="sidebar-user"></div>
       <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:10px;" id="sidebar-currency-info">€ Euro</div>
+      <button class="btn btn-secondary btn-sm" onclick="openMyProfile()" style="width:100%;margin-bottom:6px">👤 Mon profil</button>
       <button class="btn btn-secondary btn-sm" onclick="logout()" style="width:100%">🚪 Déconnexion</button>
     </div>
   </aside>
@@ -531,6 +595,15 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
         <div class="flex-between mb-20">
           <div style="color:var(--mid);font-size:14px;">Informations personnelles et coordonnées des membres.</div>
           <button class="btn btn-primary btn-sm" onclick="openMemberModal()">+ Ajouter un membre</button>
+        </div>
+        <!-- Pending join requests — visible to admins only -->
+        <div id="pending-requests-panel" style="display:none;margin-bottom:18px">
+          <div class="card" style="border:2px solid var(--warning)">
+            <div class="card-header">
+              <div class="card-title" style="color:var(--warning)">⏳ Demandes en attente <span id="pending-count" class="badge-count" style="background:var(--warning)">0</span></div>
+            </div>
+            <div id="pending-requests-list"></div>
+          </div>
         </div>
         <div class="grid-3" id="members-grid"></div>
         <div class="card mt-12">
@@ -1013,6 +1086,59 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
         </div>
       </div>
 
+
+      <!-- ══ ADMINISTRATION (superadmin only) ══ -->
+      <div class="section" id="section-admin">
+        <div class="grid-2">
+
+          <!-- Stats globales -->
+          <div>
+            <div class="card mb-16">
+              <div class="card-title mb-16">📊 Vue globale famille</div>
+              <div id="admin-stats"></div>
+            </div>
+            <div class="card mb-16">
+              <div class="card-title mb-16">👥 Gestion des membres</div>
+              <div id="admin-members-list"></div>
+            </div>
+            <div class="card">
+              <div class="card-title mb-16">⏳ Demandes en attente</div>
+              <div id="admin-pending-list"></div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Logs d'activité -->
+            <div class="card mb-16">
+              <div class="card-title mb-16">📋 Journal d'activité</div>
+              <div id="admin-logs" style="max-height:300px;overflow-y:auto"></div>
+            </div>
+            <!-- Danger zone admin -->
+            <div class="card mb-16" style="border:2px solid var(--warning)">
+              <div class="card-title mb-12" style="color:var(--warning)">⚠️ Actions administrateur</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-secondary btn-sm" onclick="adminExportData()">📤 Exporter toutes les données (JSON)</button>
+                <button class="btn btn-secondary btn-sm" onclick="adminResetAlerts()">🔔 Réinitialiser toutes les alertes</button>
+                <button class="btn btn-secondary btn-sm" onclick="adminSendTestEmail()">📧 Tester l'envoi d'email</button>
+              </div>
+            </div>
+            <!-- Paramètres famille -->
+            <div class="card">
+              <div class="card-title mb-16">🏠 Paramètres de la famille</div>
+              <div class="form-group">
+                <label>Nom de la famille</label>
+                <input type="text" id="admin-family-name" style="width:100%;padding:10px 14px;border:2px solid var(--warm);border-radius:10px;font-family:inherit;font-size:14px;outline:none">
+              </div>
+              <div class="form-group">
+                <label>Budget mensuel (<span class="curr-sym">€</span>)</label>
+                <input type="number" id="admin-budget" style="width:100%;padding:10px 14px;border:2px solid var(--warm);border-radius:10px;font-family:inherit;font-size:14px;outline:none">
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="adminSaveSettings()">💾 Sauvegarder</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="section" id="section-parametres">
         <div class="grid-2">
 
@@ -1082,7 +1208,12 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
       <div class="form-group"><label>Nom</label><input type="text" id="m-lastname" placeholder="Dupont"></div>
     </div>
     <div class="input-row">
-      <div class="form-group"><label>Rôle</label><select id="m-role"><option>Papa</option><option>Maman</option><option>Grand-père</option><option>Grand-mère</option><option>Oncle</option><option>Tante</option><option>Autre</option></select></div>
+      <div class="form-group"><label>Rôle</label><select id="m-role">
+        <option value="Papa">👨 Papa</option><option value="Maman">👩 Maman</option>
+        <option value="Enfant">👧 Enfant</option><option value="Grand-père">👴 Grand-père</option>
+        <option value="Grand-mère">👵 Grand-mère</option><option value="Tuteur">🧑 Tuteur</option>
+        <option value="Autre">⭐ Autre</option>
+      </select></div>
       <div class="form-group"><label>Date de naissance</label><input type="date" id="m-dob"></div>
     </div>
     <div class="input-row">
@@ -1095,6 +1226,69 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
       <div class="form-group"><label>Groupe sanguin</label><select id="m-blood"><option value="">— Non renseigné —</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
     </div>
     <button class="btn btn-primary" onclick="saveMember()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- EDIT MEMBER MODAL (admin) -->
+<div class="modal-overlay" id="modal-edit-member">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✏️ Modifier le membre</div><button class="close-btn" onclick="closeModal('modal-edit-member')">✕</button></div>
+    <input type="hidden" id="edit-member-id">
+    <div class="input-row">
+      <div class="form-group"><label>Prénom</label><input type="text" id="edit-m-firstname"></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="edit-m-lastname"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Rôle</label><select id="edit-m-role">
+        <option value="Papa">👨 Papa</option><option value="Maman">👩 Maman</option>
+        <option value="Enfant">👧 Enfant</option><option value="Grand-père">👴 Grand-père</option>
+        <option value="Grand-mère">👵 Grand-mère</option><option value="Tuteur">🧑 Tuteur</option>
+        <option value="Autre">⭐ Autre</option>
+      </select></div>
+      <div class="form-group"><label>Date de naissance</label><input type="date" id="edit-m-dob"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Téléphone</label><input type="tel" id="edit-m-phone"></div>
+      <div class="form-group"><label>Email affiché</label><input type="email" id="edit-m-email"></div>
+    </div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="edit-m-address"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Groupe sanguin</label><select id="edit-m-blood"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      <div class="form-group"><label>Statut du compte</label><select id="edit-m-status">
+        <option value="active">✅ Actif</option>
+        <option value="blocked">🚫 Bloqué</option>
+      </select></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveEditMember()">💾 Enregistrer les modifications</button>
+  </div>
+</div>
+
+<!-- MY PROFILE MODAL (all users) -->
+<div class="modal-overlay" id="modal-my-profile">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">👤 Mon profil</div><button class="close-btn" onclick="closeModal('modal-my-profile')">✕</button></div>
+    <div class="input-row">
+      <div class="form-group"><label>Prénom</label><input type="text" id="profile-firstname"></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="profile-lastname"></div>
+    </div>
+    <div class="input-row">
+      <div class="form-group"><label>Date de naissance</label><input type="date" id="profile-dob"></div>
+      <div class="form-group"><label>Téléphone</label><input type="tel" id="profile-phone"></div>
+    </div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="profile-address"></div>
+    <div class="input-row">
+      <div class="form-group"><label>Groupe sanguin</label><select id="profile-blood"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      <div class="form-group"><label>Langue de l'interface</label><select id="profile-lang">
+        <option value="fr">🇫🇷 Français</option><option value="en">🇬🇧 English</option>
+        <option value="ar">🇩🇿 العربية</option><option value="sv">🇸🇪 Svenska</option>
+        <option value="es">🇪🇸 Español</option><option value="de">🇩🇪 Deutsch</option>
+      </select></div>
+    </div>
+    <hr class="divider-line">
+    <div style="font-size:13px;font-weight:700;color:var(--mid);margin-bottom:10px">🔒 Changer le mot de passe</div>
+    <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="profile-newpw" placeholder="Laisser vide pour ne pas changer"></div>
+    <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="profile-confirmpw" placeholder="Confirmer le nouveau mot de passe"></div>
+    <button class="btn btn-primary" onclick="saveMyProfile()">💾 Enregistrer mon profil</button>
   </div>
 </div>
 
@@ -1707,6 +1901,8 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 <!-- ═══ FAMILYNEST — Script unique, zero doublon ═══ -->
 <script>
@@ -1810,21 +2006,32 @@ function handleLogin() {
 }
 
 function handleRegister() {
-  const fn    = document.getElementById('reg-firstname').value.trim();
-  const ln    = document.getElementById('reg-lastname').value.trim();
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
-  const pw    = document.getElementById('reg-password').value;
-  const role  = document.getElementById('reg-role').value;
-  if (!fn || !email || !pw) { showToast('Veuillez remplir les champs requis', 'error'); return; }
+  const fn      = document.getElementById('reg-firstname').value.trim();
+  const ln      = document.getElementById('reg-lastname').value.trim();
+  const dob     = document.getElementById('reg-dob').value;
+  const email   = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pw      = document.getElementById('reg-password').value;
+  const role    = document.getElementById('reg-role').value;
+  const country = document.getElementById('reg-country').value;
+  const lang    = document.getElementById('reg-lang')?.value || 'fr';
+  if (!fn || !ln || !dob || !email || !pw || !role || !country) {
+    showToast('Tous les champs sont obligatoires', 'error'); return;
+  }
   if (pw.length < 6) { showToast('Mot de passe : 6 caractères minimum', 'error'); return; }
+  const countryInfo = COUNTRY_DATA[country] || { currency:'EUR', sym:'€' };
   showLoading('Création du compte…');
   auth.createUserWithEmailAndPassword(email, pw)
     .then(cred => {
       const uid  = cred.user.uid;
       const code = 'FAM-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
       const familyData = {
-        name: 'Famille ' + (ln || fn), code,
-        members: [{id:uid, firstname:fn, lastname:ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color:randomColor()}],
+        name: 'Famille ' + ln, code,
+        country, lang, currency: countryInfo.currency, currencySym: countryInfo.sym,
+        members: [{
+          id:uid, firstname:fn, lastname:ln, role, email, dob,
+          phone:'', address:'', ss:'', blood:'', color:randomColor(), status:'active'
+        }],
+        pendingMembers: [],
         events:[], expenses:[], charges:[], factures:[],
         biens:[], docs:[], alerts:[], enfants:[], vacances:[],
         courses:[], courseReminders:[], checklists:[], anniversaires:[],
@@ -1833,31 +2040,34 @@ function handleRegister() {
         compteurs:[], contrats:[], contacts:[],
         budget:{monthly:3000}
       };
-      // Écrire famille + user dans Firestore en parallèle
       return Promise.all([
         db.collection('families').doc(code).set(familyData),
-        db.collection('users').doc(uid).set({ firstname:fn, lastname:ln, role, email, familyCode:code })
-      ]).then(() => {
-        showToast('Famille créée ! Code : ' + code, 'success');
-      });
+        db.collection('users').doc(uid).set({
+          firstname:fn, lastname:ln, role, email, dob,
+          familyCode:code, country, lang, approved:true
+        })
+      ]).then(() => showToast('Famille créée ! Code : ' + code, 'success'));
     })
     .catch(e => {
       hideLoading();
-      if (e.code === 'auth/email-already-in-use') showToast('Email déjà utilisé — connectez-vous', 'error');
+      if (e.code === 'auth/email-already-in-use') showToast('Email déjà utilisé', 'error');
       else showToast(e.message, 'error');
     });
 }
 
 function handleJoin() {
-  const fn    = document.getElementById('join-firstname').value.trim();
-  const ln    = document.getElementById('join-lastname').value.trim();
-  const email = document.getElementById('join-email').value.trim().toLowerCase();
-  const pw    = document.getElementById('join-password').value;
-  const role  = document.getElementById('join-role').value;
-  const code  = document.getElementById('join-code').value.trim().toUpperCase();
-  if (!fn || !email || !pw || !code) { showToast('Veuillez remplir tous les champs', 'error'); return; }
+  const fn      = document.getElementById('join-firstname').value.trim();
+  const ln      = document.getElementById('join-lastname').value.trim();
+  const dob     = document.getElementById('join-dob').value;
+  const email   = document.getElementById('join-email').value.trim().toLowerCase();
+  const pw      = document.getElementById('join-password').value;
+  const role    = document.getElementById('join-role').value;
+  const country = document.getElementById('join-country').value;
+  const code    = document.getElementById('join-code').value.trim().toUpperCase();
+  if (!fn || !ln || !dob || !email || !pw || !role || !country || !code) {
+    showToast('Tous les champs sont obligatoires', 'error'); return;
+  }
   showLoading('Vérification du code famille…');
-  // Vérifier que la famille existe
   db.collection('families').doc(code).get()
     .then(snap => {
       if (!snap.exists) { hideLoading(); showToast('Code famille introuvable', 'error'); return; }
@@ -1866,18 +2076,29 @@ function handleJoin() {
       return auth.createUserWithEmailAndPassword(email, pw)
         .then(cred => {
           const uid = cred.user.uid;
-          const newMember = {id:uid, firstname:fn, lastname:ln, role, email, dob:'', phone:'', address:'', ss:'', blood:'', color:randomColor()};
-          familyData.members = [...(familyData.members||[]), newMember];
+          const pendingEntry = {
+            uid, firstname:fn, lastname:ln, role, email, dob, country,
+            requestedAt: new Date().toISOString()
+          };
+          const pending = [...(familyData.pendingMembers || []), pendingEntry];
           return Promise.all([
-            db.collection('families').doc(code).update({ members: familyData.members }),
-            db.collection('users').doc(uid).set({ firstname:fn, lastname:ln, role, email, familyCode:code })
+            db.collection('families').doc(code).update({ pendingMembers: pending }),
+            db.collection('users').doc(uid).set({
+              firstname:fn, lastname:ln, role, email, dob,
+              familyCode:code, country, lang:'fr', approved:false
+            })
           ]);
         })
-        .then(() => showToast('Bienvenue dans ' + familyData.name + ' ! 🎉', 'success'));
+        .then(() => {
+          hideLoading();
+          showToast('Demande envoyée ! Un parent doit approuver votre accès.', 'success');
+          auth.signOut();
+          switchAuthTab('login');
+        });
     })
     .catch(e => {
       hideLoading();
-      if (e.code === 'auth/email-already-in-use') showToast('Email déjà utilisé — connectez-vous', 'error');
+      if (e.code === 'auth/email-already-in-use') showToast('Email déjà utilisé', 'error');
       else showToast(e.message, 'error');
     });
 }
@@ -1909,7 +2130,16 @@ auth.onAuthStateChanged(user => {
   db.collection('users').doc(user.uid).get()
     .then(snap => {
       if (!snap.exists) { auth.signOut(); hideLoading(); return; }
-      currentUser = { uid: user.uid, ...snap.data() };
+      const userData = snap.data();
+      // Check if user is approved (pending join requests are not approved yet)
+      if (userData.approved === false) {
+        hideLoading();
+        auth.signOut();
+        document.getElementById('auth-screen').style.display = 'flex';
+        showToast('Votre demande est en attente d'approbation par un parent.', 'warning');
+        return;
+      }
+      currentUser = { uid: user.uid, ...userData };
       // S'abonner en temps réel à la famille
       subscribeFamily(currentUser.familyCode);
       // Attendre le premier snapshot
@@ -1981,8 +2211,11 @@ function switchAuthTab(tab) {
 function launchApp() {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
-  if(currentFamily?.settings?.currency) {
-    const c=currentFamily.settings.currency;
+  // Apply family country currency
+  if (currentFamily?.currencySym) {
+    setCurrency(currentFamily.currency || 'EUR', currentFamily.currencySym);
+  } else if (currentFamily?.settings?.currency) {
+    const c = currentFamily.settings.currency;
     setCurrency(c.code, c.sym);
   } else {
     setCurrency(CURRENCY.code, CURRENCY.sym);
@@ -2202,35 +2435,266 @@ function checkAutoAlerts() {
 // ══════════════════════════════════════════════════════
 // 10. MEMBERS
 // ══════════════════════════════════════════════════════
-function isAdmin() {
-  return currentUser && ['Papa','Maman','Tuteur'].includes(currentUser.role);
+// ══ COUNTRY / LANGUAGE DATA ══
+const COUNTRY_DATA = {
+  'FR': { name:'🇫🇷 France',          lang:'fr', currency:'EUR', sym:'€',  phone:'+33'  },
+  'DZ': { name:'🇩🇿 Algérie',          lang:'ar', currency:'DZD', sym:'دج', phone:'+213' },
+  'MA': { name:'🇲🇦 Maroc',            lang:'fr', currency:'MAD', sym:'درهم',phone:'+212' },
+  'TN': { name:'🇹🇳 Tunisie',          lang:'fr', currency:'TND', sym:'DT', phone:'+216' },
+  'SE': { name:'🇸🇪 Sverige',          lang:'sv', currency:'SEK', sym:'kr', phone:'+46'  },
+  'BE': { name:'🇧🇪 Belgique',         lang:'fr', currency:'EUR', sym:'€',  phone:'+32'  },
+  'CH': { name:'🇨🇭 Suisse',           lang:'fr', currency:'CHF', sym:'CHF',phone:'+41'  },
+  'CA': { name:'🇨🇦 Canada',           lang:'fr', currency:'CAD', sym:'CA$',phone:'+1'   },
+  'GB': { name:'🇬🇧 United Kingdom',   lang:'en', currency:'GBP', sym:'£',  phone:'+44'  },
+  'US': { name:'🇺🇸 United States',    lang:'en', currency:'USD', sym:'$',  phone:'+1'   },
+  'DE': { name:'🇩🇪 Deutschland',      lang:'de', currency:'EUR', sym:'€',  phone:'+49'  },
+  'ES': { name:'🇪🇸 España',           lang:'es', currency:'EUR', sym:'€',  phone:'+34'  },
+  'IT': { name:'🇮🇹 Italia',           lang:'it', currency:'EUR', sym:'€',  phone:'+39'  },
+  'PT': { name:'🇵🇹 Portugal',         lang:'pt', currency:'EUR', sym:'€',  phone:'+351' },
+  'NL': { name:'🇳🇱 Nederland',        lang:'nl', currency:'EUR', sym:'€',  phone:'+31'  },
+  'TR': { name:'🇹🇷 Türkiye',          lang:'tr', currency:'TRY', sym:'₺',  phone:'+90'  },
+  'EG': { name:'🇪🇬 مصر',             lang:'ar', currency:'EGP', sym:'ج.م',phone:'+20'  },
+  'AE': { name:'🇦🇪 الإمارات',         lang:'ar', currency:'AED', sym:'د.إ',phone:'+971' },
+  'SA': { name:'🇸🇦 السعودية',         lang:'ar', currency:'SAR', sym:'ر.س',phone:'+966' },
+  'MX': { name:'🇲🇽 México',           lang:'es', currency:'MXN', sym:'$',  phone:'+52'  },
+};
+
+function populateCountrySelect(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Choisir votre pays —</option>' +
+    Object.entries(COUNTRY_DATA).map(([code, d]) =>
+      `<option value="${code}">${d.name}</option>`
+    ).join('');
+  if (current) sel.value = current;
 }
+
+function onCountryChange(prefix) {
+  const code = document.getElementById(prefix+'-country')?.value;
+  if (!code || !COUNTRY_DATA[code]) return;
+  const d = COUNTRY_DATA[code];
+  // Auto-set lang
+  const langSel = document.getElementById(prefix+'-lang');
+  if (langSel) langSel.value = d.lang;
+  // Auto-set currency display
+  const currInp = document.getElementById(prefix+'-currency');
+  if (currInp) currInp.value = d.currency + ' (' + d.sym + ')';
+}
+
+function onLangChange(prefix) {
+  // User manually changed lang — just update display
+}
+
+// Populate on page load
+document.addEventListener('DOMContentLoaded', () => {
+  populateCountrySelect('reg-country');
+  populateCountrySelect('join-country');
+  const saved = localStorage.getItem('fn_email');
+  if (saved) { const inp = document.getElementById('login-email'); if (inp) inp.value = saved; }
+});
+
+// ══ PERMISSIONS ══
+const ADMIN_ROLES  = ['Papa','Maman','Tuteur','Grand-père','Grand-mère'];
+const CHILD_ROLES  = ['Enfant'];
+
+function isAdmin() {
+  return currentUser && ADMIN_ROLES.includes(currentUser.role);
+}
+function isChild() {
+  return currentUser && CHILD_ROLES.includes(currentUser.role);
+}
+
+// ══ APPROVAL SYSTEM ══
+function renderPendingRequests() {
+  const panel = document.getElementById('pending-requests-panel');
+  if (!panel) return;
+  if (!isAdmin()) { panel.style.display = 'none'; return; }
+  const pending = (currentFamily.pendingMembers || []);
+  const count = document.getElementById('pending-count');
+  if (count) count.textContent = pending.length;
+  if (!pending.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  const list = document.getElementById('pending-requests-list');
+  if (!list) return;
+  list.innerHTML = pending.map(p => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--warm)">
+      <div style="flex:1">
+        <div style="font-weight:700">${p.firstname} ${p.lastname}</div>
+        <div style="font-size:12px;color:var(--light)">${p.role} · ${p.email}</div>
+        <div style="font-size:11px;color:var(--light)">Demande reçue le ${formatDate(p.requestedAt?.split('T')[0])}</div>
+      </div>
+      <button onclick="approveRequest('${p.uid}')" class="btn btn-success btn-sm">✅ Approuver</button>
+      <button onclick="rejectRequest('${p.uid}')" class="btn btn-danger btn-sm">❌ Rejeter</button>
+    </div>`).join('');
+}
+
+function approveRequest(uid) {
+  const pending = currentFamily.pendingMembers || [];
+  const req = pending.find(p => p.uid === uid);
+  if (!req) return;
+  // Move from pending to members
+  if (!currentFamily.members) currentFamily.members = [];
+  currentFamily.members.push({
+    id: req.uid, firstname: req.firstname, lastname: req.lastname,
+    role: req.role, email: req.email, dob: req.dob || '',
+    phone: '', address: '', ss: '', blood: '', color: randomColor(),
+    status: 'active'
+  });
+  currentFamily.pendingMembers = pending.filter(p => p.uid !== uid);
+  saveToFirestore();
+  // Also update the user's Firestore doc to grant access
+  db.collection('users').doc(uid).update({ approved: true, familyCode: currentFamily.code })
+    .catch(e => console.error('Approve error:', e));
+  renderMembers();
+  showToast(req.firstname + ' approuvé(e) ! 🎉', 'success');
+}
+
+function rejectRequest(uid) {
+  if (!confirm('Rejeter cette demande ?')) return;
+  currentFamily.pendingMembers = (currentFamily.pendingMembers || []).filter(p => p.uid !== uid);
+  saveToFirestore();
+  renderMembers();
+  showToast('Demande rejetée', 'success');
+}
+
+// ══ EDIT MEMBER (admin) ══
+function openEditMember(memberId) {
+  if (!isAdmin()) { showToast('Accès réservé aux admins', 'error'); return; }
+  const m = (currentFamily.members || []).find(m => String(m.id) === String(memberId));
+  if (!m) return;
+  document.getElementById('edit-member-id').value = memberId;
+  document.getElementById('edit-m-firstname').value  = m.firstname || '';
+  document.getElementById('edit-m-lastname').value   = m.lastname  || '';
+  document.getElementById('edit-m-role').value       = m.role      || '';
+  document.getElementById('edit-m-dob').value        = m.dob       || '';
+  document.getElementById('edit-m-phone').value      = m.phone     || '';
+  document.getElementById('edit-m-email').value      = m.email     || '';
+  document.getElementById('edit-m-address').value    = m.address   || '';
+  document.getElementById('edit-m-blood').value      = m.blood     || '';
+  document.getElementById('edit-m-status').value     = m.status    || 'active';
+  openModal('modal-edit-member');
+}
+
+function saveEditMember() {
+  const id = document.getElementById('edit-member-id').value;
+  const m  = (currentFamily.members || []).find(m => String(m.id) === String(id));
+  if (!m) return;
+  m.firstname = document.getElementById('edit-m-firstname').value.trim();
+  m.lastname  = document.getElementById('edit-m-lastname').value.trim();
+  m.role      = document.getElementById('edit-m-role').value;
+  m.dob       = document.getElementById('edit-m-dob').value;
+  m.phone     = document.getElementById('edit-m-phone').value;
+  m.email     = document.getElementById('edit-m-email').value;
+  m.address   = document.getElementById('edit-m-address').value;
+  m.blood     = document.getElementById('edit-m-blood').value;
+  m.status    = document.getElementById('edit-m-status').value;
+  saveToFirestore();
+  closeModal('modal-edit-member');
+  renderMembers();
+  showToast('Profil modifié !', 'success');
+}
+
+// ══ MY PROFILE (all users) ══
+function openMyProfile() {
+  // Find current user in family members
+  const me = (currentFamily.members || []).find(m =>
+    String(m.id) === String(currentUser.uid) || m.email === currentUser.email
+  );
+  if (me) {
+    document.getElementById('profile-firstname').value = me.firstname || '';
+    document.getElementById('profile-lastname').value  = me.lastname  || '';
+    document.getElementById('profile-dob').value       = me.dob       || '';
+    document.getElementById('profile-phone').value     = me.phone     || '';
+    document.getElementById('profile-address').value   = me.address   || '';
+    document.getElementById('profile-blood').value     = me.blood     || '';
+  }
+  document.getElementById('profile-lang').value = currentUser.lang || 'fr';
+  document.getElementById('profile-newpw').value    = '';
+  document.getElementById('profile-confirmpw').value = '';
+  openModal('modal-my-profile');
+}
+
+function saveMyProfile() {
+  const newpw     = document.getElementById('profile-newpw').value;
+  const confirmpw = document.getElementById('profile-confirmpw').value;
+  if (newpw && newpw !== confirmpw) { showToast('Les mots de passe ne correspondent pas', 'error'); return; }
+  if (newpw && newpw.length < 6)    { showToast('Mot de passe : 6 caractères minimum', 'error'); return; }
+
+  // Update in family members
+  const me = (currentFamily.members || []).find(m =>
+    String(m.id) === String(currentUser.uid) || m.email === currentUser.email
+  );
+  if (me) {
+    me.firstname = document.getElementById('profile-firstname').value.trim();
+    me.lastname  = document.getElementById('profile-lastname').value.trim();
+    me.dob       = document.getElementById('profile-dob').value;
+    me.phone     = document.getElementById('profile-phone').value;
+    me.address   = document.getElementById('profile-address').value;
+    me.blood     = document.getElementById('profile-blood').value;
+  }
+
+  // Update currentUser
+  currentUser.lang = document.getElementById('profile-lang').value;
+
+  // Update Firestore user doc
+  db.collection('users').doc(currentUser.uid).update({
+    firstname: me?.firstname || currentUser.firstname,
+    lastname:  me?.lastname  || currentUser.lastname,
+    lang: currentUser.lang
+  }).catch(e => console.error(e));
+
+  // Change password in Firebase Auth
+  if (newpw) {
+    auth.currentUser.updatePassword(newpw)
+      .then(() => showToast('Mot de passe mis à jour ✓', 'success'))
+      .catch(e => {
+        if (e.code === 'auth/requires-recent-login') {
+          showToast('Reconnectez-vous pour changer le mot de passe', 'error');
+        } else showToast(e.message, 'error');
+      });
+  }
+
+  saveToFirestore();
+  closeModal('modal-my-profile');
+  updateSidebar();
+  showToast('Profil mis à jour !', 'success');
+}
+
+// ══ RENDER MEMBERS UPDATED ══
 
 function renderMembers() {
   const g=document.getElementById('members-grid');
   if(!g) return;
   const admin = isAdmin();
-  g.innerHTML=(currentFamily.members||[]).map(m=>`
-    <div class="member-card">
-      <div class="member-avatar-lg" style="background:${m.color||'#3D5A47'}">${m.firstname[0]}${m.lastname?.[0]||''}</div>
-      <div class="member-name">${m.firstname} ${m.lastname}</div>
-      <div class="member-role">
+  g.innerHTML=(currentFamily.members||[]).map(m=>{
+    const isMe = String(m.id)===String(currentUser.uid) || m.email===currentUser.email;
+    const isBlocked = m.status === 'blocked';
+    const isAdminRole = ADMIN_ROLES.includes(m.role);
+    return `
+    <div class="member-card" style="opacity:${isBlocked?0.6:1};${isBlocked?'border:2px solid var(--danger)':''}">
+      <div class="member-avatar-lg" style="background:${m.color||'#4C1D95'}">${m.firstname[0]}${m.lastname?.[0]||''}</div>
+      <div class="member-name">${m.firstname} ${m.lastname} ${isMe?'<span style="font-size:11px;color:var(--light)">(Moi)</span>':''}</div>
+      <div class="member-role" style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap">
         ${m.role}
-        ${['Papa','Maman','Tuteur'].includes(m.role)?'<span class="tag tag-forest" style="margin-left:6px;font-size:10px">👑 Admin</span>':''}
+        ${isAdminRole?'<span class="tag tag-forest" style="font-size:10px">👑 Admin</span>':''}
+        ${isBlocked?'<span class="tag tag-danger" style="font-size:10px">🚫 Bloqué</span>':''}
       </div>
-      ${m.dob?`<div style="font-size:12px;color:var(--light);margin-bottom:7px">🎂 ${formatDate(m.dob)} · ${calcAge(m.dob)} ans</div>`:''}
-      ${m.blood?`<span class="tag tag-danger" style="margin-bottom:7px">🩸 ${m.blood}</span><br>`:''}
-      ${m.phone?`<div style="font-size:12px;margin-top:5px">📱 ${m.phone}</div>`:''}
+      ${m.dob?`<div style="font-size:12px;color:var(--light);margin:6px 0">🎂 ${formatDate(m.dob)} · ${calcAge(m.dob)} ans</div>`:''}
+      ${m.blood?`<span class="tag tag-danger" style="margin-bottom:6px;display:inline-block">🩸 ${m.blood}</span>`:'' }
+      ${m.phone?`<div style="font-size:12px;margin-top:4px">📱 ${m.phone}</div>`:''}
       ${m.email?`<div style="font-size:12px">✉️ ${m.email}</div>`:''}
-      ${admin && m.id !== currentUser.uid ? `
-        <button onclick="deleteMember('${m.id}','${m.firstname} ${m.lastname}')"
-          class="btn btn-danger btn-sm"
-          style="width:100%;margin-top:12px;font-size:12px">
-          🗑 Retirer de la famille
-        </button>` : ''}
-    </div>`).join('');
+      ${admin && !isMe ? `
+        <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+          <button onclick="openEditMember('${m.id}')" class="btn btn-secondary btn-xs" style="flex:1">✏️ Modifier</button>
+          <button onclick="toggleBlockMember('${m.id}','${m.firstname}')" class="btn btn-xs" style="flex:1;background:${isBlocked?'var(--success)':'var(--warning)'};color:white">${isBlocked?'✅ Débloquer':'🚫 Bloquer'}</button>
+          <button onclick="deleteMember('${m.id}','${m.firstname} ${m.lastname}')" class="btn btn-danger btn-xs" style="flex:1">🗑 Retirer</button>
+        </div>` : ''}
+    </div>`;
+  }).join('');
   const dfc=document.getElementById('display-family-code');
   if(dfc) dfc.textContent=currentFamily.code;
+  renderPendingRequests();
   populateDropdowns();
 }
 
@@ -2244,7 +2708,15 @@ function deleteMember(memberId, memberName) {
   showToast(memberName + ' retiré(e) de la famille', 'success');
 }
 
-function openMemberModal() { populateDropdowns(); openModal('modal-member'); }
+function toggleBlockMember(memberId, name) {
+  if (!isAdmin()) return;
+  const m = (currentFamily.members||[]).find(m=>String(m.id)===String(memberId));
+  if (!m) return;
+  m.status = m.status === 'blocked' ? 'active' : 'blocked';
+  saveToFirestore();
+  renderMembers();
+  showToast(name + (m.status==='blocked' ? ' bloqué 🚫' : ' débloqué ✅'), 'success');
+}
 function saveMember() {
   const m={id:Date.now(),firstname:el('m-firstname').value.trim(),lastname:el('m-lastname').value.trim(),role:el('m-role').value,dob:el('m-dob')?.value||'',phone:el('m-phone')?.value||'',email:el('m-email')?.value||'',address:el('m-address')?.value||'',ss:el('m-ss')?.value||'',blood:el('m-blood')?.value||'',color:randomColor()};
   if(!m.firstname){showToast('Prénom requis','error');return;}
