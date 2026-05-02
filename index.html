@@ -289,6 +289,25 @@ tbody td{padding:11px 13px;color:var(--dark);}
 .param-currency-btn{padding:14px;border:2px solid var(--warm);border-radius:12px;background:var(--white);cursor:pointer;text-align:center;transition:all 0.2s;color:var(--dark);}
 .param-currency-btn:hover{border-color:var(--sage);}
 .param-currency-btn.active{border-color:var(--forest);background:rgba(76,29,149,0.08);color:var(--forest);}
+/* Profile photo */
+.profile-avatar-wrap{position:relative;width:90px;height:90px;margin:0 auto 16px;cursor:pointer;}
+.profile-avatar-img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--warm);}
+.profile-avatar-edit{position:absolute;bottom:0;right:0;width:28px;height:28px;background:var(--forest);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:white;border:2px solid white;}
+/* Scan module */
+.scan-area{border:2px dashed var(--warm);border-radius:16px;padding:30px;text-align:center;transition:border-color 0.2s;cursor:pointer;}
+.scan-area:hover{border-color:var(--forest);}
+.scan-result-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--cream);margin-bottom:8px;font-size:13px;}
+/* Email config */
+.email-provider-btn{padding:14px;border:2px solid var(--warm);border-radius:12px;background:var(--white);cursor:pointer;text-align:center;transition:all 0.2s;font-size:13px;}
+.email-provider-btn.active{border-color:var(--forest);background:rgba(76,29,149,0.08);}
+/* BankID */
+.bankid-btn{width:100%;padding:14px;background:#235971;color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;transition:all 0.2s;}
+.bankid-btn:hover{background:#1a4258;transform:translateY(-1px);}
+/* Tvätstuga */
+.tvatt-slot{padding:10px 14px;border-radius:10px;border:2px solid var(--warm);margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;}
+.tvatt-slot:hover{border-color:var(--forest);}
+.tvatt-slot.booked{background:rgba(76,29,149,0.08);border-color:var(--forest);}
+.tvatt-slot.mine{background:rgba(39,174,96,0.1);border-color:var(--success);}
 hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
 .color-pick{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:border-color 0.2s;}
 .color-pick.active{border-color:var(--dark);}
@@ -340,7 +359,7 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <!-- Tabs -->
     <div class="auth-tabs-new" id="auth-tabs">
       <button class="auth-tab-new active"  onclick="switchAuthTab('login')">Connexion</button>
-      <button class="auth-tab-new"         onclick="switchAuthTab('register')">Créer une famille</button>
+      <button class="auth-tab-new"         onclick="switchAuthTab('register')">Créer un compte</button>
       <button class="auth-tab-new"         onclick="switchAuthTab('join')">Rejoindre ma famille</button>
     </div>
 
@@ -364,6 +383,11 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
         <label for="remember-me">Mémoriser mon email</label>
       </div>
       <button class="auth-btn-primary" onclick="handleLogin()">🔑 Connexion</button>
+      <div class="auth-divider">ou</div>
+      <button class="bankid-btn" onclick="loginWithBankID()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect width="24" height="24" rx="4" fill="transparent"/><text y="18" font-size="14" font-weight="bold" fill="white">BID</text></svg>
+        Logga in med BankID
+      </button>
       <div class="auth-divider">pas encore de compte ?</div>
       <button class="auth-btn-secondary" onclick="switchAuthTab('register')">🏡 Créer une famille</button>
       <button class="auth-btn-secondary" onclick="switchAuthTab('join')" style="margin-top:8px">🔗 Rejoindre ma famille</button>
@@ -372,7 +396,7 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <!-- ── CRÉER UNE FAMILLE ── -->
     <div id="register-form" style="display:none">
       <div class="auth-right-header">
-        <h2>Créer votre foyer 🏠</h2>
+        <h2>Créer un compte 🏠</h2>
         <p>Tous les champs sont obligatoires</p>
       </div>
       <div style="display:flex;gap:10px">
@@ -529,6 +553,8 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <div class="nav-item" onclick="showSection('courses')"><span class="nav-icon">🛒</span>Courses<span class="badge-count" id="badge-courses">0</span></div>
     <div class="nav-item" onclick="showSection('repas')"><span class="nav-icon">🍽️</span>Repas & Cuisine</div>
     <div class="nav-item" onclick="showSection('taches')"><span class="nav-icon">🔧</span>Tâches ménagères</div>
+    <div class="nav-item" onclick="showSection('tvatt')"><span class="nav-icon">🫧</span>Tvätstuga<span class="badge-count" id="badge-tvatt">0</span></div>
+    <div class="nav-item" onclick="showSection('scan')"><span class="nav-icon">📷</span>Scanner & Import</div>
     <div class="nav-item" onclick="showSection('checklists')"><span class="nav-icon">✅</span>Checklists</div>
     <div class="nav-item" onclick="showSection('anniversaires')"><span class="nav-icon">🎂</span>Anniversaires<span class="badge-count" id="badge-anniv">0</span></div>
     <div class="nav-section">Santé & Maison</div>
@@ -539,6 +565,7 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <div class="nav-section">Assistant IA</div>
     <div class="nav-item" onclick="showSection('assistant')"><span class="nav-icon">🤖</span>Assistant famille</div>
     <div class="nav-section">Compte</div>
+    <div class="nav-item" onclick="showSection('emailconfig')"><span class="nav-icon">📧</span>Config. Email</div>
     <div class="nav-item" onclick="showSection('parametres')"><span class="nav-icon">⚙️</span>Paramètres</div>
     <div class="nav-item" id="nav-admin" style="display:none" onclick="showSection('admin')"><span class="nav-icon">🛡️</span>Administration</div>
     <div class="sidebar-footer">
@@ -1087,7 +1114,172 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
       </div>
 
 
-      <!-- ══ ADMINISTRATION (superadmin only) ══ -->
+      <!-- TVÄTSTUGA -->
+      <div class="section" id="section-tvatt">
+        <div class="flex-between mb-16">
+          <div style="color:var(--mid);font-size:14px">Réservez votre créneau de laverie — alertes automatiques.</div>
+          <button class="btn btn-primary btn-sm" onclick="openTvattModal()">+ Réserver</button>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">🫧 Créneaux cette semaine</div></div>
+            <div id="tvatt-slots"></div>
+          </div>
+          <div>
+            <div class="card mb-16">
+              <div class="card-header"><div class="card-title">📅 Mes réservations</div></div>
+              <div id="tvatt-mine"></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">📋 Règles de la laverie</div></div>
+              <div id="tvatt-rules"></div>
+              <button class="btn btn-secondary btn-sm mt-12" onclick="openTvattRulesModal()">✏️ Modifier les règles</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCANNER & IMPORT -->
+      <div class="section" id="section-scan">
+        <div class="grid-2">
+          <div>
+            <div class="card mb-16">
+              <div class="card-header"><div class="card-title">📷 Scanner un document</div></div>
+              <p style="font-size:13px;color:var(--mid);margin-bottom:16px">Photographiez ou importez n'importe quel texte — l'IA extrait automatiquement les données et les classe.</p>
+              <div class="scan-area" onclick="document.getElementById('scan-file-input').click()" id="scan-drop-area">
+                <div style="font-size:40px;margin-bottom:12px">📷</div>
+                <div style="font-weight:700;margin-bottom:6px">Cliquer pour scanner</div>
+                <div style="font-size:12px;color:var(--light)">Reçu, facture, liste de courses, document, étiquette produit…</div>
+                <input type="file" id="scan-file-input" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="handleScanFile(event)">
+              </div>
+              <div style="margin-top:12px">
+                <div style="font-size:12px;font-weight:700;color:var(--mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.6px">Ou saisir du texte à analyser</div>
+                <textarea id="scan-text-input" rows="4" placeholder="Collez ou tapez n'importe quel texte…&#10;Ex: Lait 1.89€ x2, Pain 2.50€, Fromage 3.99€…" style="width:100%;padding:12px;border:2px solid var(--warm);border-radius:10px;font-family:inherit;font-size:14px;outline:none;resize:vertical"></textarea>
+                <button class="btn btn-primary" style="margin-top:10px" onclick="analyzeText()">🤖 Analyser le texte</button>
+              </div>
+            </div>
+
+            <div class="card" id="scan-status-card" style="display:none">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="font-size:24px" id="scan-status-icon">⏳</div>
+                <div>
+                  <div style="font-weight:700" id="scan-status-title">Analyse en cours…</div>
+                  <div style="font-size:12px;color:var(--light)" id="scan-status-msg">L'IA traite votre document</div>
+                </div>
+              </div>
+              <div id="scan-status-results" style="margin-top:14px"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card mb-16">
+              <div class="card-title mb-12">📊 Données extraites</div>
+              <div id="scan-extracted-data">
+                <div style="text-align:center;padding:30px;color:var(--light)">
+                  <div style="font-size:32px;margin-bottom:8px">🔍</div>
+                  <div style="font-size:13px">Scannez un document pour extraire les données</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title mb-12">💰 Calcul des provisions</div>
+              <div id="scan-provisions">
+                <div style="font-size:13px;color:var(--light)">Les provisions seront calculées automatiquement après le scan d'un reçu.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMAIL CONFIG -->
+      <div class="section" id="section-emailconfig">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title mb-4">📧 Configuration Email</div>
+            <p style="font-size:13px;color:var(--mid);margin-bottom:20px">Configurez votre service d'envoi d'emails pour recevoir les alertes automatiques de FamilyNest.</p>
+
+            <div style="font-size:12px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px">Choisir un service</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px" id="email-providers">
+              <div class="email-provider-btn active" id="ep-emailjs" onclick="selectEmailProvider('emailjs')">
+                <div style="font-size:24px;margin-bottom:6px">📬</div>
+                <div style="font-weight:700;font-size:13px">EmailJS</div>
+                <div style="font-size:11px;color:var(--light)">Gratuit 200/mois</div>
+              </div>
+              <div class="email-provider-btn" id="ep-sendgrid" onclick="selectEmailProvider('sendgrid')">
+                <div style="font-size:24px;margin-bottom:6px">📨</div>
+                <div style="font-weight:700;font-size:13px">SendGrid</div>
+                <div style="font-size:11px;color:var(--light)">100/jour gratuit</div>
+              </div>
+            </div>
+
+            <!-- EmailJS config -->
+            <div id="emailjs-config">
+              <div style="background:rgba(76,29,149,0.06);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--mid)">
+                ℹ️ Créez un compte gratuit sur <a href="https://emailjs.com" target="_blank" style="color:var(--forest)">emailjs.com</a> → Services → Add Service → Email Templates
+              </div>
+              <div class="form-group"><label>Public Key <span style="color:var(--danger)">*</span></label><input type="text" id="ejs-public-key" placeholder="user_xxxxxxxxxx"></div>
+              <div class="form-group"><label>Service ID <span style="color:var(--danger)">*</span></label><input type="text" id="ejs-service-id" placeholder="service_xxxxxxx"></div>
+              <div class="form-group"><label>Template ID — Alertes</label><input type="text" id="ejs-template-alert" placeholder="template_xxxxxxx"></div>
+              <div class="form-group"><label>Template ID — Approbation</label><input type="text" id="ejs-template-approval" placeholder="template_xxxxxxx"></div>
+            </div>
+
+            <!-- SendGrid config -->
+            <div id="sendgrid-config" style="display:none">
+              <div style="background:rgba(76,29,149,0.06);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--mid)">
+                ℹ️ Créez un compte sur <a href="https://sendgrid.com" target="_blank" style="color:var(--forest)">sendgrid.com</a> → Settings → API Keys → Create API Key
+              </div>
+              <div class="form-group"><label>API Key <span style="color:var(--danger)">*</span></label><input type="text" id="sg-api-key" placeholder="SG.xxxxxxxxxx"></div>
+              <div class="form-group"><label>Email expéditeur <span style="color:var(--danger)">*</span></label><input type="email" id="sg-from-email" placeholder="noreply@familynest.app"></div>
+              <div class="form-group"><label>Nom expéditeur</label><input type="text" id="sg-from-name" placeholder="FamilyNest"></div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-primary" onclick="saveEmailConfig()">💾 Sauvegarder</button>
+              <button class="btn btn-secondary" onclick="testEmailConfig()">🧪 Tester</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card mb-16">
+              <div class="card-title mb-12">🔔 Alertes email activées</div>
+              <div id="email-alerts-config">
+                <div class="checkbox-row mb-8" onclick="toggleEmailAlert(this,'docs')" style="margin-bottom:8px">
+                  <input type="checkbox" id="ea-docs" checked><label for="ea-docs">📄 Documents expirant bientôt</label>
+                </div>
+                <div class="checkbox-row mb-8" onclick="toggleEmailAlert(this,'vehicles')" style="margin-bottom:8px">
+                  <input type="checkbox" id="ea-vehicles" checked><label for="ea-vehicles">🚗 CT et assurance véhicules</label>
+                </div>
+                <div class="checkbox-row mb-8" onclick="toggleEmailAlert(this,'invoices')" style="margin-bottom:8px">
+                  <input type="checkbox" id="ea-invoices" checked><label for="ea-invoices">🧾 Factures à payer</label>
+                </div>
+                <div class="checkbox-row mb-8" onclick="toggleEmailAlert(this,'birthdays')" style="margin-bottom:8px">
+                  <input type="checkbox" id="ea-birthdays" checked><label for="ea-birthdays">🎂 Anniversaires à venir</label>
+                </div>
+                <div class="checkbox-row mb-8" onclick="toggleEmailAlert(this,'tvatt')" style="margin-bottom:8px">
+                  <input type="checkbox" id="ea-tvatt" checked><label for="ea-tvatt">🫧 Rappels tvätstuga</label>
+                </div>
+                <div class="checkbox-row mb-8" onclick="toggleEmailAlert(this,'approvals')">
+                  <input type="checkbox" id="ea-approvals" checked><label for="ea-approvals">👥 Demandes d'approbation</label>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title mb-12">📋 Templates d'emails</div>
+              <p style="font-size:13px;color:var(--mid);margin-bottom:12px">Copiez ces variables dans vos templates EmailJS :</p>
+              <div style="background:var(--cream);border-radius:10px;padding:12px;font-size:12px;font-family:monospace;line-height:1.8">
+                <div>{{to_name}} — Prénom du destinataire</div>
+                <div>{{family_name}} — Nom de la famille</div>
+                <div>{{alert_title}} — Titre de l'alerte</div>
+                <div>{{alert_message}} — Message détaillé</div>
+                <div>{{app_url}} — Lien vers l'app</div>
+                <div>{{date}} — Date d'envoi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ADMINISTRATION ══ -->
       <div class="section" id="section-admin">
         <div class="grid-2">
 
@@ -1267,6 +1459,14 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
 <div class="modal-overlay" id="modal-my-profile">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">👤 Mon profil</div><button class="close-btn" onclick="closeModal('modal-my-profile')">✕</button></div>
+    <!-- Photo de profil -->
+    <div class="profile-avatar-wrap" onclick="document.getElementById('profile-photo-input').click()">
+      <img id="profile-avatar-display" src="" class="profile-avatar-img" style="display:none">
+      <div id="profile-avatar-placeholder" class="member-avatar-lg" style="width:90px;height:90px;font-size:32px;background:var(--forest);margin:0 auto"></div>
+      <div class="profile-avatar-edit">📷</div>
+      <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="handleProfilePhoto(event)">
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--light);margin-bottom:16px">Cliquer pour changer la photo</div>
     <div class="input-row">
       <div class="form-group"><label>Prénom</label><input type="text" id="profile-firstname"></div>
       <div class="form-group"><label>Nom</label><input type="text" id="profile-lastname"></div>
@@ -1892,6 +2092,47 @@ hr.divider-line{border:none;border-top:1px solid var(--warm);margin:14px 0;}
     <div class="form-group"><label>Adresse</label><input type="text" id="ct-adresse" placeholder="12 rue des Acacias, Paris"></div>
     <div class="form-group"><label>Notes</label><textarea id="ct-notes" rows="2" placeholder="Horaires, spécialités, infos utiles..."></textarea></div>
     <button class="btn btn-primary" onclick="saveContact()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- TVÄTSTUGA BOOKING MODAL -->
+<div class="modal-overlay" id="modal-tvatt">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🫧 Réserver la tvätstuga</div><button class="close-btn" onclick="closeModal('modal-tvatt')">✕</button></div>
+    <div class="input-row">
+      <div class="form-group"><label>Jour</label>
+        <select id="tvatt-day">
+          <option>Lundi</option><option>Mardi</option><option>Mercredi</option><option>Jeudi</option>
+          <option>Vendredi</option><option>Samedi</option><option>Dimanche</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Créneau</label>
+        <select id="tvatt-slot">
+          <option>07:00 – 09:00</option><option>09:00 – 11:00</option><option>11:00 – 13:00</option>
+          <option>13:00 – 15:00</option><option>15:00 – 17:00</option><option>17:00 – 19:00</option>
+          <option>19:00 – 21:00</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Machine</label>
+      <select id="tvatt-machine"><option>Machine 1</option><option>Machine 2</option><option>Sèche-linge</option><option>Machine 1 + Sèche-linge</option></select>
+    </div>
+    <div class="form-group"><label>Rappel avant</label>
+      <select id="tvatt-reminder"><option value="30">30 minutes avant</option><option value="60">1 heure avant</option><option value="120">2 heures avant</option></select>
+    </div>
+    <div class="form-group"><label>Notes</label><input type="text" id="tvatt-notes" placeholder="Linge blanc, couleurs…"></div>
+    <button class="btn btn-primary" onclick="saveTvattBooking()">💾 Réserver</button>
+  </div>
+</div>
+
+<!-- TVÄTSTUGA RULES MODAL -->
+<div class="modal-overlay" id="modal-tvatt-rules">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📋 Règles de la laverie</div><button class="close-btn" onclick="closeModal('modal-tvatt-rules')">✕</button></div>
+    <div class="form-group"><label>Règles (une par ligne)</label>
+      <textarea id="tvatt-rules-input" rows="8" placeholder="1. Nettoyer après utilisation&#10;2. Maximum 2 créneaux par semaine&#10;3. Pas de machine après 21h…"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="saveTvattRules()">💾 Sauvegarder</button>
   </div>
 </div>
 
@@ -3886,6 +4127,858 @@ openAddModal = function(){
 
 // ══ CLOSE MODALS ON OVERLAY CLICK ══
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// ══════════════════════════════════════════════════════
+// EMAILJS CONFIG — à remplir avec vos identifiants
+// ══════════════════════════════════════════════════════
+const EMAILJS_CONFIG = {
+  publicKey:  'VOTRE_PUBLIC_KEY',   // ex: 'user_xxxxxxxxxxxxxxxxx'
+  serviceId:  'VOTRE_SERVICE_ID',   // ex: 'service_xxxxxxx'
+  templateAlert:   'VOTRE_TEMPLATE_ALERT_ID',   // template pour alertes
+  templateApproval:'VOTRE_TEMPLATE_APPROVAL_ID' // template pour approbation
+};
+
+// Initialiser EmailJS
+function initEmailJS() {
+  if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'VOTRE_PUBLIC_KEY') {
+    emailjs.init(EMAILJS_CONFIG.publicKey);
+    return true;
+  }
+  return false;
+}
+
+// ══ SEND EMAIL ALERT ══
+function sendEmailAlert(toEmail, toName, alertTitle, alertMsg, alertType) {
+  if (!initEmailJS()) {
+    console.log('EmailJS not configured — alert would be sent to:', toEmail);
+    return Promise.resolve();
+  }
+  return emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateAlert, {
+    to_email:   toEmail,
+    to_name:    toName,
+    family_name: currentFamily?.name || 'FamilyNest',
+    alert_title: alertTitle,
+    alert_message: alertMsg,
+    alert_type: alertType,
+    app_url:    APP_URL,
+    date:       new Date().toLocaleDateString('fr-FR')
+  }).catch(e => console.error('EmailJS send error:', e));
+}
+
+// ══ SEND APPROVAL NOTIFICATION ══
+function sendApprovalEmail(toEmail, toName, familyName, approved) {
+  if (!initEmailJS()) return Promise.resolve();
+  return emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateApproval, {
+    to_email:    toEmail,
+    to_name:     toName,
+    family_name: familyName,
+    status:      approved ? 'approuvée ✅' : 'refusée ❌',
+    message:     approved
+      ? `Bienvenue dans ${familyName} ! Vous pouvez maintenant vous connecter sur ${APP_URL}`
+      : `Votre demande pour rejoindre ${familyName} a été refusée.`,
+    app_url:     APP_URL
+  }).catch(e => console.error('EmailJS approval error:', e));
+}
+
+// ══ TRIGGER EMAIL ALERTS FROM FAMILY DATA ══
+function checkAndSendAlerts() {
+  if (!currentFamily || !initEmailJS()) return;
+  const now = new Date();
+
+  // Check docs expiring
+  (currentFamily.docs || []).forEach(doc => {
+    if (!doc.notifEmail || !doc.owner) return;
+    const days = Math.ceil((new Date(doc.expiry) - now) / (1000*86400));
+    const threshold = doc.alertDelay || 90;
+    if (days === threshold || days === 30 || days === 7) {
+      const member = (currentFamily.members || []).find(m =>
+        m.firstname === doc.owner || m.firstname + ' ' + m.lastname === doc.owner
+      );
+      if (member?.email) {
+        sendEmailAlert(
+          member.email, member.firstname,
+          `⏰ Document expirant bientôt : ${doc.type}`,
+          `Votre ${doc.type} (N° ${doc.number}) expire dans ${days} jours, le ${new Date(doc.expiry).toLocaleDateString('fr-FR')}.`,
+          'document'
+        );
+      }
+    }
+  });
+
+  // Check vehicle CT/assurance expiring
+  (currentFamily.vehicules || []).forEach(v => {
+    const ctDays  = v.ct       ? Math.ceil((new Date(v.ct)       - now) / (1000*86400)) : null;
+    const assDays = v.assurance ? Math.ceil((new Date(v.assurance) - now) / (1000*86400)) : null;
+    const adminMember = (currentFamily.members || []).find(m => ADMIN_ROLES.includes(m.role));
+    if (!adminMember?.email) return;
+    if (ctDays === 30 || ctDays === 7) {
+      sendEmailAlert(adminMember.email, adminMember.firstname,
+        `🚗 Contrôle technique à prévoir : ${v.nom}`,
+        `Le contrôle technique de votre ${v.nom} (${v.immat}) est dans ${ctDays} jours.`,
+        'vehicle');
+    }
+    if (assDays === 30 || assDays === 7) {
+      sendEmailAlert(adminMember.email, adminMember.firstname,
+        `🚗 Assurance à renouveler : ${v.nom}`,
+        `L'assurance de votre ${v.nom} expire dans ${assDays} jours.`,
+        'vehicle');
+    }
+  });
+
+  // Check factures overdue
+  (currentFamily.factures || []).filter(f => f.status === 'En attente').forEach(f => {
+    const days = Math.ceil((new Date(f.due) - now) / (1000*86400));
+    if (days === 3 || days === 0) {
+      const admin = (currentFamily.members || []).find(m => ADMIN_ROLES.includes(m.role));
+      if (!admin?.email) return;
+      sendEmailAlert(admin.email, admin.firstname,
+        `🧾 Facture à payer : ${f.name}`,
+        `La facture "${f.name}" de ${f.amount} ${currentFamily.currencySym || '€'} est à payer ${days === 0 ? 'aujourd\'hui' : `dans ${days} jours`}.`,
+        'invoice');
+    }
+  });
+
+  // Check anniversaires in 7 days
+  (currentFamily.anniversaires || []).forEach(a => {
+    const dob = new Date(a.dob);
+    const thisYear = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+    if (thisYear < now) thisYear.setFullYear(now.getFullYear() + 1);
+    const days = Math.ceil((thisYear - now) / (1000*86400));
+    if (days === 7) {
+      const admins = (currentFamily.members || []).filter(m => ADMIN_ROLES.includes(m.role));
+      admins.forEach(admin => {
+        if (!admin.email) return;
+        const age = now.getFullYear() - new Date(a.dob).getFullYear() + 1;
+        sendEmailAlert(admin.email, admin.firstname,
+          `🎂 Anniversaire dans 7 jours : ${a.name}`,
+          `${a.name} fête ses ${age} ans dans 7 jours ! Pensez à lui faire un cadeau 🎁`,
+          'birthday');
+      });
+    }
+  });
+}
+
+// ══ APPROVAL WITH EMAIL ══
+function approveRequest(uid) {
+  const pending = currentFamily.pendingMembers || [];
+  const req = pending.find(p => p.uid === uid);
+  if (!req) return;
+  if (!currentFamily.members) currentFamily.members = [];
+  currentFamily.members.push({
+    id: req.uid, firstname: req.firstname, lastname: req.lastname,
+    role: req.role, email: req.email, dob: req.dob || '',
+    phone: '', address: '', ss: '', blood: '', color: randomColor(), status: 'active'
+  });
+  currentFamily.pendingMembers = pending.filter(p => p.uid !== uid);
+  saveToFirestore();
+  db.collection('users').doc(uid).update({ approved: true })
+    .catch(e => console.error('Approve user error:', e));
+  // Send email notification
+  sendApprovalEmail(req.email, req.firstname, currentFamily.name, true);
+  renderMembers();
+  showToast(req.firstname + ' approuvé(e) ! Email envoyé 🎉', 'success');
+}
+
+function rejectRequest(uid) {
+  if (!confirm('Rejeter cette demande ?')) return;
+  const req = (currentFamily.pendingMembers || []).find(p => p.uid === uid);
+  currentFamily.pendingMembers = (currentFamily.pendingMembers || []).filter(p => p.uid !== uid);
+  saveToFirestore();
+  if (req) sendApprovalEmail(req.email, req.firstname, currentFamily.name, false);
+  renderMembers();
+  showToast('Demande rejetée — email envoyé', 'success');
+}
+
+// ══ ADMIN MODULE ══
+const SUPERADMIN_EMAILS = []; // Rempli dynamiquement — premier créateur de la famille
+
+function isSuperAdmin() {
+  if (!currentUser || !currentFamily) return false;
+  // Le premier membre de la famille (créateur) est superadmin
+  const first = (currentFamily.members || [])[0];
+  return first && (String(first.id) === String(currentUser.uid) || first.email === currentUser.email);
+}
+
+function renderAdmin() {
+  if (!isSuperAdmin()) {
+    showToast('Accès réservé au super-administrateur', 'error');
+    showSection('dashboard');
+    return;
+  }
+
+  // Stats
+  const stats = document.getElementById('admin-stats');
+  if (stats) stats.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+      <div style="background:var(--cream);padding:12px;border-radius:10px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:var(--forest)">${(currentFamily.members||[]).length}</div>
+        <div style="font-size:11px;color:var(--light)">Membres actifs</div>
+      </div>
+      <div style="background:var(--cream);padding:12px;border-radius:10px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:var(--warning)">${(currentFamily.pendingMembers||[]).length}</div>
+        <div style="font-size:11px;color:var(--light)">En attente</div>
+      </div>
+      <div style="background:var(--cream);padding:12px;border-radius:10px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:var(--info)">${(currentFamily.docs||[]).length}</div>
+        <div style="font-size:11px;color:var(--light)">Documents</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--mid)">
+      <div class="flex-between mb-8"><span>Famille</span><strong>${currentFamily.name}</strong></div>
+      <div class="flex-between mb-8"><span>Code</span><strong>${currentFamily.code}</strong></div>
+      <div class="flex-between mb-8"><span>Pays</span><strong>${currentFamily.country || '—'}</strong></div>
+      <div class="flex-between"><span>Devise</span><strong>${currentFamily.currency || '—'} ${currentFamily.currencySym || ''}</strong></div>
+    </div>`;
+
+  // Members list with full admin controls
+  const ml = document.getElementById('admin-members-list');
+  if (ml) ml.innerHTML = (currentFamily.members||[]).map(m => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--cream);margin-bottom:8px">
+      <div class="avatar" style="width:36px;height:36px;font-size:13px;background:${m.color||'var(--forest)'}">
+        ${m.firstname[0]}${m.lastname?.[0]||''}
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13px">${m.firstname} ${m.lastname}</div>
+        <div style="font-size:11px;color:var(--light)">${m.role} · ${m.email}</div>
+        <span class="tag ${m.status==='blocked'?'tag-danger':'tag-success'}" style="font-size:10px">
+          ${m.status==='blocked'?'🚫 Bloqué':'✅ Actif'}
+        </span>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+        <button onclick="openEditMember('${m.id}')" class="btn btn-secondary btn-xs">✏️</button>
+        <button onclick="toggleBlockMember('${m.id}','${m.firstname}')" class="btn btn-xs" style="background:${m.status==='blocked'?'var(--success)':'var(--warning)'};color:white;padding:5px 8px;border-radius:6px;border:none;cursor:pointer;font-size:11px">${m.status==='blocked'?'✅':'🚫'}</button>
+        <button onclick="deleteMember('${m.id}','${m.firstname} ${m.lastname}')" class="btn btn-danger btn-xs">🗑</button>
+      </div>
+    </div>`).join('') || '<p style="color:var(--light);font-size:13px">Aucun membre</p>';
+
+  // Pending
+  const pl = document.getElementById('admin-pending-list');
+  if (pl) {
+    const pending = currentFamily.pendingMembers || [];
+    pl.innerHTML = pending.length ? pending.map(p => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:#FFF7ED;margin-bottom:8px">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px">${p.firstname} ${p.lastname}</div>
+          <div style="font-size:11px;color:var(--light)">${p.role} · ${p.email}</div>
+          <div style="font-size:10px;color:var(--light)">Demande: ${new Date(p.requestedAt).toLocaleDateString('fr-FR')}</div>
+        </div>
+        <button onclick="approveRequest('${p.uid}')" class="btn btn-success btn-xs">✅</button>
+        <button onclick="rejectRequest('${p.uid}')" class="btn btn-danger btn-xs">❌</button>
+      </div>`).join('')
+    : '<p style="color:var(--light);font-size:13px">Aucune demande en attente</p>';
+  }
+
+  // Activity log
+  const lg = document.getElementById('admin-logs');
+  if (lg) {
+    const logs = currentFamily.activityLog || [];
+    lg.innerHTML = logs.length ? logs.slice(-20).reverse().map(l => `
+      <div style="padding:8px 0;border-bottom:1px solid var(--cream);font-size:12px">
+        <span style="color:var(--light)">${new Date(l.at).toLocaleString('fr-FR')}</span>
+        <span style="margin-left:8px">${l.icon} ${l.msg}</span>
+      </div>`).join('')
+    : '<p style="color:var(--light);font-size:13px">Aucune activité enregistrée</p>';
+  }
+
+  // Pre-fill settings
+  const fn = document.getElementById('admin-family-name');
+  if (fn) fn.value = currentFamily.name || '';
+  const bud = document.getElementById('admin-budget');
+  if (bud) bud.value = currentFamily.budget?.monthly || 3000;
+}
+
+function adminSaveSettings() {
+  const name = document.getElementById('admin-family-name')?.value.trim();
+  const budget = parseFloat(document.getElementById('admin-budget')?.value) || 3000;
+  if (name) currentFamily.name = name;
+  if (!currentFamily.budget) currentFamily.budget = {};
+  currentFamily.budget.monthly = budget;
+  saveToFirestore();
+  updateSidebar();
+  showToast('Paramètres sauvegardés !', 'success');
+}
+
+function adminExportData() {
+  const json = JSON.stringify(currentFamily, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'familynest-export-' + currentFamily.code + '-' + todayStr() + '.json';
+  a.click();
+  showToast('Données exportées !', 'success');
+}
+
+function adminResetAlerts() {
+  if (!confirm('Réinitialiser toutes les alertes personnalisées ?')) return;
+  currentFamily.alerts = [];
+  saveToFirestore();
+  renderAlerts();
+  showToast('Alertes réinitialisées', 'success');
+}
+
+function adminSendTestEmail() {
+  const admin = (currentFamily.members || []).find(m => ADMIN_ROLES.includes(m.role));
+  if (!admin?.email) { showToast('Aucun email admin trouvé', 'error'); return; }
+  sendEmailAlert(
+    admin.email, admin.firstname,
+    '🧪 Test EmailJS — FamilyNest',
+    'Si vous recevez cet email, EmailJS est correctement configuré ! ✅',
+    'test'
+  ).then(() => showToast('Email de test envoyé à ' + admin.email, 'success'))
+   .catch(() => showToast('Erreur envoi — vérifiez la config EmailJS', 'error'));
+}
+
+// Log activity helper
+function logActivity(icon, msg) {
+  if (!currentFamily) return;
+  if (!currentFamily.activityLog) currentFamily.activityLog = [];
+  currentFamily.activityLog.push({
+    at: new Date().toISOString(),
+    by: currentUser?.firstname || '?',
+    icon, msg
+  });
+  // Keep last 50 entries
+  if (currentFamily.activityLog.length > 50) {
+    currentFamily.activityLog = currentFamily.activityLog.slice(-50);
+  }
+}
+
+// Show/hide admin nav
+function updateAdminNav() {
+  const nav = document.getElementById('nav-admin');
+  if (nav) nav.style.display = isSuperAdmin() ? 'flex' : 'none';
+}
+
+// ══ EXTEND showSection for admin ══
+const _origShowSectionAdmin = showSection;
+showSection = function(id) {
+  _origShowSectionAdmin(id);
+  if (id === 'admin') renderAdmin();
+};
+
+// ══ EXTEND launchApp to check admin nav and start alert checking ══
+const _origLaunchApp = launchApp;
+launchApp = function() {
+  _origLaunchApp();
+  updateAdminNav();
+  // Check alerts every hour
+  checkAndSendAlerts();
+  setInterval(checkAndSendAlerts, 60 * 60 * 1000);
+};
+
+// ══ TVÄTSTUGA ══
+const TVATT_DAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const TVATT_SLOTS_LIST = ['07:00 – 09:00','09:00 – 11:00','11:00 – 13:00','13:00 – 15:00','15:00 – 17:00','17:00 – 19:00','19:00 – 21:00'];
+
+function renderTvatt() {
+  if (!currentFamily.tvattBookings) currentFamily.tvattBookings = [];
+  if (!currentFamily.tvattRules) currentFamily.tvattRules = ['Nettoyer les filtres après utilisation','Maximum 2 créneaux par semaine par foyer','Respecter les horaires réservés','Pas de machine après 21h00'];
+
+  // Weekly slots grid
+  const sl = document.getElementById('tvatt-slots');
+  if (sl) {
+    let html = '';
+    TVATT_DAYS.forEach(day => {
+      html += `<div style="margin-bottom:14px"><div style="font-weight:700;font-size:13px;color:var(--mid);margin-bottom:6px">${day}</div>`;
+      TVATT_SLOTS_LIST.forEach(slot => {
+        const booking = currentFamily.tvattBookings.find(b => b.day===day && b.slot===slot);
+        const isMe = booking && (booking.memberId === currentUser.uid || booking.memberEmail === currentUser.email);
+        html += `<div class="tvatt-slot ${booking?'booked':''} ${isMe?'mine':''}" onclick="${booking && !isMe ? '' : `openTvattModalFor('${day}','${slot}')`}">
+          <span style="font-size:16px">${isMe?'✅':booking?'🔒':'🫧'}</span>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:13px">${slot}</div>
+            ${booking?`<div style="font-size:11px;color:var(--light)">${isMe?'Ma réservation':booking.memberName} — ${booking.machine}</div>`:'<div style="font-size:11px;color:var(--light)">Disponible</div>'}
+          </div>
+          ${isMe?`<button onclick="cancelTvatt('${booking.id}')" class="btn btn-danger btn-xs">Annuler</button>`:''}
+        </div>`;
+      });
+      html += '</div>';
+    });
+    sl.innerHTML = html;
+  }
+
+  // My bookings
+  const mine = currentFamily.tvattBookings.filter(b => b.memberId===currentUser.uid||b.memberEmail===currentUser.email);
+  const ml = document.getElementById('tvatt-mine');
+  if (ml) ml.innerHTML = mine.length ? mine.map(b=>`
+    <div class="alert-item alert-ok" style="margin-bottom:7px">
+      <span>🫧</span>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px">${b.day} ${b.slot}</div>
+        <div style="font-size:12px;opacity:0.7">${b.machine} ${b.notes?'— '+b.notes:''}</div>
+      </div>
+      <button onclick="cancelTvatt('${b.id}')" class="btn btn-danger btn-xs">✕</button>
+    </div>`).join('') : '<p style="color:var(--light);font-size:13px">Aucune réservation</p>';
+
+  // Rules
+  const rl = document.getElementById('tvatt-rules');
+  if (rl) rl.innerHTML = currentFamily.tvattRules.map((r,i)=>`<div style="padding:8px 0;border-bottom:1px solid var(--cream);font-size:13px">📌 ${r}</div>`).join('');
+
+  updateTvattBadge();
+}
+
+function updateTvattBadge() {
+  const mine = (currentFamily.tvattBookings||[]).filter(b=>b.memberId===currentUser?.uid||b.memberEmail===currentUser?.email).length;
+  const b = document.getElementById('badge-tvatt');
+  if (b) { b.textContent=mine; b.style.display=mine?'inline-block':'none'; }
+}
+
+function openTvattModal() { openModal('modal-tvatt'); }
+function openTvattModalFor(day, slot) {
+  openModal('modal-tvatt');
+  const dd = document.getElementById('tvatt-day'); if(dd) dd.value = day;
+  const ds = document.getElementById('tvatt-slot'); if(ds) ds.value = slot;
+}
+function saveTvattBooking() {
+  const day   = document.getElementById('tvatt-day')?.value;
+  const slot  = document.getElementById('tvatt-slot')?.value;
+  const machine = document.getElementById('tvatt-machine')?.value;
+  const notes = document.getElementById('tvatt-notes')?.value || '';
+  const reminder = document.getElementById('tvatt-reminder')?.value;
+  // Check not already booked
+  const existing = (currentFamily.tvattBookings||[]).find(b=>b.day===day&&b.slot===slot);
+  if (existing) { showToast('Ce créneau est déjà réservé', 'error'); return; }
+  if (!currentFamily.tvattBookings) currentFamily.tvattBookings = [];
+  const booking = {
+    id: Date.now(), day, slot, machine, notes, reminder,
+    memberId: currentUser.uid, memberEmail: currentUser.email,
+    memberName: currentUser.firstname + ' ' + currentUser.lastname,
+    bookedAt: new Date().toISOString()
+  };
+  currentFamily.tvattBookings.push(booking);
+  logActivity('🫧', `${currentUser.firstname} a réservé la tvätstuga — ${day} ${slot}`);
+  saveToFirestore();
+  closeModal('modal-tvatt');
+  renderTvatt();
+  showToast(`Tvätstuga réservée — ${day} ${slot} ✅`, 'success');
+  // Email reminder
+  if (currentUser.email) {
+    sendEmailAlert(currentUser.email, currentUser.firstname,
+      `🫧 Rappel tvätstuga : ${day} ${slot}`,
+      `Votre créneau de laverie est le ${day} de ${slot}. Machine: ${machine}.`,
+      'tvatt');
+  }
+}
+function cancelTvatt(id) {
+  currentFamily.tvattBookings = (currentFamily.tvattBookings||[]).filter(b=>String(b.id)!==String(id));
+  saveToFirestore(); renderTvatt(); showToast('Réservation annulée', 'success');
+}
+function openTvattRulesModal() {
+  const inp = document.getElementById('tvatt-rules-input');
+  if (inp) inp.value = (currentFamily.tvattRules||[]).join('\n');
+  openModal('modal-tvatt-rules');
+}
+function saveTvattRules() {
+  const inp = document.getElementById('tvatt-rules-input');
+  if (inp) currentFamily.tvattRules = inp.value.split('\n').filter(r=>r.trim());
+  saveToFirestore(); closeModal('modal-tvatt-rules'); renderTvatt(); showToast('Règles sauvegardées !', 'success');
+}
+
+// ══ SCAN & IMPORT ══
+function handleScanFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const card = document.getElementById('scan-status-card');
+  if (card) card.style.display = 'block';
+  const si = document.getElementById('scan-status-icon');
+  const st = document.getElementById('scan-status-title');
+  const sm = document.getElementById('scan-status-msg');
+  if (si) si.textContent='⏳'; if(st) st.textContent='Lecture du fichier…'; if(sm) sm.textContent='';
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const base64 = e.target.result.split(',')[1];
+    await analyzeWithAI(null, base64, file.type||'image/jpeg');
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+async function analyzeText() {
+  const text = document.getElementById('scan-text-input')?.value.trim();
+  if (!text) { showToast('Entrez du texte à analyser', 'error'); return; }
+  const card = document.getElementById('scan-status-card');
+  if (card) card.style.display = 'block';
+  await analyzeWithAI(text, null, null);
+}
+
+async function analyzeWithAI(text, base64, mediaType) {
+  const si=document.getElementById('scan-status-icon');
+  const st=document.getElementById('scan-status-title');
+  const sm=document.getElementById('scan-status-msg');
+  if(si) si.textContent='⏳'; if(st) st.textContent='Analyse IA en cours…'; if(sm) sm.textContent='';
+
+  const prompt = `Analyse ce contenu et extrais TOUTES les données structurées.
+Réponds UNIQUEMENT en JSON valide:
+{
+  "type": "recu|facture|liste|document|produit|autre",
+  "titre": "titre du document",
+  "date": "date si trouvée",
+  "total": 0.00,
+  "monnaie": "EUR",
+  "magasin": "nom du magasin si applicable",
+  "articles": [{"nom":"...", "quantite":1, "prix_unitaire":0.00, "total":0.00, "categorie":"alimentaire|hygiene|entretien|autre"}],
+  "informations": {"cle":"valeur"},
+  "provisions": {"total_semaine": 0.00, "total_mois": 0.00, "budget_restant": 0.00}
+}`;
+
+  try {
+    const endpoint = window.location.hostname.includes('localhost') || window.location.hostname.includes('claudeusercontent')
+      ? 'https://familinest.netlify.app/.netlify/functions/chat'
+      : '/.netlify/functions/chat';
+
+    const messages = text
+      ? [{ role:'user', content: prompt + '\n\nTexte à analyser:\n' + text }]
+      : [{ role:'user', content:[
+          {type:'image', source:{type:'base64', media_type:mediaType, data:base64}},
+          {type:'text',  text: prompt}
+        ]}];
+
+    const res = await fetch(endpoint, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages })
+    });
+    const data = await res.json();
+    const raw  = data.content?.[0]?.text || '{}';
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    // Success — display results
+    if(si) si.textContent='✅'; if(st) st.textContent='Données extraites !';
+    displayScanResults(parsed);
+  } catch(e) {
+    if(si) si.textContent='❌'; if(st) st.textContent='Erreur d\'analyse';
+    if(sm) sm.textContent='Vérifiez votre connexion';
+    console.error('Scan error:', e);
+  }
+}
+
+function displayScanResults(data) {
+  const ed = document.getElementById('scan-extracted-data');
+  const pv = document.getElementById('scan-provisions');
+
+  if (ed) {
+    const articles = data.articles || [];
+    ed.innerHTML = `
+      <div style="margin-bottom:12px">
+        <div class="flex-between mb-8"><span style="color:var(--light);font-size:12px">Type</span><span class="tag tag-forest">${data.type||'document'}</span></div>
+        ${data.titre?`<div class="flex-between mb-8"><span style="color:var(--light);font-size:12px">Titre</span><strong style="font-size:13px">${data.titre}</strong></div>`:''}
+        ${data.date?`<div class="flex-between mb-8"><span style="color:var(--light);font-size:12px">Date</span><span style="font-size:13px">${data.date}</span></div>`:''}
+        ${data.magasin?`<div class="flex-between mb-8"><span style="color:var(--light);font-size:12px">Magasin</span><strong style="font-size:13px">${data.magasin}</strong></div>`:''}
+        ${data.total?`<div class="flex-between"><span style="color:var(--light);font-size:12px">Total</span><strong style="font-size:18px;color:var(--forest)">${data.total} ${data.monnaie||currentFamily.currencySym||'€'}</strong></div>`:''}
+      </div>
+      ${articles.length?`
+      <hr class="divider-line">
+      <div style="font-size:12px;font-weight:700;color:var(--mid);margin-bottom:8px">${articles.length} ARTICLE(S) DÉTECTÉ(S)</div>
+      ${articles.map(a=>`
+        <div class="scan-result-item">
+          <div style="flex:1">
+            <div style="font-weight:600">${a.nom}</div>
+            <div style="font-size:11px;color:var(--light)">${a.categorie||''}</div>
+          </div>
+          <span style="color:var(--light);font-size:12px">×${a.quantite||1}</span>
+          <span style="font-weight:700;color:var(--forest)">${a.total||a.prix_unitaire||0} ${data.monnaie||'€'}</span>
+        </div>`).join('')}
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="importScanToCourses(${JSON.stringify(articles).replace(/"/g,'&quot;')})">🛒 Importer dans Courses</button>
+        <button class="btn btn-secondary btn-sm" onclick="importScanToDepenses(${JSON.stringify(data).replace(/"/g,'&quot;')})">💶 Importer dans Dépenses</button>
+      </div>`:''}`;
+  }
+
+  // Provisions
+  if (pv && data.articles?.length) {
+    const budget = currentFamily.budget?.monthly || 3000;
+    const totalExp = (currentFamily.expenses||[]).reduce((s,e)=>s+e.amount,0);
+    const scanTotal = data.total || data.articles.reduce((s,a)=>s+(a.total||0),0);
+    const reste = budget - totalExp - scanTotal;
+    pv.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:var(--cream);padding:12px;border-radius:10px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--forest)">${scanTotal.toFixed(2)} ${data.monnaie||'€'}</div>
+          <div style="font-size:11px;color:var(--light)">Ce scan</div>
+        </div>
+        <div style="background:${reste>0?'#F0FDF4':'#FEF2F2'};padding:12px;border-radius:10px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:${reste>0?'var(--success)':'var(--danger)'}">${reste.toFixed(2)} ${currentFamily.currencySym||'€'}</div>
+          <div style="font-size:11px;color:var(--light)">Budget restant</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--mid)">
+        Budget mensuel: <strong>${budget} ${currentFamily.currencySym||'€'}</strong><br>
+        Dépenses enregistrées: <strong>${totalExp.toFixed(2)} ${currentFamily.currencySym||'€'}</strong>
+      </div>`;
+  }
+}
+
+function importScanToCourses(articles) {
+  if (!currentFamily.courses) currentFamily.courses = [];
+  let added = 0;
+  articles.forEach((a,i) => {
+    const exists = currentFamily.courses.find(c=>c.name.toLowerCase()===a.nom.toLowerCase());
+    if (!exists) {
+      currentFamily.courses.push({
+        id:Date.now()+i, name:a.nom,
+        cat: a.categorie==='alimentaire'?'🥫 Épicerie':a.categorie==='hygiene'?'🧴 Hygiène':'🛒 Courses',
+        unit:'unité(s)', stock:parseFloat(a.quantite)||1, min:1, lifespan:14, lastBought:todayStr()
+      });
+      added++;
+    }
+  });
+  saveToFirestore();
+  showToast(`${added} article(s) importé(s) dans Courses !`, 'success');
+}
+
+function importScanToDepenses(data) {
+  if (!currentFamily.expenses) currentFamily.expenses = [];
+  const total = data.total || (data.articles||[]).reduce((s,a)=>s+(a.total||0),0);
+  currentFamily.expenses.push({
+    id:Date.now(), label: data.magasin || data.titre || 'Scan import',
+    amount: parseFloat(total)||0, date:todayStr(),
+    category:'🛒 Alimentation', by: currentUser.firstname
+  });
+  saveToFirestore();
+  showToast('Dépense importée !', 'success');
+}
+
+// ══ EMAIL CONFIG ══
+function selectEmailProvider(provider) {
+  document.querySelectorAll('.email-provider-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ep-'+provider)?.classList.add('active');
+  document.getElementById('emailjs-config').style.display  = provider==='emailjs'  ? 'block' : 'none';
+  document.getElementById('sendgrid-config').style.display = provider==='sendgrid' ? 'block' : 'none';
+}
+
+function renderEmailConfig() {
+  const cfg = currentFamily.emailConfig || {};
+  if (cfg.provider) selectEmailProvider(cfg.provider);
+  if (cfg.ejsPublicKey) document.getElementById('ejs-public-key').value = cfg.ejsPublicKey;
+  if (cfg.ejsServiceId) document.getElementById('ejs-service-id').value = cfg.ejsServiceId;
+  if (cfg.ejsTemplateAlert) document.getElementById('ejs-template-alert').value = cfg.ejsTemplateAlert;
+  if (cfg.ejsTemplateApproval) document.getElementById('ejs-template-approval').value = cfg.ejsTemplateApproval;
+  if (cfg.sgApiKey) document.getElementById('sg-api-key').value = cfg.sgApiKey;
+  if (cfg.sgFromEmail) document.getElementById('sg-from-email').value = cfg.sgFromEmail;
+  if (cfg.sgFromName) document.getElementById('sg-from-name').value = cfg.sgFromName;
+}
+
+function saveEmailConfig() {
+  const active = document.querySelector('.email-provider-btn.active');
+  const provider = active?.id?.replace('ep-','') || 'emailjs';
+  if (!currentFamily.emailConfig) currentFamily.emailConfig = {};
+  currentFamily.emailConfig = {
+    provider,
+    ejsPublicKey:      document.getElementById('ejs-public-key')?.value.trim(),
+    ejsServiceId:      document.getElementById('ejs-service-id')?.value.trim(),
+    ejsTemplateAlert:  document.getElementById('ejs-template-alert')?.value.trim(),
+    ejsTemplateApproval: document.getElementById('ejs-template-approval')?.value.trim(),
+    sgApiKey:    document.getElementById('sg-api-key')?.value.trim(),
+    sgFromEmail: document.getElementById('sg-from-email')?.value.trim(),
+    sgFromName:  document.getElementById('sg-from-name')?.value.trim(),
+  };
+  // Update EMAILJS_CONFIG global
+  if (provider==='emailjs') {
+    EMAILJS_CONFIG.publicKey        = currentFamily.emailConfig.ejsPublicKey || '';
+    EMAILJS_CONFIG.serviceId        = currentFamily.emailConfig.ejsServiceId || '';
+    EMAILJS_CONFIG.templateAlert    = currentFamily.emailConfig.ejsTemplateAlert || '';
+    EMAILJS_CONFIG.templateApproval = currentFamily.emailConfig.ejsTemplateApproval || '';
+    if (EMAILJS_CONFIG.publicKey) {
+      try { emailjs.init(EMAILJS_CONFIG.publicKey); } catch(e){}
+    }
+  }
+  saveToFirestore();
+  showToast('Configuration email sauvegardée !', 'success');
+}
+
+function testEmailConfig() {
+  const admin = (currentFamily.members||[]).find(m=>ADMIN_ROLES.includes(m.role));
+  if (!admin?.email) { showToast('Aucun email admin trouvé', 'error'); return; }
+  sendEmailAlert(admin.email, admin.firstname,
+    '🧪 Test FamilyNest — Configuration email',
+    'Si vous recevez cet email, votre configuration est correcte ! ✅\n\nFamilyNest est prêt à vous envoyer des alertes automatiques.',
+    'test'
+  ).then(()=>showToast('Email de test envoyé à '+admin.email,'success'))
+   .catch(()=>showToast('Erreur — vérifiez vos identifiants EmailJS','error'));
+}
+
+function toggleEmailAlert(row, type) {
+  const cb = row.querySelector('input[type=checkbox]');
+  if (cb) {
+    cb.checked = !cb.checked;
+    if (!currentFamily.emailAlerts) currentFamily.emailAlerts = {};
+    currentFamily.emailAlerts[type] = cb.checked;
+    saveToFirestore();
+  }
+}
+
+// ══ PROFILE PHOTO ══
+function handleProfilePhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 2*1024*1024) { showToast('Photo trop grande (max 2MB)', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const b64 = e.target.result;
+    // Display preview
+    const img = document.getElementById('profile-avatar-display');
+    const ph  = document.getElementById('profile-avatar-placeholder');
+    if (img) { img.src=b64; img.style.display='block'; }
+    if (ph)  { ph.style.display='none'; }
+    // Store in currentUser temp
+    currentUser._tempPhoto = b64;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Extend saveMyProfile to include photo
+const _origSaveMyProfile = saveMyProfile;
+saveMyProfile = function() {
+  // Save photo to family member
+  if (currentUser._tempPhoto) {
+    const me = (currentFamily.members||[]).find(m=>
+      String(m.id)===String(currentUser.uid)||m.email===currentUser.email
+    );
+    if (me) me.photo = currentUser._tempPhoto;
+    delete currentUser._tempPhoto;
+  }
+  _origSaveMyProfile();
+};
+
+// Extend openMyProfile to show photo
+const _origOpenMyProfile = openMyProfile;
+openMyProfile = function() {
+  _origOpenMyProfile();
+  const me = (currentFamily.members||[]).find(m=>
+    String(m.id)===String(currentUser.uid)||m.email===currentUser.email
+  );
+  const img = document.getElementById('profile-avatar-display');
+  const ph  = document.getElementById('profile-avatar-placeholder');
+  if (me?.photo) {
+    if(img){img.src=me.photo;img.style.display='block';}
+    if(ph){ph.style.display='none';}
+  } else {
+    if(img) img.style.display='none';
+    if(ph) {
+      ph.style.display='flex';
+      ph.textContent=(currentUser.firstname||'?')[0]+(currentUser.lastname||'?')[0];
+    }
+  }
+};
+
+// Update member cards to show photos
+const _origRenderMembers = renderMembers;
+renderMembers = function() {
+  _origRenderMembers();
+  // Update avatars with photos
+  (currentFamily.members||[]).forEach(m=>{
+    if (m.photo) {
+      const avatars = document.querySelectorAll('.member-avatar-lg');
+      // We can't easily target by member — this is handled in the renderMembers template below
+    }
+  });
+};
+
+// ══ BANKID / CRIIPTO ══
+const CRIIPTO_CONFIG = {
+  domain:   'VOTRE_DOMAINE.criipto.id', // ex: 'myfamily.criipto.id'
+  clientId: 'urn:grn:authn:se:bankid:same-device', // Swedish BankID
+  // Pour la simulation: utiliser le mode test de Criipto
+};
+
+function loginWithBankID() {
+  if (CRIIPTO_CONFIG.domain === 'VOTRE_DOMAINE.criipto.id') {
+    // Mode simulation — pas encore configuré
+    showBankIDSimulation();
+    return;
+  }
+  // Vrai BankID via Criipto
+  const redirectUri = encodeURIComponent(window.location.href);
+  const state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('bankid_state', state);
+  const url = `https://${CRIIPTO_CONFIG.domain}/oauth2/authorize`
+    + `?client_id=${encodeURIComponent(CRIIPTO_CONFIG.clientId)}`
+    + `&redirect_uri=${redirectUri}`
+    + `&response_type=code`
+    + `&scope=openid`
+    + `&state=${state}`
+    + `&acr_values=urn:grn:authn:se:bankid:same-device`;
+  window.location.href = url;
+}
+
+function showBankIDSimulation() {
+  // Créer un popup de simulation BankID
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:32px;width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <div style="width:80px;height:80px;background:#235971;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px">🔐</div>
+      <div style="font-family:serif;font-size:22px;font-weight:700;color:#235971;margin-bottom:4px">BankID</div>
+      <div style="font-size:13px;color:#666;margin-bottom:24px">Simulateur de test</div>
+      <div style="text-align:left;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px">Personnummer (test)</div>
+        <input id="bankid-pnr" type="text" placeholder="19900101-1234" style="width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-size:16px;letter-spacing:2px;text-align:center;font-family:monospace;outline:none;box-sizing:border-box">
+        <div style="font-size:11px;color:#999;margin-top:6px">Utilisez n'importe quel numéro pour tester</div>
+      </div>
+      <div id="bankid-status" style="min-height:40px;margin-bottom:16px"></div>
+      <button onclick="simulateBankIDAuth()" style="width:100%;padding:14px;background:#235971;color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px">
+        📱 Ouvrir BankID
+      </button>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:100%;padding:10px;background:#f5f5f5;color:#666;border:none;border-radius:10px;font-size:14px;cursor:pointer">
+        Annuler
+      </button>
+      <div style="font-size:11px;color:#999;margin-top:12px">Mode simulation — configurez Criipto pour la production</div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function simulateBankIDAuth() {
+  const pnr = document.getElementById('bankid-pnr')?.value.trim();
+  if (!pnr || pnr.length < 10) { showToast('Entrez un personnummer valide', 'error'); return; }
+  const status = document.getElementById('bankid-status');
+  if (status) status.innerHTML = '<div style="color:#235971;font-size:13px">⏳ Authentification en cours…</div>';
+  setTimeout(() => {
+    if (status) status.innerHTML = '<div style="color:green;font-size:13px">✅ Authentification BankID réussie !</div>';
+    setTimeout(() => {
+      document.querySelector('div[style*="position:fixed"][style*="9999"]')?.remove();
+      showToast('BankID simulé ✅ — Configurez Criipto pour la vraie authentification', 'success');
+    }, 1500);
+  }, 2000);
+}
+
+// ══ EXTEND showSection ══
+const _origShowSectionFinal = showSection;
+showSection = function(id) {
+  _origShowSectionFinal(id);
+  if (id==='tvatt')       renderTvatt();
+  if (id==='scan')        {} // no initial render needed
+  if (id==='emailconfig') renderEmailConfig();
+  const extraTitles = {
+    tvatt:'🫧 Tvätstuga — Laverie',
+    scan:'📷 Scanner & Import',
+    emailconfig:'📧 Configuration Email'
+  };
+  if (extraTitles[id]) { const pt=document.getElementById('page-title'); if(pt) pt.textContent=extraTitles[id]; }
+};
+
+// ══ EXTEND openAddModal ══
+const _origOpenAddModalFinal = openAddModal;
+openAddModal = function() {
+  const active = document.querySelector('.section.active');
+  if (!active) return;
+  const id = active.id.replace('section-','');
+  if (id==='tvatt') openTvattModal();
+  else _origOpenAddModalFinal();
+};
+
+// ══ RESTORE EMAIL CONFIG ON LAUNCH ══
+const _origLaunchAppFinal = launchApp;
+launchApp = function() {
+  _origLaunchAppFinal();
+  // Restore email config
+  const cfg = currentFamily?.emailConfig;
+  if (cfg?.ejsPublicKey) {
+    EMAILJS_CONFIG.publicKey        = cfg.ejsPublicKey;
+    EMAILJS_CONFIG.serviceId        = cfg.ejsServiceId || '';
+    EMAILJS_CONFIG.templateAlert    = cfg.ejsTemplateAlert || '';
+    EMAILJS_CONFIG.templateApproval = cfg.ejsTemplateApproval || '';
+    try { if(typeof emailjs!=='undefined') emailjs.init(cfg.ejsPublicKey); } catch(e){}
+  }
+};
 
 // ── Auto-fill email sauvegardé ──
 (function(){const saved=localStorage.getItem('fn_email');if(saved){const inp=document.getElementById('login-email');if(inp)inp.value=saved;}})();
