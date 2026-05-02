@@ -2377,7 +2377,7 @@ auth.onAuthStateChanged(user => {
         hideLoading();
         auth.signOut();
         document.getElementById('auth-screen').style.display = 'flex';
-        showToast('Votre demande est en attente d'approbation par un parent.', 'warning');
+        showToast('Votre demande est en attente d\'approbation par un parent.', 'warning');
         return;
       }
       currentUser = { uid: user.uid, ...userData };
@@ -2958,6 +2958,7 @@ function toggleBlockMember(memberId, name) {
   renderMembers();
   showToast(name + (m.status==='blocked' ? ' bloqué 🚫' : ' débloqué ✅'), 'success');
 }
+function openMemberModal() { populateDropdowns(); openModal('modal-member'); }
 function saveMember() {
   const m={id:Date.now(),firstname:el('m-firstname').value.trim(),lastname:el('m-lastname').value.trim(),role:el('m-role').value,dob:el('m-dob')?.value||'',phone:el('m-phone')?.value||'',email:el('m-email')?.value||'',address:el('m-address')?.value||'',ss:el('m-ss')?.value||'',blood:el('m-blood')?.value||'',color:randomColor()};
   if(!m.firstname){showToast('Prénom requis','error');return;}
