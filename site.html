@@ -15,6 +15,19 @@ html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;line-height:1.7;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 
+/* ═══ LANG SWITCHER ═══ */
+.lang-switcher{position:relative;margin-left:8px}
+.lang-current{display:flex;align-items:center;gap:5px;cursor:pointer;padding:4px 10px;border:1px solid rgba(255,255,255,.2);border-radius:20px;transition:all .2s;user-select:none}
+.lang-current:hover{border-color:var(--gold);background:rgba(201,168,76,.1)}
+.lang-current span{font-size:11px;color:rgba(255,255,255,.8);font-weight:600}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);min-width:150px;overflow:hidden;display:none;z-index:9999;border:1px solid var(--border)}
+.lang-menu.open{display:block;animation:fadeDown .2s ease}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.lang-opt{padding:10px 14px;font-size:13px;cursor:pointer;color:var(--text);transition:background .15s;display:flex;align-items:center;gap:8px}
+.lang-opt:hover{background:var(--bg);color:var(--green);font-weight:600}
+.lang-opt.active{background:#f0f9f4;color:var(--green);font-weight:700}
+body[dir="rtl"] .lang-menu{right:auto;left:0}
+
 /* ═══ GOV HEADER ═══ */
 #siteHeader{position:fixed;top:0;left:0;right:0;z-index:1000;transition:box-shadow .3s}
 .gov-top{background:linear-gradient(90deg,#003520,#006233,#003520);padding:8px 24px}
@@ -58,7 +71,7 @@ a{text-decoration:none;color:inherit}
 .hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:.3s}
 
 /* ═══ HERO VIDEO ═══ */
-.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:0!important}
 .hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,#001a0d,#003520,#001a0d)}
 .hero-bg iframe{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);border:none;pointer-events:none;opacity:.6}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,30,15,.9) 0%,rgba(0,60,30,.7) 60%,rgba(0,20,10,.85) 100%);z-index:1}
@@ -172,6 +185,31 @@ a{text-decoration:none;color:inherit}
 .hi-time{font-size:13px;font-weight:600;color:var(--green)}
 .map-box{height:280px;background:linear-gradient(135deg,#e8f5ee,#f0f9f4);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;border:1px dashed var(--border);overflow:hidden}
 .map-box iframe{width:100%;height:100%;border:none}
+
+/* ═══ ANNONCES ═══ */
+.filtre-btn{padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;color:var(--text2)}
+.filtre-btn:hover{border-color:var(--green);color:var(--green)}
+.filtre-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.annonce-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .3s;cursor:pointer}
+.annonce-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.1);border-color:transparent}
+.annonce-img{height:180px;background:linear-gradient(135deg,#f0f9f4,#e8f5ee);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden}
+.annonce-img img{width:100%;height:100%;object-fit:cover}
+.annonce-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.badge-avis{background:rgba(37,99,235,.15);color:#1d4ed8}
+.badge-formulaire{background:rgba(0,98,51,.15);color:#006233}
+.badge-communique{background:rgba(124,58,237,.15);color:#6d28d9}
+.badge-photo{background:rgba(234,179,8,.15);color:#92400e}
+.badge-urgent{background:rgba(210,16,52,.15);color:#D21034}
+.annonce-body{padding:18px}
+.annonce-date{font-size:11px;color:var(--gold);font-weight:600;margin-bottom:8px}
+.annonce-card h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.4}
+.annonce-card p{font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.annonce-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+.annonce-type-icon{font-size:18px}
+.annonce-action{font-size:12px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:4px}
+.annonce-action::after{content:'→';transition:transform .2s}
+.annonce-card:hover .annonce-action::after{transform:translateX(3px)}
+.annonce-urgent{border-left:4px solid #D21034}
 
 /* ═══ COMMUNAUTÉ ═══ */
 .comm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -340,6 +378,23 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
         <a href="https://www.el-mouradia.dz" target="_blank">Présidence</a>
         <a href="https://www.interieur.gov.dz" target="_blank">Intérieur</a>
         <span class="gov-date" id="govDate"></span>
+        <!-- Sélecteur de langue -->
+        <div class="lang-switcher" id="langSwitcher">
+          <div class="lang-current" onclick="toggleLangMenu()">
+            <span id="langFlag">🇫🇷</span>
+            <span id="langCode">FR</span>
+            <span style="font-size:8px;opacity:.6">▼</span>
+          </div>
+          <div class="lang-menu" id="langMenu">
+            <div class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</div>
+            <div class="lang-opt" onclick="setLang('en')">🇬🇧 English</div>
+            <div class="lang-opt" onclick="setLang('sv')">🇸🇪 Svenska</div>
+            <div class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div>
+            <div class="lang-opt" onclick="setLang('it')">🇮🇹 Italiano</div>
+            <div class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</div>
+            <div class="lang-opt" onclick="setLang('ar')">🇩🇿 العربية</div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Barre tricolore -->
@@ -369,12 +424,13 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
         </div>
       </div>
       <div class="nav-links" id="navLinks">
-        <a href="#accueil" class="active">Accueil</a>
-        <a href="#services">Services</a>
-        <a href="#actualites">Actualités</a>
-        <a href="#rdv">Rendez-vous</a>
-        <a href="#suivi">Suivi dossier</a>
-        <a href="#contact">Contact</a>
+        <a href="#accueil" class="active" data-i18n="nav_home">Accueil</a>
+        <a href="#services" data-i18n="nav_services">Services</a>
+        <a href="#actualites" data-i18n="nav_news">Actualités</a>
+        <a href="#annonces" data-i18n="nav_annonces">Annonces</a>
+        <a href="#rdv" data-i18n="nav_rdv">Rendez-vous</a>
+        <a href="#suivi" data-i18n="nav_suivi">Suivi dossier</a>
+        <a href="#contact" data-i18n="nav_contact">Contact</a>
         <a href="#services" class="nav-cta" onclick="openServiceForm('passeport');return false;">📄 Demande en ligne</a>
       </div>
       <button class="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
@@ -382,7 +438,194 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
   </nav>
 </header>
 
-<!-- ═══ HERO VIDÉO ═══ -->
+<!-- ═══ PANNEAU PUBLICITAIRE — BILLBOARD ═══ -->
+<div id="billboard" style="position:relative;z-index:5;margin-top:130px;padding-top:0">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;height:320px;overflow:hidden;position:relative">
+
+    <!-- Panneau 1 — Algérie paysages (défile vers le bas) -->
+    <div style="overflow:hidden;position:relative;border-right:2px solid rgba(255,255,255,.15)">
+      <div class="bb-strip bb-strip-1">
+        <div class="bb-slide" style="background:linear-gradient(135deg,#1a6b3c,#006233)">
+          <img src="https://images.unsplash.com/photo-1539768942893-daf53e448371?w=600&q=80" alt="Alger" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🏛️ Alger</div><div class="bb-text">La capitale de la République</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#8B6914,#C9A84C)">
+          <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=600&q=80" alt="Sahara" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🏜️ Sahara</div><div class="bb-text">Le grand désert algérien</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#006233,#004d28)">
+          <img src="https://images.unsplash.com/photo-1560969184-10fe8719e047?w=600&q=80" alt="Méditerranée" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🌊 Méditerranée</div><div class="bb-text">Les côtes algériennes</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#2d4a8a,#1a2d5a)">
+          <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80" alt="Mosquée" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🕌 Culture</div><div class="bb-text">Patrimoine architectural</div></div>
+        </div>
+        <!-- Dupliqué pour loop infini -->
+        <div class="bb-slide" style="background:linear-gradient(135deg,#1a6b3c,#006233)">
+          <img src="https://images.unsplash.com/photo-1539768942893-daf53e448371?w=600&q=80" alt="Alger" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🏛️ Alger</div><div class="bb-text">La capitale de la République</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#8B6914,#C9A84C)">
+          <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=600&q=80" alt="Sahara" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🏜️ Sahara</div><div class="bb-text">Le grand désert algérien</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panneau central — Ambassade / Services (défile plus lentement) -->
+    <div style="overflow:hidden;position:relative;border-right:2px solid rgba(255,255,255,.15)">
+      <div class="bb-strip bb-strip-2">
+        <div class="bb-slide bb-slide-dark">
+          <div class="bb-service-card">
+            <div style="font-size:48px;margin-bottom:12px">🛂</div>
+            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">Passeport Biométrique</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px">Renouvellement · Nouvelle demande</div>
+            <div style="padding:8px 20px;background:rgba(201,168,76,.9);border-radius:20px;font-size:12px;font-weight:700;color:#1a2e1f;display:inline-block">Faire une demande →</div>
+          </div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(180deg,#003520,#006233)">
+          <div class="bb-service-card">
+            <div style="font-size:48px;margin-bottom:12px">✈️</div>
+            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">Visa d'entrée</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:8px">Tourisme · Famille · Affaires</div>
+            <div style="font-size:11px;color:rgba(201,168,76,.8)">visa@embalgeria.se</div>
+          </div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(180deg,#4a1a00,#8B3A00)">
+          <div class="bb-service-card">
+            <div style="font-size:48px;margin-bottom:12px">📋</div>
+            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">État Civil</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:8px">Acte 12S · Mariage · Livret de famille</div>
+            <div style="font-size:11px;color:rgba(201,168,76,.8)">consular@embalgeria.se</div>
+          </div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(180deg,#1a1a4a,#2d2d8a)">
+          <div class="bb-service-card">
+            <div style="font-size:48px;margin-bottom:12px">🗳️</div>
+            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">Liste Électorale</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:8px">Inscrivez-vous pour voter en Algérie</div>
+            <div style="padding:8px 20px;background:rgba(201,168,76,.9);border-radius:20px;font-size:12px;font-weight:700;color:#1a2e1f;display:inline-block">S'inscrire →</div>
+          </div>
+        </div>
+        <!-- Dupliqué -->
+        <div class="bb-slide bb-slide-dark">
+          <div class="bb-service-card">
+            <div style="font-size:48px;margin-bottom:12px">🛂</div>
+            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">Passeport Biométrique</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px">Renouvellement · Nouvelle demande</div>
+            <div style="padding:8px 20px;background:rgba(201,168,76,.9);border-radius:20px;font-size:12px;font-weight:700;color:#1a2e1f;display:inline-block">Faire une demande →</div>
+          </div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(180deg,#003520,#006233)">
+          <div class="bb-service-card">
+            <div style="font-size:48px;margin-bottom:12px">✈️</div>
+            <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">Visa d'entrée</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:8px">Tourisme · Famille · Affaires</div>
+            <div style="font-size:11px;color:rgba(201,168,76,.8)">visa@embalgeria.se</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panneau 3 — Suède + Algérie (défile vers le haut) -->
+    <div style="overflow:hidden;position:relative">
+      <div class="bb-strip bb-strip-3">
+        <div class="bb-slide" style="background:linear-gradient(135deg,#006AA7,#004d7a)">
+          <img src="https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=600&q=80" alt="Stockholm" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🇸🇪 Stockholm</div><div class="bb-text">Capitale de la Suède</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#D21034,#8b0020)">
+          <div class="bb-service-card">
+            <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">🚨 Urgence 24h/24</div>
+            <div style="font-size:28px;font-weight:900;color:#fff;margin-bottom:8px">+46 (0) 8<br/>679 9130</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.6)">Accidents · Arrestation<br/>Documents perdus</div>
+          </div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#1a4a2a,#006233)">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Algérie paysage" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🇩🇿 Algérie</div><div class="bb-text">Terre de culture et d'histoire</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#4a3500,#8B6914)">
+          <div class="bb-service-card">
+            <div style="font-size:12px;color:rgba(201,168,76,.8);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Horaires d'ouverture</div>
+            <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px">Lun – Ven</div>
+            <div style="font-size:32px;font-weight:900;color:var(--gold,#C9A84C)">09:00 – 13:00</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:8px">Fermé week-ends & jours fériés</div>
+          </div>
+        </div>
+        <!-- Dupliqué -->
+        <div class="bb-slide" style="background:linear-gradient(135deg,#006AA7,#004d7a)">
+          <img src="https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=600&q=80" alt="Stockholm" onerror="this.style.display='none'"/>
+          <div class="bb-caption"><div class="bb-tag">🇸🇪 Stockholm</div><div class="bb-text">Capitale de la Suède</div></div>
+        </div>
+        <div class="bb-slide" style="background:linear-gradient(135deg,#D21034,#8b0020)">
+          <div class="bb-service-card">
+            <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">🚨 Urgence 24h/24</div>
+            <div style="font-size:28px;font-weight:900;color:#fff;margin-bottom:8px">+46 (0) 8<br/>679 9130</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.6)">Accidents · Arrestation<br/>Documents perdus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay gradient top/bottom pour effet fondu -->
+    <div style="position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,rgba(0,30,15,.8),transparent);z-index:3;pointer-events:none"></div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(0,30,15,.8),transparent);z-index:3;pointer-events:none"></div>
+
+    <!-- Badge "LIVE" -->
+    <div style="position:absolute;top:12px;left:12px;z-index:10;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);padding:5px 12px;border-radius:20px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#ff3333;animation:blink 1s infinite"></div>
+      <span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:.08em">EN DIRECT</span>
+    </div>
+
+    <!-- Label -->
+    <div style="position:absolute;bottom:12px;right:12px;z-index:10;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.08em">Ambassade d'Algérie · Stockholm</div>
+  </div>
+
+  <!-- Barre de navigation du billboard -->
+  <div style="background:#0a1a10;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;gap:16px;align-items:center">
+      <span style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em">Panneau officiel</span>
+      <div style="display:flex;gap:6px" id="bbDots">
+        <div class="bb-dot bb-dot-active"></div>
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+        <div class="bb-dot"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="#services" style="font-size:11px;color:rgba(201,168,76,.7);font-weight:600;transition:color .2s" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(201,168,76,.7)'">Nos services →</a>
+      <a href="#rdv" onclick="openServiceForm('passeport');return false" style="font-size:11px;padding:5px 14px;background:var(--green,#006233);color:#fff;border-radius:12px;font-weight:600">📄 Demande en ligne</a>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Billboard CSS */
+.bb-strip{display:flex;flex-direction:column;width:100%;animation-timing-function:linear;animation-iteration-count:infinite}
+.bb-strip-1{animation:scrollDown 20s linear infinite}
+.bb-strip-2{animation:scrollDown 28s linear infinite}
+.bb-strip-3{animation:scrollUp 24s linear infinite}
+.bb-slide{height:320px;width:100%;flex-shrink:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.bb-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 8s ease;z-index:0}
+.bb-slide:hover img{transform:scale(1.05)}
+.bb-slide-dark{background:linear-gradient(180deg,#0a1a10,#006233)}
+.bb-caption{position:absolute;bottom:0;left:0;right:0;padding:16px 14px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);z-index:2}
+.bb-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold,#C9A84C);margin-bottom:4px}
+.bb-text{font-size:13px;font-weight:600;color:#fff}
+.bb-service-card{text-align:center;padding:20px;position:relative;z-index:2}
+.bb-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s}
+.bb-dot-active{background:var(--gold,#C9A84C)}
+@keyframes scrollDown{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+@keyframes scrollUp{0%{transform:translateY(-50%)}100%{transform:translateY(0%)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.bb-strip:hover{animation-play-state:paused}
+@media(max-width:768px){
+  #billboard [style*="grid-template-columns:1fr 1fr 1fr"]{grid-template-columns:1fr!important;height:280px!important}
+  #billboard [style*="grid-template-columns:1fr 1fr 1fr"] > div:not(:first-child){display:none}
+}
+</style>
 <section class="hero" id="accueil">
   <div class="hero-bg">
     <!-- Vidéo YouTube Algérie en fond -->
@@ -396,12 +639,12 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
   <div class="hero-overlay"></div>
   <div class="hero-inner container">
     <div class="hero-text">
-      <div class="hero-kicker">Portail Consulaire Officiel</div>
+      <div class="hero-kicker" data-i18n="hero_kicker">Portail Consulaire Officiel</div>
       <h1>Au service de la<br/><em>communauté algérienne</em><br/>en Suède</h1>
-      <p class="hero-desc" id="heroDesc">Bienvenue sur le portail officiel de l'Ambassade d'Algérie à Stockholm. Effectuez vos démarches consulaires, suivez vos dossiers et prenez rendez-vous en ligne.</p>
+      <p class="hero-desc" id="heroDesc" data-i18n="hero_desc">Bienvenue sur le portail officiel de l'Ambassade d'Algérie à Stockholm. Effectuez vos démarches consulaires, suivez vos dossiers et prenez rendez-vous en ligne.</p>
       <div class="hero-btns">
-        <button class="btn-gold" onclick="openServiceForm('passeport')">📄 Demande de document</button>
-        <a href="#services" class="btn-outline">🔍 Nos services consulaires</a>
+        <button class="btn-gold" onclick="openServiceForm('passeport')" data-i18n="hero_btn_doc">📄 Demande de document</button>
+        <a href="#services" class="btn-outline" data-i18n="hero_btn_svc">🔍 Nos services consulaires</a>
       </div>
       <div class="hero-urgence">
         <span style="font-size:18px">🚨</span>
@@ -410,14 +653,14 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
     </div>
     <div class="stats-card">
       <div class="stats-card-title">📊 L'ambassade en chiffres</div>
-      <div class="stat-row"><div class="stat-icon">👥</div><div><span class="stat-val" id="statCitoyens">—</span><div class="stat-lbl">Citoyens immatriculés</div></div></div>
-      <div class="stat-row"><div class="stat-icon">📁</div><div><span class="stat-val" id="statDossiers">—</span><div class="stat-lbl">Dossiers traités</div></div></div>
-      <div class="stat-row"><div class="stat-icon">📅</div><div><span class="stat-val" id="statRdv">—</span><div class="stat-lbl">Rendez-vous accordés</div></div></div>
-      <div class="stat-row"><div class="stat-icon">🎟️</div><div><span class="stat-val" id="statEvents">—</span><div class="stat-lbl">Événements organisés</div></div></div>
+      <div class="stat-row"><div class="stat-icon">👥</div><div><span class="stat-val" id="statCitoyens">—</span><div class="stat-lbl" data-i18n="stat_citoyens">Citoyens immatriculés</div></div></div>
+      <div class="stat-row"><div class="stat-icon">📁</div><div><span class="stat-val" id="statDossiers">—</span><div class="stat-lbl" data-i18n="stat_dossiers">Dossiers traités</div></div></div>
+      <div class="stat-row"><div class="stat-icon">📅</div><div><span class="stat-val" id="statRdv">—</span><div class="stat-lbl" data-i18n="stat_rdv">Rendez-vous accordés</div></div></div>
+      <div class="stat-row"><div class="stat-icon">🎟️</div><div><span class="stat-val" id="statEvents">—</span><div class="stat-lbl" data-i18n="stat_events">Événements organisés</div></div></div>
       <div class="stat-hours">
         <div class="stat-hours-title">🕐 Horaires d'ouverture</div>
-        <div class="stat-hours-val">Lundi – Vendredi : 09:00 – 13:00</div>
-        <div class="stat-hours-sub">Fermé week-ends et jours fériés algériens et suédois</div>
+        <div class="stat-hours-val" data-i18n="stat_hours_val">Lundi – Vendredi : 09:00 – 13:00</div>
+        <div class="stat-hours-sub" data-i18n="stat_hours_sub">Fermé week-ends et jours fériés algériens et suédois</div>
       </div>
     </div>
   </div>
@@ -428,9 +671,9 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
 <section class="section" id="services">
   <div class="container">
     <div class="section-head">
-      <div class="section-kicker">Services consulaires</div>
-      <h2>Tout ce dont vous avez besoin</h2>
-      <p>L'Ambassade d'Algérie à Stockholm met à votre disposition une gamme complète de services administratifs et consulaires.</p>
+      <div class="section-kicker" data-i18n="svc_kicker">Services consulaires</div>
+      <h2 data-i18n="svc_title">Tout ce dont vous avez besoin</h2>
+      <p data-i18n="svc_desc">L'Ambassade d'Algérie à Stockholm met à votre disposition une gamme complète de services administratifs et consulaires.</p>
       <div class="divider"></div>
     </div>
     <div class="services-grid">
@@ -496,9 +739,9 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
 <section class="section section-alt" id="actualites">
   <div class="container">
     <div class="section-head">
-      <div class="section-kicker">Actualités</div>
-      <h2>Dernières nouvelles</h2>
-      <p>Restez informés des dernières communications et événements de l'ambassade.</p>
+      <div class="section-kicker" data-i18n="news_kicker">Actualités</div>
+      <h2 data-i18n="news_title">Dernières nouvelles</h2>
+      <p data-i18n="news_desc">Restez informés des dernières communications et événements de l'ambassade.</p>
       <div class="divider"></div>
     </div>
     <div class="news-grid" id="newsGrid">
@@ -509,14 +752,60 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
   </div>
 </section>
 
+<!-- ═══ ANNONCES OFFICIELLES ═══ -->
+<section class="section" id="annonces">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-kicker" data-i18n="ann_kicker">Tableau d'affichage officiel</div>
+      <h2 data-i18n="ann_title">Annonces & Publications</h2>
+      <p data-i18n="ann_desc">Documents officiels, avis consulaires, formulaires et informations publiés par l'ambassade.</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Filtres catégories -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:32px" id="annonceFiltres">
+      <button class="filtre-btn active" onclick="filtrerAnnonces('')">Tout</button>
+      <button class="filtre-btn" onclick="filtrerAnnonces('avis')">📢 Avis officiels</button>
+      <button class="filtre-btn" onclick="filtrerAnnonces('formulaire')">📋 Formulaires</button>
+      <button class="filtre-btn" onclick="filtrerAnnonces('communique')">📰 Communiqués</button>
+      <button class="filtre-btn" onclick="filtrerAnnonces('photo')">🖼️ Galerie photos</button>
+      <button class="filtre-btn" onclick="filtrerAnnonces('urgent')">🚨 Urgent</button>
+    </div>
+
+    <!-- Grille annonces -->
+    <div id="annoncesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px">
+      <!-- Chargé dynamiquement depuis Firebase -->
+      <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text2)" id="annoncesEmpty">
+        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <p>Chargement des annonces...</p>
+      </div>
+    </div>
+
+    <!-- Modale détail annonce -->
+    <div class="overlay" id="annonceDetailModal">
+      <div class="modal-box" style="max-width:700px">
+        <div class="modal-head">
+          <h3 id="annonceDetailTitle">Annonce</h3>
+          <button class="modal-close" onclick="closeAnnonceDetail()">✕</button>
+        </div>
+        <div class="modal-body" id="annonceDetailBody"></div>
+        <div class="modal-foot">
+          <button class="btn-cancel" onclick="closeAnnonceDetail()">Fermer</button>
+          <a id="annonceDetailDownload" href="#" download style="display:none;padding:9px 22px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">⬇️ Télécharger</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ RDV EN LIGNE ═══ -->
 <section class="rdv-section" id="rdv">
   <div class="container">
     <div class="rdv-inner">
       <div class="rdv-text">
         <div class="section-kicker" style="color:rgba(201,168,76,.8)">Service numérique</div>
-        <h2 style="color:#fff">Prenez rendez-vous en ligne</h2>
-        <p>Plus besoin de vous déplacer pour un premier contact. Soumettez votre demande directement depuis chez vous.</p>
+        <h2 style="color:#fff" data-i18n="rdv_title">Prenez rendez-vous en ligne</h2>
+        <p data-i18n="rdv_desc">Plus besoin de vous déplacer pour un premier contact. Soumettez votre demande directement depuis chez vous.</p>
         <div class="rdv-steps">
           <div class="rdv-step"><div class="step-num">1</div><div class="step-txt"><strong>Remplissez le formulaire</strong><span>Coordonnées et service souhaité</span></div></div>
           <div class="rdv-step"><div class="step-num">2</div><div class="step-txt"><strong>Confirmation sous 48h ouvrables</strong><span>Un agent vous contacte pour confirmer</span></div></div>
@@ -565,9 +854,9 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
 <section class="section section-alt" id="suivi">
   <div class="container">
     <div class="section-head">
-      <div class="section-kicker">Transparence</div>
-      <h2>Suivez votre dossier</h2>
-      <p>Entrez votre numéro de dossier pour connaître son état en temps réel.</p>
+      <div class="section-kicker" data-i18n="track_kicker">Transparence</div>
+      <h2 data-i18n="track_title">Suivez votre dossier</h2>
+      <p data-i18n="track_desc">Entrez votre numéro de dossier pour connaître son état en temps réel.</p>
       <div class="divider"></div>
     </div>
     <div class="tracking-box">
@@ -586,8 +875,8 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
 <section class="section" id="communaute">
   <div class="container">
     <div class="section-head">
-      <div class="section-kicker">Diaspora algérienne</div>
-      <h2>Une communauté unie</h2>
+      <div class="section-kicker" data-i18n="comm_kicker">Diaspora algérienne</div>
+      <h2 data-i18n="comm_title">Une communauté unie</h2>
       <p>L'ambassade est au service de toute la communauté algérienne résidant en Suède et en Islande.</p>
       <div class="divider"></div>
     </div>
@@ -603,8 +892,8 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
 <section class="section section-alt" id="contact">
   <div class="container">
     <div class="section-head">
-      <div class="section-kicker">Nous trouver</div>
-      <h2>Contact & Horaires</h2>
+      <div class="section-kicker" data-i18n="contact_kicker">Nous trouver</div>
+      <h2 data-i18n="contact_title">Contact & Horaires</h2>
       <div class="divider"></div>
     </div>
     <div class="contact-grid">
@@ -701,8 +990,8 @@ footer{background:var(--green2);color:rgba(255,255,255,.65);padding:56px 0 22px}
     <div class="chat-head">
       <div class="chat-av">🤖</div>
       <div class="chat-head-info">
-        <div class="cname">Assistant Ambassade</div>
-        <div class="cstatus">Disponible 24h/24 · 7j/7</div>
+        <div class="cname" data-i18n="chat_name">Assistant Ambassade</div>
+        <div class="cstatus" data-i18n="chat_status">Disponible 24h/24 · 7j/7</div>
       </div>
       <button class="chat-close-btn" onclick="toggleChat()">✕</button>
     </div>
@@ -776,6 +1065,9 @@ async function initSite() {
     fbGet('contacts_user'), fbGet('dossiers'), fbGet('rdvs'), fbGet('evenements'),
     fbGet('web_actualites'), fbGet('communications')
   ]);
+
+  // Charger les annonces en parallèle
+  loadAnnonces();
 
   const a = amb||{}, w = web||{}, h = hor||{};
   const name = w.titre || a.name || "Ambassade d'Algérie en Suède";
@@ -1150,6 +1442,297 @@ async function searchDossier() {
 document.getElementById('trackNum')?.addEventListener('keydown', e=>{ if(e.key==='Enter') searchDossier(); });
 
 // ══════════════════════════════════════════════════════
+//  SYSTÈME DE TRADUCTION MULTILINGUE
+// ══════════════════════════════════════════════════════
+const LANGS = {
+  fr:{flag:'🇫🇷',code:'FR',name:'Français',dir:'ltr'},
+  en:{flag:'🇬🇧',code:'EN',name:'English',dir:'ltr'},
+  sv:{flag:'🇸🇪',code:'SV',name:'Svenska',dir:'ltr'},
+  es:{flag:'🇪🇸',code:'ES',name:'Español',dir:'ltr'},
+  it:{flag:'🇮🇹',code:'IT',name:'Italiano',dir:'ltr'},
+  de:{flag:'🇩🇪',code:'DE',name:'Deutsch',dir:'ltr'},
+  ar:{flag:'🇩🇿',code:'AR',name:'العربية',dir:'rtl'},
+};
+
+const T = {
+  nav_home:     {fr:'Accueil',en:'Home',sv:'Hem',es:'Inicio',it:'Home',de:'Startseite',ar:'الرئيسية'},
+  nav_services: {fr:'Services',en:'Services',sv:'Tjänster',es:'Servicios',it:'Servizi',de:'Dienste',ar:'الخدمات'},
+  nav_news:     {fr:'Actualités',en:'News',sv:'Nyheter',es:'Noticias',it:'Notizie',de:'Nachrichten',ar:'الأخبار'},
+  nav_annonces: {fr:'Annonces',en:'Notices',sv:'Meddelanden',es:'Anuncios',it:'Annunci',de:'Ankündigungen',ar:'الإعلانات'},
+  nav_rdv:      {fr:'Rendez-vous',en:'Appointments',sv:'Möten',es:'Citas',it:'Appuntamenti',de:'Termine',ar:'المواعيد'},
+  nav_suivi:    {fr:'Suivi dossier',en:'Track file',sv:'Följ ärende',es:'Seguimiento',it:'Traccia pratica',de:'Akte verfolgen',ar:'متابعة الملف'},
+  nav_contact:  {fr:'Contact',en:'Contact',sv:'Kontakt',es:'Contacto',it:'Contatto',de:'Kontakt',ar:'اتصل بنا'},
+  nav_btn:      {fr:'📄 Demande en ligne',en:'📄 Online request',sv:'📄 Ansökan online',es:'📄 Solicitud online',it:'📄 Richiesta online',de:'📄 Online-Antrag',ar:'📄 طلب إلكتروني'},
+  hero_kicker:  {fr:'Portail Consulaire Officiel',en:'Official Consular Portal',sv:'Officiell konsulär portal',es:'Portal Consular Oficial',it:'Portale Consolare Ufficiale',de:'Offizielles Konsularportal',ar:'البوابة القنصلية الرسمية'},
+  hero_h1_1:    {fr:'Au service de la',en:'Serving the',sv:'I tjänst för',es:'Al servicio de la',it:'Al servizio della',de:'Im Dienst der',ar:'في خدمة'},
+  hero_h1_em:   {fr:'communauté algérienne',en:'Algerian community',sv:'algeriska gemenskapen',es:'comunidad argelina',it:'comunità algerina',de:'algerischen Gemeinschaft',ar:'الجالية الجزائرية'},
+  hero_h1_3:    {fr:'en Suède',en:'in Sweden',sv:'i Sverige',es:'en Suecia',it:'in Svezia',de:'in Schweden',ar:'في السويد'},
+  hero_desc:    {fr:'Bienvenue sur le portail officiel de l\'Ambassade d\'Algérie à Stockholm. Effectuez vos démarches consulaires, suivez vos dossiers et prenez rendez-vous en ligne.',en:'Welcome to the official portal of the Algerian Embassy in Stockholm. Complete your consular procedures, track your files and book appointments online.',sv:'Välkommen till Algeriets ambassads officiella portal i Stockholm. Utför dina konsulära ärenden, följ dina ärenden och boka möten online.',es:'Bienvenido al portal oficial de la Embajada de Argelia en Estocolmo. Realice sus trámites consulares, siga sus expedientes y solicite citas en línea.',it:'Benvenuto nel portale ufficiale dell\'Ambasciata d\'Algeria a Stoccolma. Effettua le tue pratiche consolari, segui i tuoi fascicoli e prenota appuntamenti online.',de:'Willkommen im offiziellen Portal der Algerischen Botschaft in Stockholm. Erledigen Sie Ihre Konsularangelegenheiten, verfolgen Sie Ihre Akten und vereinbaren Sie online Termine.',ar:'مرحباً بكم في البوابة الرسمية لسفارة الجزائر في ستوكهولم. أنجزوا إجراءاتكم القنصلية وتابعوا ملفاتكم وحجزوا مواعيدكم عبر الإنترنت.'},
+  hero_btn_doc: {fr:'📄 Demande de document',en:'📄 Document request',sv:'📄 Dokumentansökan',es:'📄 Solicitud de documento',it:'📄 Richiesta documento',de:'📄 Dokumentanfrage',ar:'📄 طلب وثيقة'},
+  hero_btn_svc: {fr:'🔍 Nos services consulaires',en:'🔍 Our consular services',sv:'🔍 Våra konsulära tjänster',es:'🔍 Nuestros servicios consulares',it:'🔍 I nostri servizi consolari',de:'🔍 Unsere Konsulardienste',ar:'🔍 خدماتنا القنصلية'},
+  hero_urgence: {fr:'Urgence consulaire 24h/24 :',en:'Consular emergency 24/7:',sv:'Konsulär nödsituation dygnet runt:',es:'Emergencia consular 24h/24:',it:'Emergenza consolare 24h/24:',de:'Konsularnotfall 24h/24:',ar:'الطوارئ القنصلية 24/24:'},
+  stat_citoyens:{fr:'Citoyens immatriculés',en:'Registered citizens',sv:'Registrerade medborgare',es:'Ciudadanos matriculados',it:'Cittadini immatricolati',de:'Registrierte Bürger',ar:'المواطنون المسجلون'},
+  stat_dossiers:{fr:'Dossiers traités',en:'Files processed',sv:'Behandlade ärenden',es:'Expedientes tramitados',it:'Pratiche trattate',de:'Bearbeitete Akten',ar:'الملفات المعالجة'},
+  stat_rdv:     {fr:'Rendez-vous accordés',en:'Appointments granted',sv:'Beviljade möten',es:'Citas concedidas',it:'Appuntamenti concessi',de:'Erteilte Termine',ar:'المواعيد الممنوحة'},
+  stat_events:  {fr:'Événements organisés',en:'Events organized',sv:'Organiserade evenemang',es:'Eventos organizados',it:'Eventi organizzati',de:'Organisierte Veranstaltungen',ar:'الفعاليات المنظمة'},
+  stat_hours_val:{fr:'Lundi – Vendredi : 09:00 – 13:00',en:'Monday – Friday: 09:00 – 13:00',sv:'Måndag – Fredag: 09:00 – 13:00',es:'Lunes – Viernes: 09:00 – 13:00',it:'Lunedì – Venerdì: 09:00 – 13:00',de:'Montag – Freitag: 09:00 – 13:00',ar:'الإثنين – الجمعة: 09:00 – 13:00'},
+  stat_hours_sub:{fr:'Fermé week-ends et jours fériés algériens et suédois',en:'Closed weekends and Algerian & Swedish public holidays',sv:'Stängt helger och algeriska och svenska helgdagar',es:'Cerrado fines de semana y festivos argelinos y suecos',it:'Chiuso weekend e festività algerine e svedesi',de:'Geschlossen an Wochenenden und algerischen & schwedischen Feiertagen',ar:'مغلق أيام العطل والأعياد الجزائرية والسويدية'},
+  svc_kicker:   {fr:'Services consulaires',en:'Consular services',sv:'Konsulära tjänster',es:'Servicios consulares',it:'Servizi consolari',de:'Konsulardienste',ar:'الخدمات القنصلية'},
+  svc_title:    {fr:'Tout ce dont vous avez besoin',en:'Everything you need',sv:'Allt du behöver',es:'Todo lo que necesita',it:'Tutto ciò di cui ha bisogno',de:'Alles was Sie brauchen',ar:'كل ما تحتاجه'},
+  svc_desc:     {fr:"L'Ambassade d'Algérie à Stockholm met à votre disposition une gamme complète de services administratifs et consulaires.",en:'The Algerian Embassy in Stockholm provides a comprehensive range of administrative and consular services.',sv:'Algeriets ambassad i Stockholm erbjuder ett brett utbud av administrativa och konsulära tjänster.',es:'La Embajada de Argelia en Estocolmo pone a su disposición una gama completa de servicios administrativos y consulares.',it:"L'Ambasciata d'Algeria a Stoccolma mette a disposizione una gamma completa di servizi amministrativi e consolari.",de:'Die Algerische Botschaft in Stockholm bietet Ihnen ein umfassendes Angebot an Verwaltungs- und Konsulardiensten.',ar:'تضع سفارة الجزائر في ستوكهولم تحت تصرفكم مجموعة كاملة من الخدمات الإدارية والقنصلية.'},
+  news_kicker:  {fr:'Actualités',en:'News',sv:'Nyheter',es:'Noticias',it:'Notizie',de:'Nachrichten',ar:'الأخبار'},
+  news_title:   {fr:'Dernières nouvelles',en:'Latest news',sv:'Senaste nytt',es:'Últimas noticias',it:'Ultime notizie',de:'Neueste Nachrichten',ar:'آخر الأخبار'},
+  news_desc:    {fr:"Restez informés des dernières communications et événements de l'ambassade.",en:'Stay informed about the latest communications and events from the embassy.',sv:'Håll dig informerad om ambassadens senaste kommunikationer och evenemang.',es:'Manténgase informado sobre las últimas comunicaciones y eventos de la embajada.',it:"Rimanete informati sulle ultime comunicazioni ed eventi dell'ambasciata.",de:'Bleiben Sie über die neuesten Mitteilungen und Veranstaltungen der Botschaft informiert.',ar:'ابقوا على اطلاع بآخر البلاغات والفعاليات الصادرة عن السفارة.'},
+  ann_kicker:   {fr:"Tableau d'affichage officiel",en:'Official notice board',sv:'Officiell anslagstavla',es:'Tablón de anuncios oficial',it:'Bacheca ufficiale',de:'Offizielle Pinnwand',ar:'لوحة الإعلانات الرسمية'},
+  ann_title:    {fr:'Annonces & Publications',en:'Notices & Publications',sv:'Meddelanden & Publikationer',es:'Anuncios & Publicaciones',it:'Annunci & Pubblicazioni',de:'Ankündigungen & Veröffentlichungen',ar:'الإعلانات والمنشورات'},
+  ann_desc:     {fr:"Documents officiels, avis consulaires, formulaires et informations publiés par l'ambassade.",en:'Official documents, consular notices, forms and information published by the embassy.',sv:'Officiella dokument, konsulära meddelanden, formulär och information publicerade av ambassaden.',es:'Documentos oficiales, avisos consulares, formularios e información publicados por la embajada.',it:"Documenti ufficiali, avvisi consolari, moduli e informazioni pubblicati dall'ambasciata.",de:'Offizielle Dokumente, Konsularmitteilungen, Formulare und Informationen der Botschaft.',ar:'الوثائق الرسمية والإشعارات القنصلية والاستمارات والمعلومات الصادرة عن السفارة.'},
+  rdv_title:    {fr:'Prenez rendez-vous en ligne',en:'Book an appointment online',sv:'Boka möte online',es:'Solicite una cita en línea',it:'Prenota un appuntamento online',de:'Termin online buchen',ar:'احجزوا موعداً عبر الإنترنت'},
+  rdv_desc:     {fr:'Plus besoin de vous déplacer pour un premier contact. Soumettez votre demande directement depuis chez vous.',en:'No need to travel for an initial contact. Submit your request directly from home.',sv:'Du behöver inte resa för en första kontakt. Skicka in din begäran direkt hemifrån.',es:'No es necesario desplazarse para un primer contacto. Envíe su solicitud directamente desde casa.',it:'Non è necessario recarsi per un primo contatto. Invia la tua richiesta direttamente da casa.',de:'Keine Anreise für einen ersten Kontakt nötig. Reichen Sie Ihren Antrag direkt von zu Hause ein.',ar:'لا حاجة للتنقل للتواصل الأولي. قدموا طلبكم مباشرة من المنزل.'},
+  rdv_step1:    {fr:'Remplissez le formulaire',en:'Fill in the form',sv:'Fyll i formuläret',es:'Rellene el formulario',it:'Compila il modulo',de:'Füllen Sie das Formular aus',ar:'ملء الاستمارة'},
+  rdv_step1s:   {fr:'Coordonnées et service souhaité',en:'Contact details and desired service',sv:'Kontaktuppgifter och önskad tjänst',es:'Datos de contacto y servicio deseado',it:'Dati di contatto e servizio desiderato',de:'Kontaktdaten und gewünschter Dienst',ar:'بيانات التواصل والخدمة المطلوبة'},
+  rdv_step2:    {fr:'Confirmation sous 48h ouvrables',en:'Confirmation within 48 working hours',sv:'Bekräftelse inom 48 arbetstimmar',es:'Confirmación en 48 horas hábiles',it:'Conferma entro 48 ore lavorative',de:'Bestätigung innerhalb von 48 Arbeitsstunden',ar:'تأكيد خلال 48 ساعة عمل'},
+  rdv_step2s:   {fr:"Un agent vous contacte pour confirmer",en:'An agent will contact you to confirm',sv:'En handläggare kontaktar dig för bekräftelse',es:'Un agente le contactará para confirmar',it:'Un agente vi contatterà per confermare',de:'Ein Mitarbeiter kontaktiert Sie zur Bestätigung',ar:'سيتصل بكم أحد الوكلاء للتأكيد'},
+  rdv_step3:    {fr:'Suivi en temps réel',en:'Real-time tracking',sv:'Realtidsspårning',es:'Seguimiento en tiempo real',it:'Tracciamento in tempo reale',de:'Echtzeit-Verfolgung',ar:'المتابعة اللحظية'},
+  rdv_step3s:   {fr:'Suivez votre dossier avec votre numéro',en:'Track your file with your number',sv:'Följ ditt ärende med ditt nummer',es:'Siga su expediente con su número',it:'Segui la tua pratica con il tuo numero',de:'Verfolgen Sie Ihre Akte mit Ihrer Nummer',ar:'تابعوا ملفكم برقمكم'},
+  rdv_form_title:{fr:'📅 Demande de rendez-vous',en:'📅 Appointment request',sv:'📅 Mötesbokning',es:'📅 Solicitud de cita',it:'📅 Richiesta appuntamento',de:'📅 Terminanfrage',ar:'📅 طلب موعد'},
+  rdv_btn:      {fr:'📤 Envoyer ma demande',en:'📤 Send my request',sv:'📤 Skicka min begäran',es:'📤 Enviar mi solicitud',it:'📤 Invia la mia richiesta',de:'📤 Meine Anfrage senden',ar:'📤 إرسال طلبي'},
+  track_kicker: {fr:'Transparence',en:'Transparency',sv:'Transparens',es:'Transparencia',it:'Trasparenza',de:'Transparenz',ar:'الشفافية'},
+  track_title:  {fr:'Suivez votre dossier',en:'Track your file',sv:'Följ ditt ärende',es:'Siga su expediente',it:'Segui la tua pratica',de:'Verfolgen Sie Ihre Akte',ar:'تابعوا ملفكم'},
+  track_desc:   {fr:"Entrez votre numéro de dossier pour connaître son état en temps réel.",en:'Enter your file number to know its status in real time.',sv:'Ange ditt ärendenummer för att känna till dess status i realtid.',es:'Introduzca su número de expediente para conocer su estado en tiempo real.',it:'Inserisci il tuo numero di pratica per conoscerne lo stato in tempo reale.',de:'Geben Sie Ihre Aktennummer ein, um den aktuellen Status in Echtzeit zu erfahren.',ar:'أدخلوا رقم ملفكم لمعرفة حالته في الوقت الفعلي.'},
+  track_h3:     {fr:'🔍 Recherche de dossier',en:'🔍 File search',sv:'🔍 Ärendesökning',es:'🔍 Búsqueda de expediente',it:'🔍 Ricerca pratica',de:'🔍 Aktensuche',ar:'🔍 البحث عن الملف'},
+  track_ph:     {fr:'Ex: DOS-2025-123456',en:'Ex: DOS-2025-123456',sv:'T.ex: DOS-2025-123456',es:'Ej: DOS-2025-123456',it:'Es: DOS-2025-123456',de:'Z.B: DOS-2025-123456',ar:'مثال: DOS-2025-123456'},
+  track_btn:    {fr:'Rechercher',en:'Search',sv:'Sök',es:'Buscar',it:'Cerca',de:'Suchen',ar:'بحث'},
+  comm_kicker:  {fr:'Diaspora algérienne',en:'Algerian diaspora',sv:'Algerisk diaspora',es:'Diáspora argelina',it:'Diaspora algerina',de:'Algerische Diaspora',ar:'الجالية الجزائرية'},
+  comm_title:   {fr:'Une communauté unie',en:'A united community',sv:'En enad gemenskap',es:'Una comunidad unida',it:'Una comunità unita',de:'Eine vereinte Gemeinschaft',ar:'مجتمع متحد'},
+  comm_desc:    {fr:"L'ambassade est au service de toute la communauté algérienne résidant en Suède et en Islande.",en:'The embassy serves the entire Algerian community residing in Sweden and Iceland.',sv:'Ambassaden betjänar hela den algeriska gemenskapen som bor i Sverige och Island.',es:'La embajada está al servicio de toda la comunidad argelina residente en Suecia e Islandia.',it:"L'ambasciata è al servizio di tutta la comunità algerina residente in Svezia e Islanda.",de:'Die Botschaft dient der gesamten algerischen Gemeinschaft in Schweden und Island.',ar:'السفارة في خدمة كامل الجالية الجزائرية المقيمة في السويد وآيسلندا.'},
+  contact_kicker:{fr:'Nous trouver',en:'Find us',sv:'Hitta oss',es:'Encuéntrenos',it:'Trovaci',de:'Finden Sie uns',ar:'كيفية الوصول إلينا'},
+  contact_title: {fr:'Contact & Horaires',en:'Contact & Hours',sv:'Kontakt & Öppettider',es:'Contacto & Horarios',it:'Contatto & Orari',de:'Kontakt & Öffnungszeiten',ar:'الاتصال والمواعيد'},
+  chat_name:    {fr:'Assistant Ambassade',en:'Embassy Assistant',sv:'Ambassadassistent',es:'Asistente Embajada',it:'Assistente Ambasciata',de:'Botschaftsassistent',ar:'مساعد السفارة'},
+  chat_status:  {fr:'Disponible 24h/24 · 7j/7',en:'Available 24/7',sv:'Tillgänglig dygnet runt',es:'Disponible 24h/24',it:'Disponibile 24h/24',de:'24/7 verfügbar',ar:'متاح 24 ساعة / 7 أيام'},
+  chat_placeholder:{fr:'Posez votre question...',en:'Ask your question...',sv:'Ställ din fråga...',es:'Haga su pregunta...',it:'Fai la tua domanda...',de:'Stellen Sie Ihre Frage...',ar:'اطرح سؤالك...'},
+  chat_sugg1:   {fr:'🕐 Horaires',en:'🕐 Hours',sv:'🕐 Öppettider',es:'🕐 Horarios',it:'🕐 Orari',de:'🕐 Öffnungszeiten',ar:'🕐 المواعيد'},
+  chat_sugg2:   {fr:'Comment renouveler mon passeport ?',en:'How to renew my passport?',sv:'Hur förnyar jag mitt pass?',es:'¿Cómo renovar mi pasaporte?',it:'Come rinnovare il mio passaporto?',de:'Wie erneuere ich meinen Pass?',ar:'كيف أجدد جواز سفري؟'},
+  chat_sugg3:   {fr:'Comment prendre rendez-vous ?',en:'How to book an appointment?',sv:'Hur bokar jag ett möte?',es:'¿Cómo solicitar una cita?',it:'Come prenotare un appuntamento?',de:'Wie vereinbare ich einen Termin?',ar:'كيف أحجز موعداً؟'},
+  chat_sugg4:   {fr:"Je veux un visa pour l'Algérie",en:'I want a visa for Algeria',sv:'Jag vill ha visum till Algeriet',es:'Quiero un visado para Argelia',it:"Voglio un visto per l'Algeria",de:'Ich möchte ein Visum für Algerien',ar:'أريد تأشيرة للجزائر'},
+  footer_rights:{fr:"© 2025 Ambassade d'Algérie en Suède. Tous droits réservés.",en:'© 2025 Algerian Embassy in Sweden. All rights reserved.',sv:'© 2025 Algeriets ambassad i Sverige. Alla rättigheter förbehållna.',es:'© 2025 Embajada de Argelia en Suecia. Todos los derechos reservados.',it:"© 2025 Ambasciata d'Algeria in Svezia. Tutti i diritti riservati.",de:'© 2025 Algerische Botschaft in Schweden. Alle Rechte vorbehalten.',ar:'© 2025 سفارة الجزائر في السويد. جميع الحقوق محفوظة.'},
+};
+
+let currentLang = localStorage.getItem('site_lang') || 'fr';
+
+function t(key) {
+  return T[key]?.[currentLang] || T[key]?.['fr'] || key;
+}
+
+function applyTranslations() {
+  const lang = LANGS[currentLang];
+  // Direction RTL pour l'arabe
+  document.documentElement.lang = currentLang;
+  document.body.dir = lang.dir;
+
+  // Appliquer toutes les traductions via data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(T[key]?.[currentLang]) el.textContent = T[key][currentLang];
+  });
+
+  // Hero h1 (structure spéciale avec <em>)
+  const h1 = document.querySelector('.hero h1');
+  if(h1) h1.innerHTML = `${t('hero_h1_1')}<br/><em>${t('hero_h1_em')}</em><br/>${t('hero_h1_3')}`;
+
+  // RDV steps
+  const steps = document.querySelectorAll('.step-txt strong');
+  const stepSubs = document.querySelectorAll('.step-txt span');
+  if(steps[0]) steps[0].textContent = t('rdv_step1');
+  if(steps[1]) steps[1].textContent = t('rdv_step2');
+  if(steps[2]) steps[2].textContent = t('rdv_step3');
+  if(stepSubs[0]) stepSubs[0].textContent = t('rdv_step1s');
+  if(stepSubs[1]) stepSubs[1].textContent = t('rdv_step2s');
+  if(stepSubs[2]) stepSubs[2].textContent = t('rdv_step3s');
+
+  // RDV form
+  const rdvFormTitle = document.querySelector('.rdv-form-wrap h3');
+  if(rdvFormTitle) rdvFormTitle.textContent = t('rdv_form_title');
+  const rdvBtn = document.querySelector('#rdvForm .btn-submit-full');
+  if(rdvBtn) rdvBtn.textContent = t('rdv_btn');
+
+  // Suivi
+  const trackH3 = document.querySelector('.tracking-box h3');
+  if(trackH3) trackH3.textContent = t('track_h3');
+  const trackNum = document.getElementById('trackNum');
+  if(trackNum) trackNum.placeholder = t('track_ph');
+  const trackBtn = document.querySelector('.search-row button');
+  if(trackBtn) trackBtn.textContent = t('track_btn');
+
+  // Communauté desc
+  const commDesc = document.querySelector('#communaute .section-head p');
+  if(commDesc) commDesc.textContent = t('comm_desc');
+
+  // Chat input placeholder
+  const chatIn = document.getElementById('chatIn');
+  if(chatIn) chatIn.placeholder = t('chat_placeholder');
+
+  // Chat suggestions
+  const suggs = document.querySelectorAll('.sugg-btn');
+  if(suggs[0]) suggs[0].textContent = t('chat_sugg1');
+  if(suggs[1]) suggs[1].textContent = t('chat_sugg2');
+  if(suggs[2]) suggs[2].textContent = t('chat_sugg3');
+  if(suggs[3]) suggs[3].textContent = t('chat_sugg4');
+
+  // Nav CTA button
+  const navCta = document.querySelector('.nav-cta');
+  if(navCta) navCta.textContent = t('nav_btn');
+
+  // Hero urgence
+  const urgEl = document.querySelector('.hero-urgence span:first-child');
+  if(urgEl) urgEl.textContent = t('hero_urgence');
+
+  // Footer rights
+  const fr = document.getElementById('footerRights');
+  if(fr) fr.textContent = t('footer_rights');
+
+  // Ticker (mise à jour partielle)
+  updateTickerLang();
+
+  // Active lang option
+  document.querySelectorAll('.lang-opt').forEach(o=>{
+    o.classList.toggle('active', o.textContent.trim().startsWith(LANGS[currentLang]?.flag||''));
+  });
+
+  // Update chat AI responses language
+  currentChatLang = currentLang;
+}
+
+function updateTickerLang() {
+  const tickerTexts = {
+    fr: ['🕐 Horaires : <strong>Lundi – Vendredi · 09h00 – 13h00</strong>','📞 Urgences consulaires 24h/24 : <strong>+46 (0) 8 679 9130</strong>','📧 Passeports : <strong>pass@embalgeria.se</strong>','📧 Visas : <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+    en: ['🕐 Hours: <strong>Monday – Friday · 09:00 – 13:00</strong>','📞 Consular emergencies 24/7: <strong>+46 (0) 8 679 9130</strong>','📧 Passports: <strong>pass@embalgeria.se</strong>','📧 Visas: <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+    sv: ['🕐 Öppettider: <strong>Måndag – Fredag · 09:00 – 13:00</strong>','📞 Konsulär nödsituation dygnet runt: <strong>+46 (0) 8 679 9130</strong>','📧 Pass: <strong>pass@embalgeria.se</strong>','📧 Visum: <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+    es: ['🕐 Horarios: <strong>Lunes – Viernes · 09:00 – 13:00</strong>','📞 Emergencias consulares 24h: <strong>+46 (0) 8 679 9130</strong>','📧 Pasaportes: <strong>pass@embalgeria.se</strong>','📧 Visados: <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+    it: ['🕐 Orari: <strong>Lunedì – Venerdì · 09:00 – 13:00</strong>','📞 Emergenze consolari 24h/24: <strong>+46 (0) 8 679 9130</strong>','📧 Passaporti: <strong>pass@embalgeria.se</strong>','📧 Visti: <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+    de: ['🕐 Öffnungszeiten: <strong>Mo – Fr · 09:00 – 13:00</strong>','📞 Konsularischer Notfall 24/7: <strong>+46 (0) 8 679 9130</strong>','📧 Pässe: <strong>pass@embalgeria.se</strong>','📧 Visa: <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+    ar:  ['🕐 المواعيد: <strong>الإثنين – الجمعة · 09:00 – 13:00</strong>','📞 الطوارئ القنصلية 24/24: <strong>+46 (0) 8 679 9130</strong>','📧 جوازات السفر: <strong>pass@embalgeria.se</strong>','📧 التأشيرات: <strong>visa@embalgeria.se</strong>','📍 <strong>Danderydsgatan 3-5, BOX 26027, Stockholm</strong>'],
+  };
+  const ticker = document.querySelector('.ticker');
+  if(ticker) {
+    const texts = tickerTexts[currentLang] || tickerTexts.fr;
+    const doubled = [...texts, ...texts];
+    ticker.innerHTML = doubled.map(t=>`<span>${t}</span>`).join('');
+  }
+}
+
+async function setLang(lang) {
+  if(!LANGS[lang]) return;
+  currentLang = lang;
+  currentChatLang = lang;
+  localStorage.setItem('site_lang', lang);
+
+  // Update flag & code
+  document.getElementById('langFlag').textContent = LANGS[lang].flag;
+  document.getElementById('langCode').textContent = LANGS[lang].code;
+
+  // Close menu
+  document.getElementById('langMenu').classList.remove('open');
+
+  // Visual transition
+  document.body.style.opacity = '0.85';
+
+  // Load country-specific config from Firebase
+  const countryConfig = await fbGet('web_config_'+lang) || {};
+
+  // Apply country-specific data to contact section
+  if(countryConfig.nom)      { setText('contactName', countryConfig.nom); setText('footerName', countryConfig.nom); setText('navName', countryConfig.nom); }
+  if(countryConfig.adresse)  setText('contactAddr', countryConfig.adresse);
+
+  // Update ticker if custom ticker exists
+  const tickerData = await fbGet('web_ticker');
+  if(tickerData && Array.isArray(tickerData) && tickerData.length) {
+    const active = tickerData.filter(t => t.actif !== false && (!t.lang || t.lang === 'Toutes' || t.lang === lang));
+    if(active.length) {
+      const ticker = document.querySelector('.ticker');
+      if(ticker) {
+        const doubled = [...active, ...active];
+        ticker.innerHTML = doubled.map(t => `<span>${t.priority==='high'?'🚨 ':''}<strong>${t.message}</strong></span>`).join('');
+      }
+    } else {
+      updateTickerLang();
+    }
+  } else {
+    updateTickerLang();
+  }
+
+  // Apply all text translations
+  applyTranslations();
+
+  // Update contact details from country config
+  setTimeout(() => {
+    if(countryConfig.tel)         { const el=document.querySelector('.ci-item span[id]'); }
+    // Update all contact items
+    const telEls = document.querySelectorAll('.ci-item span');
+    // Re-apply country-specific contact with defaults
+    const DEFAULTS = {
+      fr:{tel:'+33 1 45 62 11 00',email:'paris@ambassade.dz',   addr:'50 Rue de Lisbonne, 75008 Paris',         name:"Ambassade d'Algérie en France"},
+      sv:{tel:'+46 (0) 8 679 9130',email:'consular@embalgeria.se',addr:'Danderydsgatan 3-5, BOX 26027, Stockholm',name:"Ambassade d'Algérie en Suède"},
+      en:{tel:'+44 20 7221 7800', email:'info@algerianembassy.org.uk',addr:'54 Holland Park, London W11 3RS',     name:'Algerian Embassy in the United Kingdom'},
+      es:{tel:'+34 91 411 79 00', email:'madrid@ambassade.dz',   addr:'C/ General Oráa 12, 28006 Madrid',        name:"Embajada de Argelia en España"},
+      it:{tel:'+39 06 8535 1100', email:'rome@ambassade.dz',     addr:'Via Barnaba Oriani 26, 00197 Roma',       name:"Ambasciata d'Algeria in Italia"},
+      de:{tel:'+49 30 43 09 87 0',email:'berlin@ambassade.dz',   addr:'Görschstr. 45-46, 13187 Berlin',          name:'Algerische Botschaft in Deutschland'},
+      ar:{tel:'+213 21 50 81 80', email:'mae@mfa.gov.dz',        addr:'6 Rue Ali Ben Amar, Alger 16000',         name:'سفارة الجزائر — وزارة الشؤون الخارجية'},
+    };
+    const d = DEFAULTS[lang] || DEFAULTS.fr;
+    const name    = countryConfig.nom      || d.name;
+    const addr    = countryConfig.adresse  || d.addr;
+    const tel     = countryConfig.tel      || d.tel;
+    const email   = countryConfig.email    || d.email;
+
+    setText('contactName', name);
+    setText('contactAddr', addr);
+    setText('navName', name);
+    setText('footerName', name);
+
+    // Update contact tel/email spans
+    const ciItems = document.querySelectorAll('.ci-item');
+    ciItems.forEach(item => {
+      const strong = item.querySelector('strong');
+      const span   = item.querySelector('span');
+      if(!strong || !span) return;
+      const label = strong.textContent.toLowerCase();
+      if(label.includes('téléphone') || label.includes('telephone') || label.includes('phone') || label.includes('standard'))
+        span.textContent = tel;
+      if(label.includes('email') && label.includes('contact'))
+        span.textContent = email;
+    });
+
+    // Update urgence in hero
+    const heroUrgSpan = document.querySelector('.hero-urgence');
+    if(heroUrgSpan) {
+      const urgTel = countryConfig.urgence || tel;
+      heroUrgSpan.innerHTML = `<span style="font-size:18px">🚨</span><span>${t('hero_urgence')} <strong>${urgTel}</strong></span>`;
+    }
+
+    document.body.style.opacity = '1';
+  }, 150);
+}
+
+function toggleLangMenu() {
+  const menu = document.getElementById('langMenu');
+  menu.classList.toggle('open');
+  // Close on outside click
+  if(menu.classList.contains('open')) {
+    setTimeout(()=>{
+      document.addEventListener('click', function closer(e) {
+        if(!e.target.closest('#langSwitcher')) {
+          menu.classList.remove('open');
+          document.removeEventListener('click', closer);
+        }
+      });
+    }, 10);
+  }
+}
+
+// Variable pour adapter les réponses du chatbot selon la langue
+let currentChatLang = currentLang;
+
+// ══════════════════════════════════════════════════════
 //  AGENT VIRTUEL
 // ══════════════════════════════════════════════════════
 let chatOpen=false, chatGreeted=false, chatHist=[];
@@ -1196,49 +1779,265 @@ function match(q,kw){return kw.some(k=>q.includes(k));}
 
 function getReply(q){
   const lq=q.toLowerCase();
+  const lang = currentChatLang || currentLang || 'fr';
   const tel='+46 (0) 8 679 9130', email_c='consular@embalgeria.se';
-  const lien=(t,h)=>`<a href="${h}" style="color:var(--green);font-weight:600;text-decoration:underline">${t}</a>`;
+  const lien=(txt,h)=>`<a href="${h}" style="color:var(--green);font-weight:600;text-decoration:underline">${txt}</a>`;
 
-  if(match(lq,['horaire','ouverture','heure','quand','fermé','disponible']))
-    return `🕐 **Horaires d'ouverture :**\n\n📅 **Lundi – Vendredi**\n⏰ **09:00 – 13:00**\n\nWee-end et jours fériés : **Fermé**\n\n📞 Urgences 24h/24 : **${tel}**\n\n✅ ${lien('Prendre rendez-vous en ligne','#rdv')}`;
+  const isHours   = match(lq,['horaire','hour','open','öppet','horario','orario','öffnung','مواعيد','ouverture']);
+  const isPassport= match(lq,['passeport','passport','pass','biométrique','renouvell','förnya','renovar','rinnov']);
+  const isCNI     = match(lq,['cni','carte','identité','cnibe','identity','identitetskort','identidad']);
+  const isVisa    = match(lq,['visa','algérie','algerie','voyage','séjour','visum','viajar','viaggio']);
+  const isRDV     = match(lq,['rendez','rdv','appointment','möte','boka','cita','appuntamento','termin','موعد']);
+  const isSuivi   = match(lq,['suivi','dossier','track','följ','seguimiento','traccia','متابعة']);
+  const isUrgent  = match(lq,['urgence','urgent','accident','arrêté','emergency','nöd','emergencia','طارئ']);
+  const isContact = match(lq,['adresse','contact','email','téléphone','address','kontakt','عنوان']);
+  const isHello   = match(lq,['bonjour','bonsoir','hello','hej','hola','ciao','guten','مرحبا','السلام','hi ','salut']);
+  const isThanks  = match(lq,['merci','thank','tack','gracias','grazie','danke','شكرا']);
 
-  if(match(lq,['passeport','biométrique','renouvell','renew']))
-    return `🛂 **Passeport Biométrique**\n\n**Tarifs :**\n• 696 SEK — Adulte\n• 348 SEK — Mineur / Étudiant\n• Pénalité perte : 1125 SEK\n\n**Délai :** 4 à 8 semaines\n📧 pass@embalgeria.se\n\n✅ ${lien('Faire une demande en ligne','#services')}`;
+  const R = {
+    fr:{
+      hours:`🕐 **Horaires d'ouverture :**
+📅 **Lundi – Vendredi · 09:00 – 13:00**
+Fermé week-ends & jours fériés
+📞 Urgences 24h/24 : **${tel}**
+✅ ${lien('Prendre rendez-vous','#rdv')}`,
+      passport:`🛂 **Passeport Biométrique**
+• 696 SEK adulte · 348 SEK mineur
+• Délai : 4–8 semaines
+📧 pass@embalgeria.se
+✅ ${lien('Faire une demande','#services')}`,
+      visa:`✈️ **Visa Algérie**
+Tourisme, Famille, Affaires, Travail, Transit
+Délai min. 14 jours · À partir de 957 SEK
+📧 visa@embalgeria.se
+✅ ${lien('Déposer un dossier','#services')}`,
+      rdv:`📅 ${lien('→ Prendre rendez-vous en ligne','#rdv')}
+Confirmation sous 48h ouvrables.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ Suivre mon dossier en ligne','#suivi')}
+Entrez votre numéro DOS-XXXX-XXXXXX.`,
+      urgent:`🚨 **URGENCE**
+📞 **${tel}**
+Permanence 24h/24 · 7j/7
+Accident · Arrestation · Document perdu`,
+      hello:`Bonjour ! 👋 Je suis votre assistant consulaire, disponible **24h/24**.
 
-  if(match(lq,['cni','carte','identité','cnibe']))
-    return `🪪 **Carte Nationale d'Identité (CNIBE)**\n\nSi vous avez un **passeport biométrique** : demande 100% en ligne sur <a href="https://passeport.interieur.gov.dz" target="_blank" style="color:var(--green);font-weight:600">interieur.gov.dz</a> — sans se déplacer.\n\nSans passeport biométrique : 114 SEK de droits, présence obligatoire.\n\n✅ ${lien('Faire une demande','#services')}`;
+🛂 ${lien('Passeport','#services')} · ✈️ ${lien('Visa','#services')} · 📅 ${lien('RDV','#rdv')} · 🔍 ${lien('Suivi','#suivi')}`,
+      thanks:'Avec plaisir ! 😊 Bonne journée 🇩🇿',
+      generic:`Bonjour ! Je peux vous aider avec :
+📅 ${lien('Rendez-vous','#rdv')} · 📄 ${lien('Documents','#services')} · 🔍 ${lien('Suivi dossier','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+    en:{
+      hours:`🕐 **Opening hours:**
+📅 **Monday – Friday · 09:00 – 13:00**
+Closed weekends & public holidays
+📞 Emergencies 24/7: **${tel}**
+✅ ${lien('Book appointment','#rdv')}`,
+      passport:`🛂 **Biometric Passport**
+• 696 SEK adult · 348 SEK minor
+• Processing: 4–8 weeks
+📧 pass@embalgeria.se
+✅ ${lien('Apply now','#services')}`,
+      visa:`✈️ **Algeria Visa**
+Tourism, Family, Business, Work, Transit
+Min. 14 days · From 957 SEK
+📧 visa@embalgeria.se
+✅ ${lien('Apply','#services')}`,
+      rdv:`📅 ${lien('→ Book an appointment online','#rdv')}
+Confirmation within 48 working hours.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ Track your file online','#suivi')}
+Enter your reference number DOS-XXXX-XXXXXX.`,
+      urgent:`🚨 **EMERGENCY**
+📞 **${tel}**
+24/7 on-call service
+Accident · Arrest · Lost document`,
+      hello:`Hello! 👋 I'm your consular assistant, available **24/7**.
 
-  if(match(lq,['visa','algérie','algerie','voyage','séjour']))
-    return `✈️ **Visa d'entrée en Algérie**\n\n**Types :** Famille, Tourisme, Affaires, Travail, Transit, Culturel, Presse\n\n**Délai :** Minimum **14 jours** (non garanti)\n**Frais :** À partir de **957 SEK**\n\n⚠️ Tout dossier incomplet est automatiquement rejeté.\n\n📧 visa@embalgeria.se\n✅ ${lien('Déposer un dossier','#services')}`;
+🛂 ${lien('Passport','#services')} · ✈️ ${lien('Visa','#services')} · 📅 ${lien('Appointment','#rdv')} · 🔍 ${lien('Track file','#suivi')}`,
+      thanks:'My pleasure! 😊 Have a great day 🇩🇿',
+      generic:`Hello! I can help you with:
+📅 ${lien('Appointment','#rdv')} · 📄 ${lien('Documents','#services')} · 🔍 ${lien('Track file','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+    sv:{
+      hours:`🕐 **Öppettider:**
+📅 **Måndag – Fredag · 09:00 – 13:00**
+Stängt helger & helgdagar
+📞 Nödsituation dygnet runt: **${tel}**
+✅ ${lien('Boka möte','#rdv')}`,
+      passport:`🛂 **Biometriskt pass**
+• 696 SEK vuxen · 348 SEK minderårig
+• Handläggningstid: 4–8 veckor
+📧 pass@embalgeria.se
+✅ ${lien('Ansök','#services')}`,
+      visa:`✈️ **Algeriet Visum**
+Turism, Familj, Affärer, Arbete, Transit
+Min. 14 dagar · Från 957 SEK
+📧 visa@embalgeria.se
+✅ ${lien('Ansök','#services')}`,
+      rdv:`📅 ${lien('→ Boka möte online','#rdv')}
+Bekräftelse inom 48 arbetstimmar.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ Följ ditt ärende online','#suivi')}
+Ange ditt referensnummer DOS-XXXX-XXXXXX.`,
+      urgent:`🚨 **NÖDSITUATION**
+📞 **${tel}**
+Dygnet runt jour
+Olycka · Gripande · Förlorat dokument`,
+      hello:`Hej! 👋 Jag är din konsulära assistent, tillgänglig **dygnet runt**.
 
-  if(match(lq,['rendez','rdv','appointment','réservation']))
-    return `📅 **Prise de rendez-vous**\n\n✅ ${lien('Formulaire de rendez-vous en ligne →','#rdv')}\n\nRemplissez : nom, email, service souhaité.\nUn agent vous confirme sous **48h ouvrables**.\n\n📞 Ou appelez le : **${tel}**`;
+🛂 ${lien('Pass','#services')} · ✈️ ${lien('Visum','#services')} · 📅 ${lien('Möte','#rdv')} · 🔍 ${lien('Följ ärende','#suivi')}`,
+      thanks:'Varsågod! 😊 Ha en bra dag 🇩🇿',
+      generic:`Hej! Jag kan hjälpa dig med:
+📅 ${lien('Möte','#rdv')} · 📄 ${lien('Dokument','#services')} · 🔍 ${lien('Ärende','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+    es:{
+      hours:`🕐 **Horarios:**
+📅 **Lunes – Viernes · 09:00 – 13:00**
+Cerrado fines de semana y festivos
+📞 Emergencias 24h: **${tel}**
+✅ ${lien('Solicitar cita','#rdv')}`,
+      passport:`🛂 **Pasaporte Biométrico**
+• 696 SEK adulto · 348 SEK menor
+• Plazo: 4–8 semanas
+📧 pass@embalgeria.se
+✅ ${lien('Solicitar','#services')}`,
+      visa:`✈️ **Visa para Argelia**
+Turismo, Familia, Negocios, Trabajo, Tránsito
+Mín. 14 días · Desde 957 SEK
+📧 visa@embalgeria.se
+✅ ${lien('Solicitar','#services')}`,
+      rdv:`📅 ${lien('→ Solicitar cita online','#rdv')}
+Confirmación en 48h hábiles.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ Seguir mi expediente online','#suivi')}
+Introduzca su número DOS-XXXX-XXXXXX.`,
+      urgent:`🚨 **EMERGENCIA**
+📞 **${tel}**
+Servicio 24h/7 días
+Accidente · Arresto · Documento perdido`,
+      hello:`¡Hola! 👋 Soy su asistente consular, disponible **24h/24**.
 
-  if(match(lq,['suivi','dossier','statut','avancement','numéro']))
-    return `🔍 **Suivi de votre dossier**\n\n${lien('→ Suivre mon dossier en ligne','#suivi')}\n\nEntrez votre numéro de dossier (format DOS-XXXX-XXXXXX ou DEM-XXXX-XXXXXX).\n\n📞 Renseignements : **${tel}**`;
+🛂 ${lien('Pasaporte','#services')} · ✈️ ${lien('Visa','#services')} · 📅 ${lien('Cita','#rdv')} · 🔍 ${lien('Seguimiento','#suivi')}`,
+      thanks:'¡De nada! 😊 ¡Que tenga un buen día! 🇩🇿',
+      generic:`¡Hola! Puedo ayudarle con:
+📅 ${lien('Cita','#rdv')} · 📄 ${lien('Documentos','#services')} · 🔍 ${lien('Seguimiento','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+    it:{
+      hours:`🕐 **Orari:**
+📅 **Lunedì – Venerdì · 09:00 – 13:00**
+Chiuso weekend e festività
+📞 Emergenze 24h: **${tel}**
+✅ ${lien('Prenota appuntamento','#rdv')}`,
+      passport:`🛂 **Passaporto Biometrico**
+• 696 SEK adulto · 348 SEK minore
+• Tempi: 4–8 settimane
+📧 pass@embalgeria.se
+✅ ${lien('Richiedi','#services')}`,
+      visa:`✈️ **Visto per l'Algeria**
+Turismo, Famiglia, Affari, Lavoro, Transito
+Min. 14 giorni · Da 957 SEK
+📧 visa@embalgeria.se
+✅ ${lien('Richiedi','#services')}`,
+      rdv:`📅 ${lien('→ Prenota online','#rdv')}
+Conferma entro 48 ore lavorative.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ Traccia la tua pratica online','#suivi')}
+Inserisci il numero DOS-XXXX-XXXXXX.`,
+      urgent:`🚨 **EMERGENZA**
+📞 **${tel}**
+Servizio 24h/24
+Incidente · Arresto · Documento perso`,
+      hello:`Ciao! 👋 Sono il suo assistente consolare, disponibile **24h/24**.
 
-  if(match(lq,['immatricul','enregistr','résider','habitez','vivre']))
-    return `🏠 **Immatriculation consulaire**\n\nObligatoire pour tout Algérien résidant en Suède ou Islande. Gratuit.\n\n**Documents requis :**\n• Passeport algérien valide\n• Acte de naissance 12S\n• Personbevis < 3 mois\n• 2 photos récentes\n\n✅ ${lien('Faire la demande','#services')}`;
+🛂 ${lien('Passaporto','#services')} · ✈️ ${lien('Visto','#services')} · 📅 ${lien('Appuntamento','#rdv')} · 🔍 ${lien('Pratica','#suivi')}`,
+      thanks:'Prego! 😊 Buona giornata! 🇩🇿',
+      generic:`Ciao! Posso aiutarla con:
+📅 ${lien('Appuntamento','#rdv')} · 📄 ${lien('Documenti','#services')} · 🔍 ${lien('Pratica','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+    de:{
+      hours:`🕐 **Öffnungszeiten:**
+📅 **Montag – Freitag · 09:00 – 13:00**
+Geschlossen Wochenenden & Feiertage
+📞 Notfall 24/7: **${tel}**
+✅ ${lien('Termin buchen','#rdv')}`,
+      passport:`🛂 **Biometrischer Reisepass**
+• 696 SEK Erwachsener · 348 SEK Minderjähriger
+• Bearbeitungszeit: 4–8 Wochen
+📧 pass@embalgeria.se
+✅ ${lien('Jetzt beantragen','#services')}`,
+      visa:`✈️ **Visum für Algerien**
+Tourismus, Familie, Geschäft, Arbeit, Transit
+Min. 14 Tage · Ab 957 SEK
+📧 visa@embalgeria.se
+✅ ${lien('Beantragen','#services')}`,
+      rdv:`📅 ${lien('→ Online Termin buchen','#rdv')}
+Bestätigung innerhalb 48 Arbeitsstunden.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ Akte online verfolgen','#suivi')}
+Geben Sie Ihre Nummer DOS-XXXX-XXXXXX ein.`,
+      urgent:`🚨 **NOTFALL**
+📞 **${tel}**
+24/7 Bereitschaft
+Unfall · Festnahme · Verlorenes Dokument`,
+      hello:`Hallo! 👋 Ich bin Ihr Konsularagent, **24/7** verfügbar.
 
-  if(match(lq,['légalis','legaliz','authentif','notari']))
-    return `📜 **Légalisation de documents**\n\nDélai : 5 à 10 jours ouvrables.\n\nApportez : original + copie + pièce d'identité.\n\n✅ ${lien('Faire une demande','#services')}\n📧 ${email_c}`;
+🛂 ${lien('Reisepass','#services')} · ✈️ ${lien('Visum','#services')} · 📅 ${lien('Termin','#rdv')} · 🔍 ${lien('Akte','#suivi')}`,
+      thanks:'Gern geschehen! 😊 Schönen Tag! 🇩🇿',
+      generic:`Hallo! Ich kann Ihnen helfen mit:
+📅 ${lien('Termin','#rdv')} · 📄 ${lien('Dokumente','#services')} · 🔍 ${lien('Akte','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+    ar:{
+      hours:`🕐 **مواعيد العمل:**
+📅 **الإثنين – الجمعة · 09:00 – 13:00**
+مغلق أيام العطل
+📞 الطوارئ 24/24: **${tel}**
+✅ ${lien('حجز موعد','#rdv')}`,
+      passport:`🛂 **جواز السفر البيومتري**
+• 696 كرون — بالغ · 348 كرون — قاصر
+• المدة: 4–8 أسابيع
+📧 pass@embalgeria.se
+✅ ${lien('تقديم طلب','#services')}`,
+      visa:`✈️ **تأشيرة الجزائر**
+سياحة، عائلة، أعمال، عمل، عبور
+مدة أدنى 14 يوماً · من 957 كرون
+📧 visa@embalgeria.se
+✅ ${lien('تقديم ملف','#services')}`,
+      rdv:`📅 ${lien('→ حجز موعد عبر الإنترنت','#rdv')}
+تأكيد خلال 48 ساعة عمل.
+📞 ${tel}`,
+      suivi:`🔍 ${lien('→ متابعة ملفي عبر الإنترنت','#suivi')}
+أدخل رقمك DOS-XXXX-XXXXXX.`,
+      urgent:`🚨 **طوارئ**
+📞 **${tel}**
+مناوبة 24/24
+حادث · اعتقال · وثيقة مفقودة`,
+      hello:`مرحباً! 👋 أنا مساعدكم القنصلي، متاح **24 ساعة**.
 
-  if(match(lq,['acte','naissance','12s','état civil','mariage','livret']))
-    return `📋 **État civil & Acte 12S**\n\nL'acte 12S est exigé pour toute demande de passeport.\n\nNés en Algérie : demande sur <a href="https://request12s.interieur.gov.dz" target="_blank" style="color:var(--green)">interieur.gov.dz</a>\nNés en Suède : demandez à l'ambassade.\n\n📧 ${email_c}`;
+🛂 ${lien('جواز السفر','#services')} · ✈️ ${lien('التأشيرة','#services')} · 📅 ${lien('موعد','#rdv')} · 🔍 ${lien('الملف','#suivi')}`,
+      thanks:'على الرحب! 😊 يوم سعيد 🇩🇿',
+      generic:`مرحباً! يمكنني مساعدتكم في:
+📅 ${lien('موعد','#rdv')} · 📄 ${lien('وثائق','#services')} · 🔍 ${lien('متابعة','#suivi')}
+📞 **${tel}** · 📧 ${email_c}`,
+    },
+  };
 
-  if(match(lq,['urgence','urgent','accident','arrêté','prison','volé','perdu','lost']))
-    return `🚨 **URGENCE CONSULAIRE**\n\n📞 **Appelez immédiatement :**\n**${tel}**\n\nPermanence 24h/24 · 7j/7\n\nL'ambassade peut :\n• Délivrer un laissez-passer d'urgence\n• Contacter vos proches\n• Vous assister face aux autorités`;
-
-  if(match(lq,['adresse','où','situé','trouver','contact','coordonnée','email','téléphone','bankgiro']))
-    return `📍 **Ambassade d'Algérie à Stockholm**\nDanderydsgatan 3-5, BOX 26027, 100 41 Stockholm\n\n📞 **${tel}**\n📧 pass@embalgeria.se (passeports)\n📧 visa@embalgeria.se (visas)\n📧 ${email_c} (consulaire)\n\n🏦 BankGiro : **5088-9039**\n\n${lien('Voir les horaires et la carte','#contact')}`;
-
-  if(match(lq,['bonjour','salam','hello','مرحبا','السلام','bonsoir','hi ']))
-    return `Bonjour ! 👋\n\nJe suis votre assistant consulaire, disponible **24h/24** pour vous orienter.\n\nJe peux vous aider avec :\n🛂 ${lien('Passeport','#services')} · 🪪 ${lien('CNI','#services')} · ✈️ ${lien('Visa','#services')}\n📅 ${lien('Rendez-vous','#rdv')} · 🔍 ${lien('Suivi dossier','#suivi')} · 📞 Urgences\n\nQuelle est votre question ?`;
-
-  if(match(lq,['merci','thank','شكرا','au revoir','bye','bonne journée']))
-    return `Avec plaisir ! 😊\n\n📅 ${lien('Prendre rendez-vous','#rdv')} · 🔍 ${lien('Suivre votre dossier','#suivi')}\n\nBonne journée ! 🇩🇿`;
-
-  return `Je suis là pour vous aider ! 🏛️\n\n📅 ${lien('Prendre rendez-vous','#rdv')}\n📄 ${lien('Faire une demande de document','#services')}\n🔍 ${lien('Suivre votre dossier','#suivi')}\n📞 Urgences 24h/24 : **${tel}**\n📧 ${email_c}\n\nQuelle est votre question précise ?`;
+  const L = R[lang] || R.fr;
+  if(isHello)    return L.hello;
+  if(isHours)    return L.hours;
+  if(isPassport) return L.passport;
+  if(isVisa)     return L.visa;
+  if(isRDV)      return L.rdv;
+  if(isSuivi)    return L.suivi;
+  if(isUrgent)   return L.urgent;
+  if(isThanks)   return L.thanks;
+  return L.generic;
 }
 
 function sendChat(){
@@ -1260,6 +2059,137 @@ function sendSugg(txt){
 setTimeout(()=>{ if(!chatOpen){ const n=document.getElementById('chat-notif'); if(n) n.style.display='flex'; } }, 5000);
 
 // ══════════════════════════════════════════════════════
+//  ANNONCES OFFICIELLES
+// ══════════════════════════════════════════════════════
+let allAnnonces = [];
+
+const CAT_CONFIG = {
+  avis:       {icon:'📢', label:'Avis officiel',  badge:'badge-avis',      emoji:'📢'},
+  formulaire: {icon:'📋', label:'Formulaire',      badge:'badge-formulaire',emoji:'📋'},
+  communique: {icon:'📰', label:'Communiqué',      badge:'badge-communique',emoji:'📰'},
+  photo:      {icon:'🖼️', label:'Photo / Galerie', badge:'badge-photo',     emoji:'🖼️'},
+  urgent:     {icon:'🚨', label:'URGENT',          badge:'badge-urgent',    emoji:'🚨'},
+};
+
+async function loadAnnonces() {
+  const data = await fbGet('web_annonces') || [];
+  allAnnonces = Array.isArray(data) ? data.filter(a=>a.publie!==false) : [];
+
+  // Si aucune annonce en base, afficher des exemples de démo
+  if(!allAnnonces.length) {
+    allAnnonces = [
+      {id:1, titre:'Modification des horaires estivaux 2025', categorie:'avis', date:'15 juin 2025',
+       contenu:'L\'ambassade informe la communauté algérienne que les horaires d\'ouverture seront modifiés du 1er juillet au 31 août 2025. Accueil du public : Lundi, Mercredi, Vendredi — 09h00 à 12h00 uniquement.',
+       image:'', publie:true},
+      {id:2, titre:'Formulaire de demande de passeport (PDF)', categorie:'formulaire', date:'10 juin 2025',
+       contenu:'Téléchargez le formulaire officiel de demande de passeport biométrique algérien. À remplir en lettres capitales et à apporter le jour de votre rendez-vous.',
+       image:'', fichier:'https://www.interieur.gov.dz', publie:true},
+      {id:3, titre:'Communiqué — Journée nationale de la Mémoire', categorie:'communique', date:'8 mai 2025',
+       contenu:'À l\'occasion de la Journée nationale de la Mémoire, l\'Ambassade d\'Algérie à Stockholm commémore les martyrs de la Révolution nationale et réaffirme les valeurs de liberté et de dignité.',
+       image:'', publie:true},
+      {id:4, titre:'URGENT — Alerte sécurité aux ressortissants', categorie:'urgent', date:'1er juin 2025',
+       contenu:'L\'ambassade conseille à tous les ressortissants algériens de s\'inscrire auprès du consulat et de tenir leurs documents de voyage à jour. En cas d\'urgence, contactez le +46 (0) 8 679 9130.',
+       image:'', publie:true},
+      {id:5, titre:'Photos — Réception officielle du 1er novembre', categorie:'photo', date:'2 novembre 2024',
+       contenu:'Retrouvez les photos de la réception officielle organisée à l\'occasion du 70ème anniversaire du déclenchement de la Révolution algérienne.',
+       image:'', publie:true},
+      {id:6, titre:'Formulaire immatriculation consulaire', categorie:'formulaire', date:'1er janvier 2025',
+       contenu:'Formulaire d\'immatriculation pour les ressortissants algériens résidant en Suède ou en Islande. L\'immatriculation est obligatoire et gratuite.',
+       image:'', publie:true},
+    ];
+  }
+  renderAnnonces(allAnnonces);
+}
+
+function filtrerAnnonces(cat) {
+  // Update active button
+  document.querySelectorAll('.filtre-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(cat) || (!cat && b.textContent==='Tout'));
+  });
+  if(!cat) { renderAnnonces(allAnnonces); return; }
+  renderAnnonces(allAnnonces.filter(a=>a.categorie===cat));
+}
+
+function renderAnnonces(list) {
+  const grid = document.getElementById('annoncesGrid');
+  if(!grid) return;
+  if(!list.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text2)">
+      <div style="font-size:40px;margin-bottom:12px">📭</div>
+      <p>Aucune annonce dans cette catégorie pour le moment.</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(a => {
+    const cat = CAT_CONFIG[a.categorie] || CAT_CONFIG.avis;
+    const isUrgent = a.categorie === 'urgent';
+    return `<div class="annonce-card ${isUrgent?'annonce-urgent':''}" onclick="openAnnonceDetail(${a.id})">
+      <div class="annonce-img">
+        ${a.image ? `<img src="${a.image}" alt="${a.titre}" onerror="this.parentElement.innerHTML='${cat.emoji}'"/>` : `<span>${cat.emoji}</span>`}
+        <span class="annonce-badge ${cat.badge}">${isUrgent?'🚨 ':''} ${cat.label}</span>
+      </div>
+      <div class="annonce-body">
+        <div class="annonce-date">📅 ${a.date||'—'}</div>
+        <h3>${a.titre}</h3>
+        <p>${(a.contenu||'').slice(0,100)}${a.contenu?.length>100?'...':''}</p>
+        <div class="annonce-footer">
+          <span class="annonce-type-icon">${cat.icon}</span>
+          <span class="annonce-action">${a.fichier?'Télécharger':'Lire la suite'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAnnonceDetail(id) {
+  const a = allAnnonces.find(x=>x.id===id);
+  if(!a) return;
+  const cat = CAT_CONFIG[a.categorie] || CAT_CONFIG.avis;
+  document.getElementById('annonceDetailTitle').textContent = `${cat.icon} ${a.titre}`;
+
+  const dlBtn = document.getElementById('annonceDetailDownload');
+  if(a.fichier) {
+    dlBtn.style.display = 'inline-flex';
+    dlBtn.href = a.fichier;
+  } else {
+    dlBtn.style.display = 'none';
+  }
+
+  document.getElementById('annonceDetailBody').innerHTML = `
+    <div>
+      ${a.image ? `<div style="height:220px;border-radius:10px;overflow:hidden;margin-bottom:18px">
+        <img src="${a.image}" style="width:100%;height:100%;object-fit:cover" alt="${a.titre}"/>
+      </div>` : ''}
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <span class="annonce-badge ${cat.badge}" style="position:static">${cat.label}</span>
+        <span style="font-size:12px;color:var(--text2)">📅 ${a.date||'—'}</span>
+        ${a.auteur?`<span style="font-size:12px;color:var(--text2)">✍️ ${a.auteur}</span>`:''}
+      </div>
+      <div style="font-size:15px;color:var(--text);line-height:1.85;white-space:pre-wrap">${a.contenu||''}</div>
+      ${a.fichier?`
+      <div style="margin-top:20px;padding:14px;background:#f0f9f4;border-radius:10px;border:1px solid #c6e8d8;display:flex;align-items:center;gap:12px">
+        <span style="font-size:28px">📄</span>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:var(--green)">Document joint disponible</div>
+          <div style="font-size:12px;color:var(--text2)">Cliquez "Télécharger" pour accéder au document</div>
+        </div>
+      </div>`:''}
+    </div>`;
+
+  document.getElementById('annonceDetailModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAnnonceDetail() {
+  document.getElementById('annonceDetailModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('annonceDetailModal').addEventListener('click', e=>{
+  if(e.target===e.currentTarget) closeAnnonceDetail();
+});
+
+// ══════════════════════════════════════════════════════
 //  UI
 // ══════════════════════════════════════════════════════
 function showToast(msg, type='success'){
@@ -1278,7 +2208,7 @@ function toggleNav(){
 window.addEventListener('scroll', ()=>{
   const h=document.getElementById('siteHeader');
   if(h) h.style.boxShadow=window.scrollY>60?'0 4px 20px rgba(0,0,0,.14)':'0 2px 12px rgba(0,0,0,.06)';
-  const secs=['accueil','services','actualites','rdv','suivi','contact'];
+  const secs=['accueil','services','actualites','annonces','rdv','suivi','contact'];
   let cur='accueil';
   secs.forEach(id=>{ const el=document.getElementById(id); if(el&&window.scrollY>=el.offsetTop-130) cur=id; });
   document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
@@ -1289,6 +2219,25 @@ document.getElementById('serviceModal').addEventListener('click', e=>{ if(e.targ
 
 // ── GO ──
 initSite();
+// Appliquer la langue sauvegardée
+const savedLang = localStorage.getItem('site_lang') || 'fr';
+if(savedLang !== 'fr') {
+  document.getElementById('langFlag').textContent = LANGS[savedLang]?.flag || '🇫🇷';
+  document.getElementById('langCode').textContent = LANGS[savedLang]?.code || 'FR';
+}
+// Appliquer après chargement DOM
+setTimeout(()=>{ setLang(savedLang); }, 100);
+
+// Billboard dot animation
+(function() {
+  const dots = document.querySelectorAll('.bb-dot');
+  let current = 0;
+  setInterval(() => {
+    dots.forEach(d=>d.classList.remove('bb-dot-active'));
+    current = (current + 1) % dots.length;
+    dots[current].classList.add('bb-dot-active');
+  }, 5000);
+})();
 </script>
 </body>
 </html>
